@@ -1,0 +1,3 @@
+# Myng
+
+MonoGame project 
