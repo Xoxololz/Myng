@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Myng.Graphics;
+using System.Collections.Generic;
 
 namespace Myng
 {
@@ -11,6 +13,8 @@ namespace Myng
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        private List<Sprite> sprites;
 
         public Game1()
         {
@@ -40,7 +44,11 @@ namespace Myng
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            /**
+             * 
+             *          TADY SE NALOADUJOU VSECHNY OBRAZKY A MAPY A NAINICIALIZUJE POSTAVA ATD
+             * 
+             * */
         }
 
         /// <summary>
@@ -59,10 +67,19 @@ namespace Myng
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //update all sprites
+            foreach (var sprite in sprites.ToArray())
+                sprite.Update(gameTime, sprites);
 
-            // TODO: Add your update logic here
+            //delete sprites that are marked for removal
+            for(int i = 0; i < sprites.Count; i++)
+            {
+                if(sprites[i].toRemove)
+                {
+                    sprites.RemoveAt(i);
+                    i--;
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -75,7 +92,12 @@ namespace Myng
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            foreach (var sprite in sprites)
+                sprite.Draw(spriteBatch);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

@@ -41,7 +41,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controller\Input.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Graphics\Character.cs" />
+    <Compile Include="Graphics\Projectile.cs" />
+    <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
