@@ -1,11 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Controller;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Myng.Graphics
 {
@@ -18,8 +13,8 @@ namespace Myng.Graphics
 
         protected Vector2 origin; //point the character rotates around
 
-        public Character(Texture2D texture2D)
-            :base(texture2D)
+        public Character(Texture2D texture2D, Vector2 position)
+            :base(texture2D, position)
         {
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
         }

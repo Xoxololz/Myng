@@ -2,9 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Myng.Graphics
 {
@@ -18,8 +15,8 @@ namespace Myng.Graphics
         private float timer = 0f;
         public float lifespan = 3f;
 
-        public Projectile(Texture2D texture2D)
-            : base(texture2D)
+        public Projectile(Texture2D texture2D, Vector2 position)
+            : base(texture2D,position)
         {
 
         }
