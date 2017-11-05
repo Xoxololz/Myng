@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Myng.Graphics
 {
-    class Character : Sprite
+    abstract public class Character : Sprite
     {
         protected float rotation;
         protected Vector2 direction;

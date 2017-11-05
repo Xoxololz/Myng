@@ -16,6 +16,16 @@ namespace Myng.Graphics
         protected Vector2 position { get; set; }
         public bool toRemove = false; //use this to mark sprite for removal
 
+        //for easy collision checking
+        protected Rectangle rectangle 
+        {
+            get
+            {
+                return new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height);
+            }
+        }
+
+
         public Sprite(Texture2D texture2D)
         {
             this.texture = texture2D;
@@ -32,6 +42,7 @@ namespace Myng.Graphics
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, position, Color.White);
-        }
+        }    
+
     }
 }

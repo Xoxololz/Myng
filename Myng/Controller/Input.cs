@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Myng.Controller
 {
-    class Input
+    public class Input
     {
         public Keys Left { get; set; }
         public Keys Right { get; set; }
