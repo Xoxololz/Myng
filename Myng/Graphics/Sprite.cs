@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Myng.Graphics
 {
-    //every sprite will extend this class 
+    //every sprite will extend this class
     abstract public class Sprite
     {
         protected Texture2D texture;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Myng.Graphics;
+using Myng.States;
 using System.Collections.Generic;
 
 namespace Myng
@@ -15,6 +15,13 @@ namespace Myng
         SpriteBatch spriteBatch;
 
         private List<Sprite> sprites;
+        private State currentState;
+        private State nextState;
+
+        public void ChangeState(State state)
+        {
+            nextState = state;
+        }
 
         public Game1()
         {
@@ -44,6 +51,7 @@ namespace Myng
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            currentState = new GameState(Content,graphics.GraphicsDevice,this);
             /**
              * 
              *          TADY SE NALOADUJOU VSECHNY OBRAZKY A MAPY A NAINICIALIZUJE POSTAVA ATD
@@ -67,19 +75,13 @@ namespace Myng
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            //update all sprites
-            foreach (var sprite in sprites.ToArray())
-                sprite.Update(gameTime, sprites);
-
-            //delete sprites that are marked for removal
-            for(int i = 0; i < sprites.Count; i++)
+            if (nextState != null)
             {
-                if(sprites[i].toRemove)
-                {
-                    sprites.RemoveAt(i);
-                    i--;
-                }
+                currentState = nextState;
+                nextState = null;
             }
+            currentState.Update(gameTime);
+            
 
             base.Update(gameTime);
         }
@@ -92,12 +94,8 @@ namespace Myng
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            currentState.Draw(gameTime, spriteBatch);
 
-            foreach (var sprite in sprites)
-                sprite.Draw(spriteBatch);
-
-            spriteBatch.End();
 
             base.Draw(gameTime);
         }
