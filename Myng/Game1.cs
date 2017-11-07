@@ -38,6 +38,7 @@ namespace Myng
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             base.Initialize();
         }
@@ -48,8 +49,7 @@ namespace Myng
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            // Create a new SpriteBatch, which can be used to draw textures.           
 
             currentState = new GameState(Content,graphics.GraphicsDevice,this);
             /**

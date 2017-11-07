@@ -8,7 +8,7 @@ namespace Myng.Helpers
     /// </summary>
     public class Polygon
     {
-        #region variables
+        #region public variables
         /// <summary>
         /// array of polygon points
         /// </summary>
@@ -16,7 +16,7 @@ namespace Myng.Helpers
         /// <summary>
         /// point to rotate around
         /// </summary>
-        public Vector2 origin { get; set; }
+        public Vector2 Origin { get; set; }
         #endregion
 
         #region Constructors
@@ -28,7 +28,7 @@ namespace Myng.Helpers
         public Polygon(Vector2[] points, Vector2 origin)
         {
             this.Points = points;
-            this.origin = origin;
+            this.Origin = origin;
         }
         /// <summary>
         /// create polygon to represent rectangle rotating around center with angle=0
@@ -60,11 +60,11 @@ namespace Myng.Helpers
                     X = rectangle.Center.X,
                     Y = rectangle.Center.Y
                 };
-                this.origin = tmp;
+                this.Origin = tmp;
             }
             else
             {
-                this.origin = origin.Value;
+                this.Origin = origin.Value;
             }
           
             Points = new Vector2[4];
@@ -102,10 +102,10 @@ namespace Myng.Helpers
         {
             for (int i = 0; i < Points.Length; i++)
             {
-                Points[i] -= origin;
+                Points[i] -= Origin;
                 Points[i].X = Points[i].X * (float)Math.Cos(MathHelper.ToRadians(angle)) - Points[i].Y * (float)Math.Sin(MathHelper.ToRadians(angle));
                 Points[i].Y = Points[i].X * (float)Math.Sin(MathHelper.ToRadians(angle)) + Points[i].Y * (float)Math.Cos(MathHelper.ToRadians(angle));
-                Points[i] += origin;
+                Points[i] += Origin;
             }
         }
         /// <summary>
