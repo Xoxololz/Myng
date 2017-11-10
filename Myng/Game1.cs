@@ -14,7 +14,6 @@ namespace Myng
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private List<Sprite> sprites;
         private State currentState;
         private State nextState;
 
