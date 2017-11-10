@@ -46,6 +46,7 @@
     <Compile Include="Graphics\Character.cs" />
     <Compile Include="Graphics\Projectile.cs" />
     <Compile Include="Graphics\Sprite.cs" />
+    <Compile Include="Graphics\TestSprite.cs" />
     <Compile Include="Helpers\Polygon.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

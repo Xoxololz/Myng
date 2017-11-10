@@ -18,6 +18,9 @@ namespace Myng.States
         public GameState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
             //TODO: initialize sprites?
+            sprites = new List<Sprite>();
+            Sprite a = new TestSprite(content.Load<Texture2D>("worm"), new Vector2(100f));
+            sprites.Add(a);
         }
 
         public override void Update(GameTime gameTime)
