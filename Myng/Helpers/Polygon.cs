@@ -12,11 +12,11 @@ namespace Myng.Helpers
         /// <summary>
         /// array of polygon points
         /// </summary>
-        public Vector2[] Points { get; set; }
+        public Vector2[] Points { get; private set; }
         /// <summary>
         /// point to rotate around
         /// </summary>
-        public Vector2 Origin { get; set; }
+        public Vector2 Origin { get; private set; }
         #endregion
 
         #region Constructors
