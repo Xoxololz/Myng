@@ -10,9 +10,9 @@ namespace Myng.Graphics
     abstract public class Sprite
     {
         protected Texture2D texture;
-        protected Vector2 position { get; set; }
+        protected Vector2 position;
         public bool toRemove = false; //use this to mark sprite for removal
-        private Polygon collisionPolygon;
+        protected Polygon collisionPolygon;
         // Polygon to check collisions
         public Polygon CollisionPolygon
         {
