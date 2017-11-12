@@ -42,12 +42,8 @@ namespace Myng.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {           
-            spriteBatch.Begin();
-
             foreach (var sprite in sprites)
                 sprite.Draw(spriteBatch);
-
-            spriteBatch.End();
         }       
     }
 }

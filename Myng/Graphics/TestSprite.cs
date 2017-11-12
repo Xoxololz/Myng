@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Controller;
@@ -10,33 +7,35 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Myng.Graphics
 {
-    public class TestSprite : Sprite
+    public class TestSprite : Character
     {
         private Input input;
 
         public TestSprite(Texture2D texture2D, Vector2 position) : base(texture2D, position)
         {
             input = new Input();
-            position = new Vector2();
         }
 
         private void Move()
         {
             if (Keyboard.GetState().IsKeyDown(input.Left))
             {
-                position.X -= 5;
+                rotation -= MathHelper.ToRadians(rotationVelocity);
             }
             if (Keyboard.GetState().IsKeyDown(input.Right))
             {
-                position.X += 5;
+                rotation += MathHelper.ToRadians(rotationVelocity);
             }
+
+            var direction = new Vector2((float)Math.Cos(MathHelper.ToRadians(180) - rotation), -(float)Math.Sin(MathHelper.ToRadians(180) - rotation));
+
             if (Keyboard.GetState().IsKeyDown(input.Up))
             {
-                position.Y -= 5;
+                position += speed * direction;
             }
             if (Keyboard.GetState().IsKeyDown(input.Down))
             {
-                position.Y +=5;
+                position -= speed * direction;
             }
         }
 
@@ -44,5 +43,6 @@ namespace Myng.Graphics
         {
             Move();
         }
+
     }
 }

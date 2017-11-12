@@ -93,8 +93,9 @@ namespace Myng
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            spriteBatch.Begin();
             currentState.Draw(gameTime, spriteBatch);
-
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
