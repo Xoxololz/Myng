@@ -27,7 +27,8 @@ namespace Myng.Graphics
                 rotation += MathHelper.ToRadians(rotationVelocity);
             }
 
-            var direction = new Vector2((float)Math.Cos(MathHelper.ToRadians(180) - rotation), -(float)Math.Sin(MathHelper.ToRadians(180) - rotation));
+            var direction = new Vector2((float)Math.Cos(MathHelper.ToRadians(180)
+                - rotation), -(float)Math.Sin(MathHelper.ToRadians(180) - rotation));
 
             if (Keyboard.GetState().IsKeyDown(input.Up))
             {

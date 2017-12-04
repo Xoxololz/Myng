@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Myng.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Myng.States;
-using System.Collections.Generic;
 
 namespace Myng
 {
@@ -17,6 +16,7 @@ namespace Myng
         private State currentState;
         private State nextState;
 
+
         public void ChangeState(State state)
         {
             nextState = state;
@@ -24,8 +24,11 @@ namespace Myng
 
         public Game1()
         {
+           
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+           
         }
 
         /// <summary>
@@ -36,8 +39,17 @@ namespace Myng
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            //sets state to be in after starting the app
+            currentState = new GameState(Content, graphics.GraphicsDevice, this);
+
+            //setting window height and width
+            graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+            graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+            graphics.IsFullScreen = true;
+            graphics.ApplyChanges();
 
             base.Initialize();
         }
@@ -50,7 +62,7 @@ namespace Myng
         {
             // Create a new SpriteBatch, which can be used to draw textures.           
 
-            currentState = new GameState(Content,graphics.GraphicsDevice,this);
+            
             /**
              * 
              *          TADY SE NALOADUJOU VSECHNY OBRAZKY A MAPY A NAINICIALIZUJE POSTAVA ATD
@@ -80,7 +92,11 @@ namespace Myng
                 nextState = null;
             }
             currentState.Update(gameTime);
-            
+
+            //probly just temporary solution we shoud do it somehow better
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                this.Exit();
+
 
             base.Update(gameTime);
         }
@@ -93,9 +109,7 @@ namespace Myng
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
             currentState.Draw(gameTime, spriteBatch);
-            spriteBatch.End();
 
             base.Draw(gameTime);
         }

@@ -8,7 +8,8 @@ namespace Myng.Helpers
     /// </summary>
     public class Polygon
     {
-        #region public variables
+
+        #region variables
         /// <summary>
         /// array of polygon points
         /// </summary>
@@ -55,16 +56,17 @@ namespace Myng.Helpers
         {
             if (origin.HasValue)
             {
+                this.Origin = origin.Value;
+                
+            }
+            else
+            {
                 Vector2 tmp = new Vector2
                 {
                     X = rectangle.Center.X,
                     Y = rectangle.Center.Y
                 };
                 this.Origin = tmp;
-            }
-            else
-            {
-                this.Origin = origin.Value;
             }
           
             Points = new Vector2[4];
@@ -112,7 +114,7 @@ namespace Myng.Helpers
         /// checks if this polygon collides with the other
         /// </summary>
         /// <param name="a">polygon to check collision with</param>
-        /// <returns></returns>
+        /// <returns>boolean that represents if polygons are in collision</returns>
         public bool Intersects(Polygon a)
         {
             var b = this;

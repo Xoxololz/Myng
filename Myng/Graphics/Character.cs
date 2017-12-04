@@ -19,7 +19,7 @@ namespace Myng.Graphics
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, position, null, Color.White, rotation, origin, 0.3f, SpriteEffects.None, 0);
         }
     }
 }
