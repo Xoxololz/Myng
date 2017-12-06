@@ -44,11 +44,12 @@
     <Compile Include="Controller\Input.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Graphics\Character.cs" />
+    <Compile Include="Graphics\Player.cs" />
     <Compile Include="Graphics\Projectile.cs" />
     <Compile Include="Graphics\Sprite.cs" />
-    <Compile Include="Graphics\TestSprite.cs" />
     <Compile Include="Helpers\Camera.cs" />
     <Compile Include="Helpers\Polygon.cs" />
+    <Compile Include="Helpers\Spell.cs" />
     <Compile Include="Helpers\TileMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,6 +67,9 @@
   <ItemGroup>
     <Content Include="Content\hyptosis_tile-art-batch-1.png" />
     <Content Include="Content\meta.jpg" />
+    <Content Include="Content\projectile.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\White_Male.png" />
     <Content Include="Content\worm.png" />
     <Content Include="Icon.ico" />

@@ -4,13 +4,13 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Graphics;
 using TiledSharp;
-using System;
 using Myng.Helpers;
 
 namespace Myng.States
 {
     public class GameState : State
     {
+        #region Fields
 
         private List<Sprite> sprites;
 
@@ -18,18 +18,28 @@ namespace Myng.States
 
         private Camera camera;
 
+        #endregion
+
+        #region Variables
 
         public static int ScreenHeight;
         public static int ScreenWidth;
         public static int MapHeight;
         public static int MapWidth;
 
+        #endregion
+
+        #region Constructor
+
         public GameState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
-            //TODO: initialize sprites?
+
             sprites = new List<Sprite>
             {
-                new TestSprite(content.Load<Texture2D>("worm"), new Vector2(100f))
+                new Player(content.Load<Texture2D>("worm"), new Vector2(100f))
+                {
+                    Bullet=new Projectile(content.Load<Texture2D>("projectile"), new Vector2(100f))
+                }
             };
 
             TmxMap map = new TmxMap("Content/Maps/mapa.tmx");
@@ -39,12 +49,16 @@ namespace Myng.States
             MapHeight = tileMap.MapHeight;
             MapWidth = tileMap.MapWidth;
 
-            ScreenHeight = graphicsDevice.DisplayMode.Height;
-            ScreenWidth = graphicsDevice.DisplayMode.Width;
+            ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
 
             camera = new Camera(sprites[0]);
 
-        }   
+        }
+
+        #endregion
+
+        #region Methods
 
         public override void Update(GameTime gameTime)
         {
@@ -67,7 +81,7 @@ namespace Myng.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(transformMatrix: camera.Transform);
+            spriteBatch.Begin(transformMatrix: Camera.Transform);
 
             tileMap.Draw(spriteBatch);
 
@@ -76,6 +90,8 @@ namespace Myng.States
 
             spriteBatch.End();
 
-        }       
+        }
+
+        #endregion
     }
 }

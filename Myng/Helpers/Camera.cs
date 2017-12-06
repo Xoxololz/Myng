@@ -6,11 +6,25 @@ namespace Myng.Helpers
 {
     public class Camera
     {
-        #region Variables
+        #region Properties
 
-        public Matrix Transform { get; private set; }
-
+        public static Matrix Transform { get; private set; }
+        /// <summary>
+        /// target to focus on
+        /// </summary>
         public Sprite Target { get; set; }
+
+        public static Vector2 ScreenOffset
+        {
+            get
+            {
+                return new Vector2()
+                {
+                    X = Transform.M41,
+                    Y = Transform.M42
+                };
+            }
+        }
 
         #endregion
 
@@ -24,7 +38,9 @@ namespace Myng.Helpers
         #endregion
 
         #region Methods
-
+        /// <summary>
+        /// focus camera on target
+        /// </summary>
         public void Focus()
         {
             Matrix x;
@@ -54,7 +70,7 @@ namespace Myng.Helpers
                 y = Matrix.CreateTranslation(0, -Target.CollisionPolygon.Origin.Y, 0);
             }
             Transform = x * y * Matrix.CreateTranslation(GameState.ScreenWidth/2 , GameState.ScreenHeight/2 , 0);
-        } 
+        }         
 
         #endregion
 

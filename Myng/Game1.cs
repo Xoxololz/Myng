@@ -27,8 +27,8 @@ namespace Myng
            
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            this.IsMouseVisible = true;
 
-           
         }
 
         /// <summary>
@@ -107,7 +107,6 @@ namespace Myng
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             currentState.Draw(gameTime, spriteBatch);
 

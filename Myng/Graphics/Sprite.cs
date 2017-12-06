@@ -10,8 +10,9 @@ namespace Myng.Graphics
     abstract public class Sprite
     {
         protected Texture2D texture;
-        protected Vector2 position;
-        public bool toRemove = false; //use this to mark sprite for removal
+        public Vector2 Position;
+        //use this to mark sprite for removal
+        public bool toRemove = false;
         protected Polygon collisionPolygon;
         // Polygon to check collisions
         public Polygon CollisionPolygon
@@ -22,7 +23,7 @@ namespace Myng.Graphics
                 if (collisionPolygon != null)
                     return collisionPolygon;
                 // if not return Polygon representing rectangle the same size as texture
-                return new Polygon(new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height));
+                return new Polygon(new Rectangle((int)Position.X, (int)Position.Y, texture.Width, texture.Height));
             }
             set
             {
@@ -33,7 +34,7 @@ namespace Myng.Graphics
         public Sprite(Texture2D texture2D, Vector2 position)
         {
             this.texture = texture2D;
-            this.position = position;
+            this.Position = position;
         }
 
         //this method will take care of pretty much everything thats happening
@@ -46,7 +47,7 @@ namespace Myng.Graphics
         //default Draw method
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, Color.White);
+            spriteBatch.Draw(texture, Position, Color.White);
         }    
 
     }

@@ -5,11 +5,10 @@ namespace Myng.Graphics
 {
     abstract public class Character : Sprite
     {
-        protected float rotation;
-        public float rotationVelocity = 3f;
         public float speed = 4f;
 
-        protected Vector2 origin; //point the character rotates around
+        //point the character rotates around
+        protected Vector2 origin;
 
         public Character(Texture2D texture2D, Vector2 position)
             :base(texture2D, position)
@@ -19,7 +18,7 @@ namespace Myng.Graphics
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, null, Color.White, rotation, origin, 0.3f, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Position, null, Color.White, 0, origin, 1f, SpriteEffects.None, 0);
         }
     }
 }

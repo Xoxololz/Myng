@@ -5,34 +5,45 @@ using System.Collections.Generic;
 
 namespace Myng.Graphics
 {
-    abstract public class Projectile : Sprite, ICloneable
+    /*abstract*/ public class Projectile : Sprite, ICloneable
     {
-        protected Sprite parent { get; set; }
+        protected Sprite parent;
 
-        public Vector2 direction;
-        public float speed = 0f; 
+        public Vector2 Direction;
+        public float speed = 8f;
 
         private float timer = 0f;
-        public float lifespan = 3f;
+        private float lifespan = 3f;
+        private double angle = 0;
 
         public Projectile(Texture2D texture2D, Vector2 position)
             : base(texture2D,position)
         {
-
+            angle = Math.Atan(Direction.Y / Direction.X);
         }
 
         public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            angle = Math.Atan(Direction.Y / Direction.X);
+
             if (timer > lifespan)
             {
                 toRemove = true;
             }
 
-            position += direction * speed;
+            Position += Direction * speed;
         }
 
-        public abstract object Clone();
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(texture, Position, null, Color.White, (float)angle, CollisionPolygon.Origin - Position, 1f, SpriteEffects.None, 0);
+        }
+
+        public virtual object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }
