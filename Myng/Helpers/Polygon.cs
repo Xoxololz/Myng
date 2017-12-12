@@ -63,8 +63,8 @@ namespace Myng.Helpers
             {
                 Vector2 tmp = new Vector2
                 {
-                    X = rectangle.Center.X,
-                    Y = rectangle.Center.Y
+                    X = rectangle.X + rectangle.Width/2,
+                    Y = rectangle.Y + rectangle.Height / 2
                 };
                 this.Origin = tmp;
             }

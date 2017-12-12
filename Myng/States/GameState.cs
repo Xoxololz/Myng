@@ -36,10 +36,14 @@ namespace Myng.States
 
             sprites = new List<Sprite>
             {
-                new Player(content.Load<Texture2D>("worm"), new Vector2(100f))
+                new Player(content.Load<Texture2D>("worm"), new Vector2(0f))
                 {
                     Bullet=new Projectile(content.Load<Texture2D>("projectile"), new Vector2(100f))
-                }
+                },
+
+                new ItemSprite(content.Load<Texture2D>("projectile"), new Vector2(1000f)),
+
+                new ItemSprite(content.Load<Texture2D>("projectile"), new Vector2(500f))
             };
 
             TmxMap map = new TmxMap("Content/Maps/mapa.tmx");
@@ -68,10 +72,12 @@ namespace Myng.States
 
             camera.Focus();
 
+            var type = sprites[0].GetType();
+
             //delete sprites that are marked for removal
             for (int i = 0; i < sprites.Count; i++)
             {
-                if (sprites[i].toRemove)
+                if (sprites[i].ToRemove)
                 {
                     sprites.RemoveAt(i);
                     i--;

@@ -14,6 +14,8 @@ namespace Myng.Graphics
 
         public List<Spell> Spells;
 
+        public List<Item> Items;
+
         public Projectile Bullet { get; set; }
 
         #endregion
@@ -36,6 +38,8 @@ namespace Myng.Graphics
             previousKey = Keyboard.GetState();
 
             input = new Input();
+
+            Items = new List<Item>();
 
             //testing function to shoot basic bullet
             Action<List<Sprite>> spell =(sprites)=> {
@@ -72,10 +76,22 @@ namespace Myng.Graphics
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
 
-            var time = gameTime.TotalGameTime;
-
             CastSpells(sprites);
             Move();
+            ClearEmptyItems();
+
+        }
+
+        private void ClearEmptyItems()
+        {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].Count <= 0)
+                {
+                    Items.RemoveAt(i);
+                    i--;
+                }
+            }
         }
 
         private void CastSpells(List<Sprite> sprites)
