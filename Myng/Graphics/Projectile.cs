@@ -30,7 +30,7 @@ namespace Myng.Graphics
 
             if (timer > lifespan)
             {
-                toRemove = true;
+                ToRemove = true;
             }
 
             Position += Direction * speed;

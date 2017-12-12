@@ -12,7 +12,7 @@ namespace Myng.Graphics
         protected Texture2D texture;
         public Vector2 Position;
         //use this to mark sprite for removal
-        public bool toRemove = false;
+        public bool ToRemove = false;
         protected Polygon collisionPolygon;
         // Polygon to check collisions
         public Polygon CollisionPolygon
@@ -23,7 +23,10 @@ namespace Myng.Graphics
                 if (collisionPolygon != null)
                     return collisionPolygon;
                 // if not return Polygon representing rectangle the same size as texture
-                return new Polygon(new Rectangle((int)Position.X, (int)Position.Y, texture.Width, texture.Height));
+                return new Polygon(new Rectangle((int)(Position.X - texture.Width/2),
+                    (int)(Position.Y - texture.Height/2),
+                    texture.Width,
+                    texture.Height));
             }
             set
             {
