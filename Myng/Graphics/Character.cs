@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Myng.Graphics
 {
@@ -23,7 +24,7 @@ namespace Myng.Graphics
         #region Constructor
 
         public Character(Texture2D texture2D, Vector2 position)
-            :base(texture2D, position)
+            : base(texture2D, position)
         {
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
         }
@@ -34,7 +35,11 @@ namespace Myng.Graphics
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, Position, null, Color.White, 0, origin, 1f, SpriteEffects.None, 0);
+            if (animationManager != null)
+                animationManager.Draw(spriteBatch);
+            else if (texture != null)
+                spriteBatch.Draw(texture, Position, null, Color.White, 0, origin, 1f, SpriteEffects.None, 0);
+            else throw new Exception("No texture or animation manager set for Character");
         }
 
         #endregion

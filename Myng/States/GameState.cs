@@ -33,22 +33,26 @@ namespace Myng.States
 
         public GameState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
+            Player player = new Player(content.Load<Texture2D>("White_Male"), new Vector2(0f))
+            {
+                Bullet = new Projectile(content.Load<Texture2D>("projectile"), new Vector2(100f))
+            };
 
             sprites = new List<Sprite>
             {
-                new Player(content.Load<Texture2D>("worm"), new Vector2(0f))
-                {
-                    Bullet=new Projectile(content.Load<Texture2D>("projectile"), new Vector2(100f))
-                },
+                player,
 
                 new ItemSprite(content.Load<Texture2D>("projectile"), new Vector2(1000f)),
 
                 new ItemSprite(content.Load<Texture2D>("projectile"), new Vector2(500f))
             };
 
+            Animation playerAnimation = new Animation(player, 4, 3);
+            player.AnimationManager = new AnimationManager(playerAnimation);
+
             TmxMap map = new TmxMap("Content/Maps/mapa.tmx");
             Texture2D tileset = content.Load<Texture2D>(map.Tilesets[0].Name.ToString());
-            tileMap = new TileMap(map,tileset);
+            tileMap = new TileMap(map, tileset);
 
             MapHeight = tileMap.MapHeight;
             MapWidth = tileMap.MapWidth;

@@ -28,6 +28,8 @@ namespace Myng.Graphics
 
         private KeyboardState previousKey;
 
+        private Vector2 velocity;
+
         #endregion
 
         #region Constructor
@@ -36,7 +38,7 @@ namespace Myng.Graphics
         {
             currentKey = Keyboard.GetState();
             previousKey = Keyboard.GetState();
-
+            velocity = new Vector2(0f); 
             input = new Input();
 
             Items = new List<Item>();
@@ -63,8 +65,6 @@ namespace Myng.Graphics
                 new Spell(spell)
             };
 
-            
-
         }
 
         #endregion
@@ -78,6 +78,13 @@ namespace Myng.Graphics
 
             CastSpells(sprites);
             Move();
+            if (animationManager != null)
+            {
+                HandleAnimation();
+                animationManager.Update(gameTime);
+            }
+            position += velocity;
+            velocity = Vector2.Zero;
             ClearEmptyItems();
 
         }
@@ -110,20 +117,32 @@ namespace Myng.Graphics
         {
             if (currentKey.IsKeyDown(input.Left))
             {
-                Position.X -= speed;
+                velocity.X -= speed;
             }
             if (currentKey.IsKeyDown(input.Right))
             {
-                Position.X += speed;
+                velocity.X += speed;
             }
             if (currentKey.IsKeyDown(input.Up))
             {
-                Position.Y -= speed;
+                velocity.Y -= speed;
             }
             if (currentKey.IsKeyDown(input.Down))
             {
-                Position.Y += speed;
+                velocity.Y += speed;
             }
+        }
+
+        private void HandleAnimation()
+        {
+            if (velocity.X > 0)
+                AnimationManager.Animation.setRow(2); //walking right
+            else if (velocity.X < 0)
+                AnimationManager.Animation.setRow(1); //walking left
+            else if (velocity.Y > 0)
+                AnimationManager.Animation.setRow(0); //walking down
+            else if (velocity.Y < 0)
+                AnimationManager.Animation.setRow(3); //walking up
         }
 
         #endregion
