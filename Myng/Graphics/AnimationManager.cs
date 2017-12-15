@@ -73,7 +73,8 @@ namespace Myng.Graphics
             if(timer >= animation.FrameSpeed)
             {
                 timer = 0;
-                animation.SetColumn((int)animation.CurrentFrame.X+1);
+                if(Animation.IsLooping)
+                    animation.SetColumn((int)animation.CurrentFrame.X+1);
                 if (animation.CurrentFrame.X >= animation.FrameColumnCount)
                     animation.SetColumn(0);
             }

@@ -134,6 +134,7 @@ namespace Myng.Graphics
 
         private void HandleAnimation()
         {
+            animationManager.Animation.IsLooping = true;
             if (velocity.X > 0)
                 animationManager.Animation.SetRow(2); //walking right
             else if (velocity.X < 0)
@@ -142,6 +143,7 @@ namespace Myng.Graphics
                 animationManager.Animation.SetRow(0); //walking down
             else if (velocity.Y < 0)
                 animationManager.Animation.SetRow(3); //walking up
+            else animationManager.Animation.IsLooping = false;
         }
 
         #endregion
