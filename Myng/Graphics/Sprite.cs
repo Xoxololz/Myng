@@ -14,6 +14,7 @@ namespace Myng.Graphics
         protected Dictionary<string, Animation> animations;
         protected Texture2D texture;
         protected Vector2 position;
+        protected float scale = 1f;
         //use this to mark sprite for removal
         public bool ToRemove = false;
         protected Polygon collisionPolygon;
@@ -28,17 +29,17 @@ namespace Myng.Graphics
                 // if not return Polygon representing rectangle the same size as texture
                 if (texture != null)
                 {
-                    return new Polygon(new Rectangle((int)(Position.X - texture.Width / 2),
-                      (int)(Position.Y - texture.Height / 2),
-                     texture.Width,
-                     texture.Height));
+                    return new Polygon(new Rectangle((int)Position.X,
+                      (int)Position.Y,
+                      (int)(texture.Width * scale),
+                      (int)(texture.Height * scale)));
                 }
                 else
                 {
-                    return new Polygon(new Rectangle((int)(Position.X - animationManager.Animation.FrameWidth / 2),
-                      (int)(Position.Y - animationManager.Animation.FrameHeight / 2),
-                     animationManager.Animation.FrameWidth,
-                     animationManager.Animation.FrameHeight));
+                    return new Polygon(new Rectangle((int)Position.X,
+                      (int)Position.Y,
+                      (int)(animationManager.Animation.FrameWidth * scale),
+                      (int)(animationManager.Animation.FrameHeight * scale)));
                 }
             }
             set
@@ -68,7 +69,7 @@ namespace Myng.Graphics
             set
             {
                 position = value;
-                if(animationManager != null)
+                if (animationManager != null)
                     animationManager.Position = value;
             }
         }
@@ -97,7 +98,7 @@ namespace Myng.Graphics
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (animationManager != null)
-                animationManager.Draw(spriteBatch);
+                animationManager.Draw(spriteBatch, scale);
             else if (texture != null)
                 spriteBatch.Draw(texture, Position, Color.White);
             else throw new Exception("No texture or animation manager set for Sprite");

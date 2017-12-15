@@ -5,6 +5,7 @@ using Myng.Controller;
 using Myng.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Myng.Graphics
 {
@@ -40,6 +41,8 @@ namespace Myng.Graphics
             previousKey = Keyboard.GetState();
             velocity = new Vector2(0f); 
             input = new Input();
+            scale = 2f;
+            origin = new Vector2(animations.First().Value.FrameWidth * scale / 2, animations.First().Value.FrameHeight * scale / 2);
 
             Items = new List<Item>();
 

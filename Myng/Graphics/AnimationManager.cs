@@ -80,7 +80,7 @@ namespace Myng.Graphics
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, float scale)
         { 
             spriteBatch.Draw(animation.Texture,
                              Position,
@@ -88,7 +88,12 @@ namespace Myng.Graphics
                                            (int)animation.CurrentFrame.Y * animation.FrameHeight,
                                            animation.FrameWidth,
                                            animation.FrameHeight),
-                             Color.White);
+                             Color.White,
+                             0f,
+                             Vector2.Zero,
+                             scale,
+                             SpriteEffects.None,
+                             0f);
         }
         
         #endregion
