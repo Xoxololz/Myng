@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Myng.Graphics
 {
@@ -27,6 +29,11 @@ namespace Myng.Graphics
             : base(texture2D, position)
         {
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
+        }
+
+        public Character(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
+        {
+            origin = new Vector2(animations.First().Value.FrameWidth / 2, animations.First().Value.FrameHeight / 2);
         }
 
         #endregion

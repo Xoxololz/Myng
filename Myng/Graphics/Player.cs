@@ -34,7 +34,7 @@ namespace Myng.Graphics
 
         #region Constructor
 
-        public Player(Texture2D texture2D, Vector2 position) : base(texture2D, position)
+        public Player(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             currentKey = Keyboard.GetState();
             previousKey = Keyboard.GetState();
@@ -83,10 +83,9 @@ namespace Myng.Graphics
                 HandleAnimation();
                 animationManager.Update(gameTime);
             }
-            position += velocity;
+            Position += velocity;
             velocity = Vector2.Zero;
             ClearEmptyItems();
-
         }
 
         private void ClearEmptyItems()
@@ -136,13 +135,13 @@ namespace Myng.Graphics
         private void HandleAnimation()
         {
             if (velocity.X > 0)
-                AnimationManager.Animation.setRow(2); //walking right
+                animationManager.Animation.SetRow(2); //walking right
             else if (velocity.X < 0)
-                AnimationManager.Animation.setRow(1); //walking left
+                animationManager.Animation.SetRow(1); //walking left
             else if (velocity.Y > 0)
-                AnimationManager.Animation.setRow(0); //walking down
+                animationManager.Animation.SetRow(0); //walking down
             else if (velocity.Y < 0)
-                AnimationManager.Animation.setRow(3); //walking up
+                animationManager.Animation.SetRow(3); //walking up
         }
 
         #endregion

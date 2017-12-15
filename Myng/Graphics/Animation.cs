@@ -10,21 +10,29 @@ namespace Myng.Graphics
 {
     public class Animation
     {
+        #region Fields
+
         private Vector2 currentFrame;
+
+        #endregion Fields
+
+        #region Properties
 
         public int FrameRowCount { get; private set; }
 
         public int FrameColumnCount { get; private set; }
 
-        public int FrameHeight { get { return Parent.Texture.Height / FrameRowCount; } }
+        public int FrameHeight { get { return Texture.Height / FrameRowCount; } }
 
         public float FrameSpeed { get; set; }
 
-        public int FrameWidth { get { return Parent.Texture.Width / FrameColumnCount; } }
+        public int FrameWidth { get { return Texture.Width / FrameColumnCount; } }
 
-        public bool isLooping { get; set; }
+        public bool IsLooping { get; set; }
 
-        public Sprite Parent{ get; private set; }
+        public Texture2D Texture{ get; private set; }
+
+        #endregion Properties
 
         public Vector2 CurrentFrame
         {
@@ -38,22 +46,22 @@ namespace Myng.Graphics
             }
         }
 
-        public Animation(Sprite parent, int frameRowCount, int frameColumnCount)
+        public Animation(Texture2D texture, int frameRowCount, int frameColumnCount)
         {
-            Parent = parent;
+            Texture = texture;
             FrameRowCount = frameRowCount;
             FrameColumnCount = frameColumnCount;
-            isLooping = true;
+            IsLooping = true;
             FrameSpeed = 0.2f;
             CurrentFrame = new Vector2(0);
         }
 
-        public void setRow(int row)
+        public void SetRow(int row)
         {
             currentFrame.Y = row;
         }
 
-        public void setColumn(int column)
+        public void SetColumn(int column)
         {
             currentFrame.X = column;
         }
