@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 
 namespace Myng.Graphics
 {
@@ -11,8 +11,10 @@ namespace Myng.Graphics
     abstract public class Sprite
     {
         protected AnimationManager animationManager;
+        protected Dictionary<string, Animation> animations;
         protected Texture2D texture;
         protected Vector2 position;
+        protected float scale = 1f;
         //use this to mark sprite for removal
         public bool ToRemove = false;
         protected Polygon collisionPolygon;
@@ -25,10 +27,20 @@ namespace Myng.Graphics
                 if (collisionPolygon != null)
                     return collisionPolygon;
                 // if not return Polygon representing rectangle the same size as texture
-                return new Polygon(new Rectangle((int)(Position.X - texture.Width / 2),
-                    (int)(Position.Y - texture.Height / 2),
-                    texture.Width,
-                    texture.Height));
+                if (texture != null)
+                {
+                    return new Polygon(new Rectangle((int)Position.X,
+                      (int)Position.Y,
+                      (int)(texture.Width * scale),
+                      (int)(texture.Height * scale)));
+                }
+                else
+                {
+                    return new Polygon(new Rectangle((int)Position.X,
+                      (int)Position.Y,
+                      (int)(animationManager.Animation.FrameWidth * scale),
+                      (int)(animationManager.Animation.FrameHeight * scale)));
+                }
             }
             set
             {
@@ -57,18 +69,8 @@ namespace Myng.Graphics
             set
             {
                 position = value;
-            }
-        }
-
-        public AnimationManager AnimationManager
-        {
-            get
-            {
-                return animationManager;
-            }
-            set
-            {
-                animationManager = value;
+                if (animationManager != null)
+                    animationManager.Position = value;
             }
         }
 
@@ -76,6 +78,13 @@ namespace Myng.Graphics
         {
             this.texture = texture2D;
             this.Position = position;
+        }
+
+        public Sprite(Dictionary<string, Animation> animations, Vector2 position)
+        {
+            this.animations = animations;
+            this.Position = position;
+            animationManager = new AnimationManager(animations.First().Value); //if you are changing this, there might be trouble in Character origin, so dont do that unless it is necessary
         }
 
         //this method will take care of pretty much everything thats happening
@@ -89,7 +98,7 @@ namespace Myng.Graphics
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (animationManager != null)
-                animationManager.Draw(spriteBatch);
+                animationManager.Draw(spriteBatch, scale);
             else if (texture != null)
                 spriteBatch.Draw(texture, Position, Color.White);
             else throw new Exception("No texture or animation manager set for Sprite");

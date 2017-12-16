@@ -10,68 +10,92 @@ namespace Myng.Graphics
 {
     public class AnimationManager
     {
-        private Animation _animation;
+        #region Fields
 
-        private float _timer;
+        private Animation animation;
+
+        private float timer;
+
+        #endregion
+
+        #region Properties
+
+        public Vector2 Position { get; set; }
+
+        #endregion
+
+        #region Constructors
 
         public AnimationManager(Animation animation)
         {
-            _animation = animation;
+            this.animation = animation;
         }
 
+        #endregion
+
+        #region Methods
+        
         public Animation Animation
         {
             get
             {
-                return _animation;
+                return animation;
             }
             set
             {
-                _animation = value;
+                animation = value;
             }
         }
 
         public void Play(Animation animation)
         {
-            if (_animation == animation)
+            if (this.animation == animation)
                 return;
 
-            _animation = animation;
+            this.animation = animation;
 
-            _animation.CurrentFrame = new Vector2(0);
+            this.animation.CurrentFrame = new Vector2(0);
 
-            _timer = 0;
+            timer = 0;
         }
 
         public void Stop()
         {
-            _animation.CurrentFrame = new Vector2(0);
+            animation.CurrentFrame = new Vector2(0);
 
-            _timer = 0;
+            timer = 0;
         }
 
         public void Update(GameTime gameTime)
         {
-            _timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if(_timer >= _animation.FrameSpeed)
+            if(timer >= animation.FrameSpeed)
             {
-                _timer = 0;
-                _animation.setColumn((int)_animation.CurrentFrame.X+1);
-                if (_animation.CurrentFrame.X >= _animation.FrameColumnCount)
-                    _animation.setColumn(0);
+                timer = 0;
+                if(Animation.IsLooping)
+                    animation.SetColumn((int)animation.CurrentFrame.X+1);
+                if (animation.CurrentFrame.X >= animation.FrameColumnCount)
+                    animation.SetColumn(0);
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, float scale)
         { 
-            spriteBatch.Draw(_animation.Parent.Texture,
-                             _animation.Parent.Position,
-                             new Rectangle((int)_animation.CurrentFrame.X * _animation.FrameWidth,
-                                           (int)_animation.CurrentFrame.Y * _animation.FrameHeight,
-                                           _animation.FrameWidth,
-                                           _animation.FrameHeight),
-                             Color.White);
+            spriteBatch.Draw(animation.Texture,
+                             Position,
+                             new Rectangle((int)animation.CurrentFrame.X * animation.FrameWidth,
+                                           (int)animation.CurrentFrame.Y * animation.FrameHeight,
+                                           animation.FrameWidth,
+                                           animation.FrameHeight),
+                             Color.White,
+                             0f,
+                             Vector2.Zero,
+                             scale,
+                             SpriteEffects.None,
+                             0f);
         }
+        
+        #endregion
     }
 }

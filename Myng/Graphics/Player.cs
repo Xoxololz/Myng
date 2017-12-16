@@ -5,6 +5,7 @@ using Myng.Controller;
 using Myng.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Myng.Graphics
 {
@@ -34,12 +35,14 @@ namespace Myng.Graphics
 
         #region Constructor
 
-        public Player(Texture2D texture2D, Vector2 position) : base(texture2D, position)
+        public Player(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             currentKey = Keyboard.GetState();
             previousKey = Keyboard.GetState();
             velocity = new Vector2(0f); 
             input = new Input();
+            scale = 2f;
+            origin = new Vector2(animations.First().Value.FrameWidth * scale / 2, animations.First().Value.FrameHeight * scale / 2);
 
             Items = new List<Item>();
 
@@ -83,10 +86,9 @@ namespace Myng.Graphics
                 HandleAnimation();
                 animationManager.Update(gameTime);
             }
-            position += velocity;
+            Position += velocity;
             velocity = Vector2.Zero;
             ClearEmptyItems();
-
         }
 
         private void ClearEmptyItems()
@@ -135,14 +137,16 @@ namespace Myng.Graphics
 
         private void HandleAnimation()
         {
+            animationManager.Animation.IsLooping = true;
             if (velocity.X > 0)
-                AnimationManager.Animation.setRow(2); //walking right
+                animationManager.Animation.SetRow(2); //walking right
             else if (velocity.X < 0)
-                AnimationManager.Animation.setRow(1); //walking left
+                animationManager.Animation.SetRow(1); //walking left
             else if (velocity.Y > 0)
-                AnimationManager.Animation.setRow(0); //walking down
+                animationManager.Animation.SetRow(0); //walking down
             else if (velocity.Y < 0)
-                AnimationManager.Animation.setRow(3); //walking up
+                animationManager.Animation.SetRow(3); //walking up
+            else animationManager.Animation.IsLooping = false;
         }
 
         #endregion
