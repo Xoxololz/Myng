@@ -11,39 +11,50 @@ namespace Myng.Graphics
 
         public Vector2 Direction;
         public float speed = 8f;
+        public double Angle = 0;
 
-        private float timer = 0f;
-        private float lifespan = 3f;
-        private double angle = 0;
+        protected float timer = 0f;
+        protected float lifespan = 3f;
 
         public Projectile(Texture2D texture2D, Vector2 position)
             : base(texture2D,position)
         {
-            angle = Math.Atan(Direction.Y / Direction.X);
+            Angle = Math.Atan(Direction.Y / Direction.X);
         }
 
+        public Projectile(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
+        {
+            Angle = Math.Atan(Direction.Y / Direction.X);
+        }
+        
         public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            angle = Math.Atan(Direction.Y / Direction.X);
 
             if (timer > lifespan)
             {
                 ToRemove = true;
             }
-
+            if(animationManager != null)
+            {
+                animationManager.Update(gameTime);
+            }
             Position += Direction * speed;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, Position, null, Color.White, (float)angle, CollisionPolygon.Origin - Position, 1f, SpriteEffects.None, 0);
+            if (texture != null)
+                spriteBatch.Draw(texture, Position, null, Color.White, (float)Angle, CollisionPolygon.Origin - Position, scale, SpriteEffects.None, 0);
+            else animationManager.Draw(spriteBatch, scale, Angle, CollisionPolygon.Origin - Position);
         }
 
         public virtual object Clone()
         {
-            return this.MemberwiseClone();
+            var projectile = this.MemberwiseClone() as Projectile;
+            projectile.animationManager = animationManager.Clone() as AnimationManager;
+
+            return projectile;
         }
     }
 }

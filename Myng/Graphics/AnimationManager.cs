@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Myng.Graphics
 {
-    public class AnimationManager
+    public class AnimationManager: ICloneable
     {
         #region Fields
 
@@ -88,14 +88,35 @@ namespace Myng.Graphics
                                            (int)animation.CurrentFrame.Y * animation.FrameHeight,
                                            animation.FrameWidth,
                                            animation.FrameHeight),
-                             Color.White,
+                             Color.White,                             
                              0f,
                              Vector2.Zero,
                              scale,
                              SpriteEffects.None,
                              0f);
         }
-        
+
+        public void Draw(SpriteBatch spriteBatch, float scale, double angle, Vector2 origin)
+        {
+            spriteBatch.Draw(animation.Texture,
+                             Position,
+                             new Rectangle((int)animation.CurrentFrame.X * animation.FrameWidth,
+                                           (int)animation.CurrentFrame.Y * animation.FrameHeight,
+                                           animation.FrameWidth,
+                                           animation.FrameHeight),
+                             Color.White,
+                             (float)angle,
+                             origin,
+                             scale,
+                             SpriteEffects.None,
+                             0f);
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
         #endregion
     }
 }

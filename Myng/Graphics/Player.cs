@@ -5,6 +5,7 @@ using Myng.Controller;
 using Myng.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Myng.Graphics
@@ -39,7 +40,7 @@ namespace Myng.Graphics
         {
             currentKey = Keyboard.GetState();
             previousKey = Keyboard.GetState();
-            velocity = new Vector2(0f); 
+            velocity = new Vector2(0f);
             input = new Input();
             scale = 2f;
             origin = new Vector2(animations.First().Value.FrameWidth * scale / 2, animations.First().Value.FrameHeight * scale / 2);
@@ -47,13 +48,18 @@ namespace Myng.Graphics
             Items = new List<Item>();
 
             //testing function to shoot basic bullet
-            Action<List<Sprite>> spell =(sprites)=> {
+            Action<List<Sprite>> spell = (sprites) =>
+            {
                 var b = Bullet.Clone() as Projectile;
-                b.Position = this.Position;
+                b.Position = this.CollisionPolygon.Origin;
 
                 var mousePos = new Vector2(Mouse.GetState().Position.X, Mouse.GetState().Position.Y);
 
                 b.Direction = -(Position - (mousePos - Camera.ScreenOffset));
+                if(b.Direction.X < 0)
+                    b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(45);
+                else b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(225);
+                Debug.WriteLine(b.Angle);
                 var lenght = b.Direction.Length();
                 b.Direction.X = b.Direction.X / lenght;
                 b.Direction.Y = b.Direction.Y / lenght;
@@ -119,19 +125,25 @@ namespace Myng.Graphics
         {
             if (currentKey.IsKeyDown(input.Left))
             {
-                velocity.X -= speed;
+                velocity.X -= 1f;
             }
             if (currentKey.IsKeyDown(input.Right))
             {
-                velocity.X += speed;
+                velocity.X += 1f;
             }
             if (currentKey.IsKeyDown(input.Up))
             {
-                velocity.Y -= speed;
+                velocity.Y -= 1f;
             }
             if (currentKey.IsKeyDown(input.Down))
             {
-                velocity.Y += speed;
+                velocity.Y += 1f;
+            }
+
+            if (velocity != Vector2.Zero)
+            {
+                velocity.Normalize();
+                velocity *= speed;
             }
         }
 
