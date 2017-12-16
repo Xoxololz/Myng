@@ -32,6 +32,15 @@ namespace Myng.Graphics
 
         private Vector2 velocity;
 
+        private Spell autoAttack;
+
+        private float timer;
+
+        private Vector2 attackDirection;
+
+        //The amount of time in seconds between attacks
+        private float attackSpeed;
+
         #endregion
 
         #region Constructor
@@ -42,10 +51,29 @@ namespace Myng.Graphics
             previousKey = Keyboard.GetState();
             velocity = new Vector2(0f);
             input = new Input();
-            scale = 2f;
-            origin = new Vector2(animations.First().Value.FrameWidth * scale / 2, animations.First().Value.FrameHeight * scale / 2);
-
+            Scale = 2f;
+            attackSpeed = 0.8f;
+            timer = attackSpeed;
+            origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
+            attackDirection = new Vector2(0, -1);
             Items = new List<Item>();
+
+            Action<List<Sprite>> autoAttackAction = (sprites) =>
+            {
+                var b = Bullet.Clone() as Projectile;
+                b.Position = CollisionPolygon.Origin;
+
+                b.Direction = attackDirection;
+                if (b.Direction.X < 0)
+                    b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(45);
+                else b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(225);
+                var lenght = b.Direction.Length();
+                b.Direction.X = b.Direction.X / lenght;
+                b.Direction.Y = b.Direction.Y / lenght;
+                sprites.Add(b);
+            };
+
+            autoAttack = new Spell(autoAttackAction);
 
             //testing function to shoot basic bullet
             Action<List<Sprite>> spell = (sprites) =>
@@ -56,10 +84,9 @@ namespace Myng.Graphics
                 var mousePos = new Vector2(Mouse.GetState().Position.X, Mouse.GetState().Position.Y);
 
                 b.Direction = -(Position - (mousePos - Camera.ScreenOffset));
-                if(b.Direction.X < 0)
+                if (b.Direction.X < 0)
                     b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(45);
                 else b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(225);
-                Debug.WriteLine(b.Angle);
                 var lenght = b.Direction.Length();
                 b.Direction.X = b.Direction.X / lenght;
                 b.Direction.Y = b.Direction.Y / lenght;
@@ -73,7 +100,6 @@ namespace Myng.Graphics
                 new Spell(spell),
                 new Spell(spell)
             };
-
         }
 
         #endregion
@@ -84,14 +110,13 @@ namespace Myng.Graphics
         {
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
+            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            Move();
+            HandleAnimation();
+            animationManager.Update(gameTime);
 
             CastSpells(sprites);
-            Move();
-            if (animationManager != null)
-            {
-                HandleAnimation();
-                animationManager.Update(gameTime);
-            }
             Position += velocity;
             velocity = Vector2.Zero;
             ClearEmptyItems();
@@ -114,11 +139,49 @@ namespace Myng.Graphics
             if (currentKey.IsKeyDown(input.Spell1) && !previousKey.IsKeyDown(input.Spell1))
                 Spells[0].Cast(sprites);
             if (currentKey.IsKeyDown(input.Spell2) && !previousKey.IsKeyDown(input.Spell2))
-                Spells[1].Cast(sprites); ;
+                Spells[1].Cast(sprites);
             if (currentKey.IsKeyDown(input.Spell3) && !previousKey.IsKeyDown(input.Spell3))
                 Spells[2].Cast(sprites);
             if (currentKey.IsKeyDown(input.Spell4) && !previousKey.IsKeyDown(input.Spell4))
                 Spells[3].Cast(sprites);
+
+            if(currentKey.IsKeyDown(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
+            {
+                attackDirection.X = 0;
+                attackDirection.Y = -1;
+                CastAutoAttack(sprites);
+                animationManager.Animation.SetRow(3);
+            }
+            if (currentKey.IsKeyDown(input.ShootDown) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
+            {
+                attackDirection.X = 0;
+                attackDirection.Y = 1;
+                CastAutoAttack(sprites);
+                animationManager.Animation.SetRow(0);
+            }
+            if (currentKey.IsKeyDown(input.ShootRight) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootDown))
+            {
+                attackDirection.X = 1;
+                attackDirection.Y = 0;
+                CastAutoAttack(sprites);
+                animationManager.Animation.SetRow(2);
+            }
+            if (currentKey.IsKeyDown(input.ShootLeft) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootRight))
+            {
+                attackDirection.X = -1;
+                attackDirection.Y = 0;
+                CastAutoAttack(sprites);
+                animationManager.Animation.SetRow(1);
+            }
+        }
+
+        private void CastAutoAttack(List<Sprite> sprites)
+        {
+            if (timer > attackSpeed)
+            {
+                autoAttack.Cast(sprites);
+                timer = 0;
+            }
         }
 
         private void Move()

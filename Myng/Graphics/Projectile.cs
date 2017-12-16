@@ -45,8 +45,8 @@ namespace Myng.Graphics
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (texture != null)
-                spriteBatch.Draw(texture, Position, null, Color.White, (float)Angle, CollisionPolygon.Origin - Position, scale, SpriteEffects.None, 0);
-            else animationManager.Draw(spriteBatch, scale, Angle, CollisionPolygon.Origin - Position);
+                spriteBatch.Draw(texture, Position, null, Color.White, (float)Angle, CollisionPolygon.Origin - Position, Scale, SpriteEffects.None, 0);
+            else animationManager.Draw(spriteBatch, Scale, Angle, CollisionPolygon.Origin - Position);
         }
 
         public virtual object Clone()

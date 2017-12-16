@@ -13,7 +13,10 @@ namespace Myng.Controller
         public Keys Right { get; set; }
         public Keys Up { get; set; }
         public Keys Down { get; set; }
-        public Keys Shoot { get; set; }
+        public Keys ShootUp { get; set; }
+        public Keys ShootDown { get; set; }
+        public Keys ShootLeft { get; set; }
+        public Keys ShootRight { get; set; }
         public Keys Spell1 { get; set; }
         public Keys Spell2 { get; set; }
         public Keys Spell3 { get; set; }
@@ -25,7 +28,10 @@ namespace Myng.Controller
             Right = Keys.D;
             Up = Keys.W;
             Down = Keys.S;
-            Shoot = Keys.Space;
+            ShootUp = Keys.Up;
+            ShootDown = Keys.Down;
+            ShootLeft = Keys.Left;
+            ShootRight = Keys.Right;
             Spell1 = Keys.D1;
             Spell2 = Keys.D2;
             Spell3 = Keys.D3;

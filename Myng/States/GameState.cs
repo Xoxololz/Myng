@@ -35,16 +35,17 @@ namespace Myng.States
         {
             var playerAnimations = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(content.Load<Texture2D>("White_Male"), 4, 3)
-                    {
-                        FrameSpeed = 0.05f
-                    }
-                }
+                { "walking", new Animation(content.Load<Texture2D>("White_Male"), 4, 3) }
             };
 
             var fireballAnimation = new Dictionary<string, Animation>()
             {
-                { "fireball", new Animation(content.Load<Texture2D>("fireball"), 1, 6) }
+                { "fireball", new Animation(content.Load<Texture2D>("fireball"), 1, 6)
+
+                    {
+                        FrameSpeed = 0.05f
+                    }
+                }
             };
 
             Player player = new Player(playerAnimations, new Vector2(0f))
