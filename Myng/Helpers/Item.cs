@@ -29,7 +29,6 @@ namespace Myng.Helpers
         /// shoud be used in any override method:
         /// takes care of decreasing count
         /// </summary>
-        /// <param name="player"></param>
         public virtual void Use()
         {
 
