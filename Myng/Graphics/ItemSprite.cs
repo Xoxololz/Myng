@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Myng.Helpers;
 
 namespace Myng.Graphics
@@ -10,7 +9,9 @@ namespace Myng.Graphics
     {
         #region Fields
 
-        private float pickUpRange = 100f;
+        private float pickUpRange = 20f;
+
+        private float attractRange = 100f;
 
         private Item item;
 
@@ -30,7 +31,7 @@ namespace Myng.Graphics
         {
             Player player = null;
 
-            foreach(var sprite in sprites)
+            foreach (var sprite in sprites)
             {
                 player = (Player)sprite;
 
@@ -43,27 +44,47 @@ namespace Myng.Graphics
             //count distance from player
             var dist = player.Position - this.Position;
 
-            //exit if player if too far away to pick up the item
-            if (dist.Length() > pickUpRange) return;
+            //if item is close enough to player pick it up and exit
+            if (dist.Length() < pickUpRange)
+            {
+                AddItem(player);
+                ToRemove = true;
+                return;
+            }
 
-            if (!player.Items.Exists( (p) => item.GetType() == p.GetType() ) )
+            // attract item if its close enough
+            if (dist.Length() < attractRange)
+            {
+                Position += CountSpeed(dist);
+            }                                
+
+        }
+
+        private Vector2 CountSpeed(Vector2 dist)
+        {
+            var speed = dist / 4;
+
+            return speed;
+        }
+
+        private void AddItem(Player player)
+        {
+            if (!player.Items.Exists((p) => item.GetType() == p.GetType()))
             {
                 item.Parent = player;
                 player.Items.Add(item);
             }
             else
             {
-                foreach(var item in player.Items)
+                foreach (var item in player.Items)
                 {
-                    if(item.GetType() == item.GetType())
+                    if (item.GetType() == item.GetType())
                     {
                         item.Count++;
+                        break;
                     }
                 }
             }
-
-            ToRemove = true;
-
         }
 
         #endregion
