@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Myng.Graphics;
 using TiledSharp;
 using Myng.Helpers;
+using Myng.Items;
 
 namespace Myng.States
 {
@@ -57,9 +58,14 @@ namespace Myng.States
             {
                 player,
 
-                new ItemSprite(content.Load<Texture2D>("projectile"), new Vector2(1000f)),
+                new ItemSprite(content.Load<Texture2D>("HealthPotion"), new Vector2(1000f)
+                    , new HealthPotion(content.Load<Texture2D>("HealthPotion"))),
 
-                new ItemSprite(content.Load<Texture2D>("projectile"), new Vector2(500f))
+                new ItemSprite(content.Load<Texture2D>("projectile"), new Vector2(500f)
+                    , new Armor(content.Load<Texture2D>("projectile"))),
+
+                new ItemSprite(content.Load<Texture2D>("meta"), new Vector2(600f)
+                    , new UpdatableTestItem(content.Load<Texture2D>("meta")))
             };
 
             TmxMap map = new TmxMap("Content/Maps/mapa.tmx");
@@ -103,7 +109,7 @@ namespace Myng.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(transformMatrix: Camera.Transform);
+            spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.BackToFront);
 
             tileMap.Draw(spriteBatch);
 

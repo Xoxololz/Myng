@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
+using Myng.Items;
 
 namespace Myng.Graphics
 {
@@ -19,9 +20,10 @@ namespace Myng.Graphics
 
 
         #region Constructors
-        public ItemSprite(Texture2D texture2D, Vector2 position) : base(texture2D, position)
+        public ItemSprite(Texture2D texture2D, Vector2 position, Item item) : base(texture2D, position)
         {
-            item = new Item();
+            layer = (int)Layers.Item * 0.01f;
+            this.item = item;
         }
         #endregion
 
@@ -41,21 +43,28 @@ namespace Myng.Graphics
             //exit if no player was found
             if (player == null) return;
 
+            item.Parent = player;
+
             //count distance from player
             var dist = player.Position - this.Position;
 
             //if item is close enough to player pick it up and exit
             if (dist.Length() < pickUpRange)
-            {
-                AddItem(player);
-                ToRemove = true;
-                return;
+            {               
+                if (player.Inventory.Add(item))
+                {                    
+                    ToRemove = true;
+                    return;
+                }                
             }
 
             // attract item if its close enough
             if (dist.Length() < attractRange)
             {
-                Position += CountSpeed(dist);
+                if (player.Inventory.CanBeAdded(item))
+                {
+                    Position += CountSpeed(dist);
+                }                
             }                                
 
         }
@@ -65,26 +74,6 @@ namespace Myng.Graphics
             var speed = dist / 4;
 
             return speed;
-        }
-
-        private void AddItem(Player player)
-        {
-            if (!player.Items.Exists((p) => item.GetType() == p.GetType()))
-            {
-                item.Parent = player;
-                player.Items.Add(item);
-            }
-            else
-            {
-                foreach (var item in player.Items)
-                {
-                    if (item.GetType() == item.GetType())
-                    {
-                        item.Count++;
-                        break;
-                    }
-                }
-            }
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Helpers;
 using System;
 using System.Collections.Generic;
 
@@ -19,11 +20,13 @@ namespace Myng.Graphics
         public Projectile(Texture2D texture2D, Vector2 position)
             : base(texture2D,position)
         {
+            layer = (int)Layers.Projectile * 0.01f;
             Angle = Math.Atan(Direction.Y / Direction.X);
         }
 
         public Projectile(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
+            layer = (int)Layers.Projectile * 0.01f;
             Angle = Math.Atan(Direction.Y / Direction.X);
         }
         
@@ -45,8 +48,10 @@ namespace Myng.Graphics
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (texture != null)
-                spriteBatch.Draw(texture, Position, null, Color.White, (float)Angle, CollisionPolygon.Origin - Position, Scale, SpriteEffects.None, 0);
-            else animationManager.Draw(spriteBatch, Scale, Angle, CollisionPolygon.Origin - Position);
+                spriteBatch.Draw(texture: texture,position: Position,sourceRectangle: null,color: Color.White,
+                    rotation: (float)Angle,origin: CollisionPolygon.Origin - Position,scale: Scale,
+                    effects: SpriteEffects.None,layerDepth: 0);
+            else animationManager.Draw(spriteBatch, Scale, Angle, CollisionPolygon.Origin - Position,layer);
         }
 
         public virtual object Clone()

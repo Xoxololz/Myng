@@ -27,7 +27,7 @@ namespace Myng
            
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            this.IsMouseVisible = true;
+            this.IsMouseVisible = false;
 
         }
 

@@ -80,8 +80,26 @@ namespace Myng.Helpers
                         float y = (float)Math.Floor(i / (double)map.Width) * map.TileHeight;
 
                         Rectangle tilesetRec = new Rectangle(tileWidth * column, tileHeight * row, tileWidth, tileHeight);
+                        float layer;
+                        switch (j)
+                        {
+                            case 0:
+                                layer = (int)Layers.BackGround*0.01f;
+                                break;
+                            case 1:
+                                layer = (int)Layers.Vegatation * 0.01f;
+                                break;
+                            case 2:
+                                layer = (int)Layers.Accesories * 0.01f;
+                                break;                           
+                            default:
+                                layer = 1f;
+                                break;
+                        }
 
-                        spriteBatch.Draw(tileset, new Rectangle((int)x, (int)y, tileWidth, tileHeight), tilesetRec, Color.White);
+                        spriteBatch.Draw(texture: tileset,destinationRectangle: new Rectangle((int)x, (int)y,
+                            tileWidth, tileHeight),sourceRectangle: tilesetRec,color: Color.White,
+                            layerDepth: layer);
                     }
                 }
             }

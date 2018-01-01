@@ -14,6 +14,7 @@ namespace Myng.Graphics
         protected Dictionary<string, Animation> animations;
         protected Texture2D texture;
         protected Vector2 position;
+        protected float layer=0f;
         public float Scale { get; set; }
         //use this to mark sprite for removal
         public bool ToRemove = false;
@@ -86,7 +87,8 @@ namespace Myng.Graphics
             this.animations = animations;
             this.Position = position;
             Scale = 1f;
-            animationManager = new AnimationManager(animations.First().Value); //if you are changing this, there might be trouble in Character origin, so dont do that unless it is necessary
+            //if you are changing this, there might be trouble in Character origin, so dont do that unless it is necessary
+            animationManager = new AnimationManager(animations.First().Value); 
         }
 
         //this method will take care of pretty much everything thats happening
@@ -100,9 +102,9 @@ namespace Myng.Graphics
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (animationManager != null)
-                animationManager.Draw(spriteBatch, Scale);
+                animationManager.Draw(spriteBatch, Scale,layer);
             else if (texture != null)
-                spriteBatch.Draw(texture, Position, Color.White);
+                spriteBatch.Draw(texture: texture,position: Position, color: Color.White, layerDepth: layer);
             else throw new Exception("No texture or animation manager set for Sprite");
 
         }

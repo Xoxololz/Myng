@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
 using Myng.Helpers;
+using Myng.Items;
+using Myng.Items.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +18,7 @@ namespace Myng.Graphics
 
         public List<Spell> Spells;
 
-        public List<Item> Items;
+        public Inventory Inventory;
 
         public Projectile Bullet { get; set; }
 
@@ -52,11 +54,12 @@ namespace Myng.Graphics
             velocity = new Vector2(0f);
             input = new Input();
             Scale = 2f;
-            attackSpeed = 0.8f;
+            attackSpeed = 0.3f;
             timer = attackSpeed;
             origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
             attackDirection = new Vector2(0, -1);
-            Items = new List<Item>();
+            Inventory = new Inventory();
+            Health = MaxHealth;
 
             Action<List<Sprite>> autoAttackAction = (sprites) =>
             {
@@ -87,9 +90,7 @@ namespace Myng.Graphics
                 if (b.Direction.X < 0)
                     b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(45);
                 else b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(225);
-                var lenght = b.Direction.Length();
-                b.Direction.X = b.Direction.X / lenght;
-                b.Direction.Y = b.Direction.Y / lenght;
+                b.Direction.Normalize();
                 sprites.Add(b);
             };
 
@@ -115,23 +116,45 @@ namespace Myng.Graphics
             Move();
             HandleAnimation();
             animationManager.Update(gameTime);
-
+            UseItems(sprites);
             CastSpells(sprites);
             Position += velocity;
             velocity = Vector2.Zero;
-            ClearEmptyItems();
+            Inventory.ClearEmptyItems();
+
+            foreach(Item item in Inventory.Items)
+            {
+                
+                IUpdatable updatableItem = item as IUpdatable;
+
+                if (updatableItem != null)
+                    updatableItem.Update(sprites);
+            }
+
         }
 
-        private void ClearEmptyItems()
+        private void UseItem(List<Sprite> sprites, int position)
         {
-            for (int i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].Count <= 0)
-                {
-                    Items.RemoveAt(i);
-                    i--;
-                }
-            }
+            // early exit if there is no item in this slot
+            if (Inventory.Items.Count < position) return;
+
+            IUsable usableItem = Inventory.Items[position-1] as IUsable;
+
+            if (usableItem != null)
+                usableItem.Use(sprites);
+        }
+
+        private void UseItems(List<Sprite> sprites)
+        {
+            
+            if (currentKey.IsKeyDown(input.Item1) && !previousKey.IsKeyDown(input.Item1))
+                UseItem(sprites, 1);
+            if (currentKey.IsKeyDown(input.Item2) && !previousKey.IsKeyDown(input.Item2))
+                UseItem(sprites, 2);
+            if (currentKey.IsKeyDown(input.Item3) && !previousKey.IsKeyDown(input.Item3))
+                UseItem(sprites, 3);
+            if (currentKey.IsKeyDown(input.Item4) && !previousKey.IsKeyDown(input.Item4))
+                UseItem(sprites, 4);
         }
 
         private void CastSpells(List<Sprite> sprites)

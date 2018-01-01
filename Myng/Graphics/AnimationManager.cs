@@ -80,23 +80,23 @@ namespace Myng.Graphics
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, float scale)
+        public void Draw(SpriteBatch spriteBatch, float scale, float layer)
         { 
-            spriteBatch.Draw(animation.Texture,
-                             Position,
-                             new Rectangle((int)animation.CurrentFrame.X * animation.FrameWidth,
+            spriteBatch.Draw(texture: animation.Texture,
+                             position: Position,
+                             sourceRectangle: new Rectangle((int)animation.CurrentFrame.X * animation.FrameWidth,
                                            (int)animation.CurrentFrame.Y * animation.FrameHeight,
                                            animation.FrameWidth,
                                            animation.FrameHeight),
-                             Color.White,                             
-                             0f,
-                             Vector2.Zero,
-                             scale,
-                             SpriteEffects.None,
-                             0f);
+                             color: Color.White,                             
+                             rotation: 0f,
+                             origin: Vector2.Zero,
+                             scale: scale,
+                             effects: SpriteEffects.None,
+                             layerDepth: layer);
         }
 
-        public void Draw(SpriteBatch spriteBatch, float scale, double angle, Vector2 origin)
+        public void Draw(SpriteBatch spriteBatch, float scale, double angle, Vector2 origin, float layer)
         {
             spriteBatch.Draw(animation.Texture,
                              Position,
@@ -109,7 +109,7 @@ namespace Myng.Graphics
                              origin,
                              scale,
                              SpriteEffects.None,
-                             0f);
+                             layer);
         }
 
         public object Clone()
