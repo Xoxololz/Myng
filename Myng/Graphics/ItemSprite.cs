@@ -22,7 +22,7 @@ namespace Myng.Graphics
         #region Constructors
         public ItemSprite(Texture2D texture2D, Vector2 position, Item item) : base(texture2D, position)
         {
-            layer = (int)Layers.Item * 0.01f;
+            layer = Layers.Item;
             this.item = item;
         }
         #endregion

@@ -124,10 +124,7 @@ namespace Myng.Graphics
 
             foreach(Item item in Inventory.Items)
             {
-                
-                IUpdatable updatableItem = item as IUpdatable;
-
-                if (updatableItem != null)
+                if (item is IUpdatable updatableItem)
                     updatableItem.Update(sprites);
             }
 
@@ -138,9 +135,7 @@ namespace Myng.Graphics
             // early exit if there is no item in this slot
             if (Inventory.Items.Count < position) return;
 
-            IUsable usableItem = Inventory.Items[position-1] as IUsable;
-
-            if (usableItem != null)
+            if (Inventory.Items[position - 1] is IUsable usableItem)
                 usableItem.Use(sprites);
         }
 

@@ -61,8 +61,7 @@ namespace Myng.Helpers
                 //early exit if Inventory is full
                 if (Items.Count >= maxsize) return false;
 
-                IStatImprover statImprover = item as IStatImprover;
-                if (statImprover != null)
+                if (item is IStatImprover statImprover)
                     statImprover.ImproveStats();
 
                 Items.Add(item);

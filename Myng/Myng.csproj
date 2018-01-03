@@ -52,13 +52,13 @@
     <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Helpers\Camera.cs" />
     <Compile Include="Helpers\Inventory.cs" />
+    <Compile Include="Helpers\Layers.cs" />
     <Compile Include="Items\Armor.cs" />
     <Compile Include="Items\HealthPotion.cs" />
     <Compile Include="Items\Interfaces\IStatImprover.cs" />
     <Compile Include="Items\Interfaces\IUpdatable.cs" />
     <Compile Include="Items\Interfaces\IUsable.cs" />
     <Compile Include="Items\Item.cs" />
-    <Compile Include="Helpers\Layers.cs" />
     <Compile Include="Helpers\Polygon.cs" />
     <Compile Include="Helpers\Spell.cs" />
     <Compile Include="Helpers\TileMap.cs" />

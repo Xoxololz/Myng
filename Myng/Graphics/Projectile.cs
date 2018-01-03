@@ -20,13 +20,13 @@ namespace Myng.Graphics
         public Projectile(Texture2D texture2D, Vector2 position)
             : base(texture2D,position)
         {
-            layer = (int)Layers.Projectile * 0.01f;
+            layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);
         }
 
         public Projectile(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
-            layer = (int)Layers.Projectile * 0.01f;
+            layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);
         }
         

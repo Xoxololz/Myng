@@ -44,7 +44,7 @@ namespace Myng.Graphics
         public Character(Texture2D texture2D, Vector2 position)
             : base(texture2D, position)
         {
-            layer = (int)Layers.Character * 0.01f;
+            layer = Layers.Character;
             origin = new Vector2(texture.Width * Scale / 2, texture.Height * Scale / 2);
         }
 

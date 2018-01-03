@@ -84,13 +84,13 @@ namespace Myng.Helpers
                         switch (j)
                         {
                             case 0:
-                                layer = (int)Layers.BackGround*0.01f;
+                                layer = Layers.Background;
                                 break;
                             case 1:
-                                layer = (int)Layers.Vegatation * 0.01f;
+                                layer = Layers.Vegatation;
                                 break;
                             case 2:
-                                layer = (int)Layers.Accesories * 0.01f;
+                                layer = Layers.Accesories;
                                 break;                           
                             default:
                                 layer = 1f;

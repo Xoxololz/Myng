@@ -94,8 +94,6 @@ namespace Myng.States
 
             camera.Focus();
 
-            var type = sprites[0].GetType();
-
             //delete sprites that are marked for removal
             for (int i = 0; i < sprites.Count; i++)
             {
