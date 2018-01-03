@@ -44,6 +44,7 @@
     <Compile Include="Controller\Input.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Graphics\AnimationManager.cs" />
+    <Compile Include="Graphics\AnimationSprite.cs" />
     <Compile Include="Graphics\Character.cs" />
     <Compile Include="Graphics\Animation.cs" />
     <Compile Include="Graphics\ItemSprite.cs" />

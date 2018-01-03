@@ -4,7 +4,9 @@ namespace Myng.Helpers
     //class just to keep track of what is in which layer
     public static class Layers
     {
-        public static float Character = 0f;
+        public static float AlwaysOnTop = 0f;
+
+        public static float Character = 0.05f;
 
         public static float Projectile = 0.1f;
 

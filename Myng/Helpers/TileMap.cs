@@ -93,8 +93,7 @@ namespace Myng.Helpers
                                 layer = Layers.Accesories;
                                 break;                           
                             default:
-                                layer = 1f;
-                                break;
+                                throw new Exception("Too many layers in tile map");
                         }
 
                         spriteBatch.Draw(texture: tileset,destinationRectangle: new Rectangle((int)x, (int)y,

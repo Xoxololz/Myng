@@ -33,7 +33,6 @@ namespace Myng.Helpers
         {
             if (!Items.Exists((p) => item.GetType() == p.GetType()))
             {
-                //early exit if Inventory is full
                 if (Items.Count >= maxsize) return false;
 
                 return true;
@@ -44,8 +43,7 @@ namespace Myng.Helpers
                 {
                     if (a.GetType() == item.GetType())
                     {
-                        //exit if there is already maximum amount of this type of items
-                        if (item.Count >= item.MaxCount) return false;
+                        if (a.Count >= a.MaxCount) return false;
 
                         return true;
                     }
@@ -58,7 +56,6 @@ namespace Myng.Helpers
         {
             if (!Items.Exists((p) => item.GetType() == p.GetType()))
             {
-                //early exit if Inventory is full
                 if (Items.Count >= maxsize) return false;
 
                 if (item is IStatImprover statImprover)
@@ -74,7 +71,6 @@ namespace Myng.Helpers
                 {
                     if (a.GetType() == item.GetType())
                     {
-                        //exit if there is already maximum amount of this type of items
                         if (item.Count >= item.MaxCount) return false;
 
                         item.Count++;

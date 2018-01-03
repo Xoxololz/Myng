@@ -5,6 +5,7 @@ using Myng.Controller;
 using Myng.Helpers;
 using Myng.Items;
 using Myng.Items.Interfaces;
+using Myng.States;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -81,17 +82,17 @@ namespace Myng.Graphics
             //testing function to shoot basic bullet
             Action<List<Sprite>> spell = (sprites) =>
             {
-                var b = Bullet.Clone() as Projectile;
-                b.Position = this.CollisionPolygon.Origin;
+                var fireballAnimation = new Dictionary<string, Animation>()
+                {
+                    { "fireball", new Animation(State.Content.Load<Texture2D>("fireball"), 1, 6)
+                        {
+                            FrameSpeed = 0.05f
+                        }
+                    }
+                };
 
-                var mousePos = new Vector2(Mouse.GetState().Position.X, Mouse.GetState().Position.Y);
-
-                b.Direction = -(Position - (mousePos - Camera.ScreenOffset));
-                if (b.Direction.X < 0)
-                    b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(45);
-                else b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(225);
-                b.Direction.Normalize();
-                sprites.Add(b);
+                var animation = new AnimationSprite(fireballAnimation,CollisionPolygon.Origin);
+                sprites.Add(animation);
             };
 
             Spells = new List<Spell>
