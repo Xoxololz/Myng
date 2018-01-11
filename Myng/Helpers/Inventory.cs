@@ -1,5 +1,8 @@
-﻿using Myng.Items;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Myng.Items;
 using Myng.Items.Interfaces;
+using Myng.States;
 using System.Collections.Generic;
 
 namespace Myng.Helpers
@@ -16,12 +19,15 @@ namespace Myng.Helpers
 
         private int maxsize=6;
 
+        private Texture2D texture;
+
         #endregion
 
         #region Constructors
 
         public Inventory()
         {
+            texture = State.Content.Load<Texture2D>("itembar");
             Items = new List<Item>();
         }
 
@@ -58,8 +64,8 @@ namespace Myng.Helpers
             {
                 if (Items.Count >= maxsize) return false;
 
-                if (item is IStatImprover statImprover)
-                    statImprover.ImproveStats();
+                if (item is IStatImprover)
+                    ((IStatImprover)item).ImproveStats();
 
                 Items.Add(item);
 
@@ -93,9 +99,14 @@ namespace Myng.Helpers
             }
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
-
+            Vector2 Position = new Vector2()
+            {
+                X = GameState.ScreenWidth/2 - Camera.ScreenOffset.X - texture.Width/2,
+                Y = GameState.ScreenHeight - Camera.ScreenOffset.Y - texture.Height
+            };
+            spriteBatch.Draw(texture: texture, position: Position, color: Color.White * 0.5f, layerDepth: Layers.Inventory);
         }
 
         #endregion
