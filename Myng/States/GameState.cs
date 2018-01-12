@@ -6,6 +6,7 @@ using Myng.Graphics;
 using TiledSharp;
 using Myng.Helpers;
 using Myng.Items;
+using Myng.Graphics.Enemies;
 
 namespace Myng.States
 {
@@ -21,7 +22,7 @@ namespace Myng.States
 
         #endregion
 
-        #region Variables
+        #region Properties
 
         public static int ScreenHeight;
         public static int ScreenWidth;
@@ -39,7 +40,22 @@ namespace Myng.States
                 { "walking", new Animation(content.Load<Texture2D>("White_Male"), 4, 3) }
             };
 
+            var monsterAnimations = new Dictionary<string, Animation>()
+            {
+                { "walking", new Animation(content.Load<Texture2D>("White_Male"), 4, 3) }
+            };
+
             var fireballAnimation = new Dictionary<string, Animation>()
+            {
+                { "fireball", new Animation(content.Load<Texture2D>("fireball"), 1, 6)
+
+                    {
+                        FrameSpeed = 0.05f
+                    }
+                }
+            };
+
+            var fireballMonsterAnimation = new Dictionary<string, Animation>()
             {
                 { "fireball", new Animation(content.Load<Texture2D>("fireball"), 1, 6)
 
@@ -54,9 +70,23 @@ namespace Myng.States
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
+            Enemy monster = new Enemy(monsterAnimations, new Vector2(200))
+            {
+                Bullet = new Projectile(fireballMonsterAnimation, new Vector2(100f))
+            };
+
+            Enemy monster2 = new Enemy(monsterAnimations, new Vector2(400))
+            {
+                Bullet = new Projectile(fireballMonsterAnimation, new Vector2(200f))
+            };
+
             sprites = new List<Sprite>
             {
                 player,
+
+                monster,
+
+                monster2,
 
                 new ItemSprite(content.Load<Texture2D>("HealthPotion"), new Vector2(1000f)
                     , new HealthPotion(content.Load<Texture2D>("HealthPotion"))),

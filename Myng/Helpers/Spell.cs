@@ -29,7 +29,7 @@ namespace Myng.Helpers
 
         #region Methods
 
-        public bool CanCast(object parameter)
+        public bool CanCast()
         {
             if(canExecute==null)
                 return true;
@@ -38,7 +38,7 @@ namespace Myng.Helpers
 
         public void Cast(List<Sprite> parameter)
         {
-            if (!CanCast(null))
+            if (!CanCast())
                 return;
          
             action(parameter);

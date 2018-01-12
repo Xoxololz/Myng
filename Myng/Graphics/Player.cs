@@ -74,12 +74,13 @@ namespace Myng.Graphics
                 var lenght = b.Direction.Length();
                 b.Direction.X = b.Direction.X / lenght;
                 b.Direction.Y = b.Direction.Y / lenght;
+                b.Parent = this;
                 sprites.Add(b);
             };
 
             autoAttack = new Spell(autoAttackAction);
 
-            //testing function to shoot basic bullet
+            //testing function 
             Action<List<Sprite>> spell = (sprites) =>
             {
                 var fireballAnimation = new Dictionary<string, Animation>()

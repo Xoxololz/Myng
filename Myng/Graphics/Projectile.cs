@@ -8,10 +8,10 @@ namespace Myng.Graphics
 {
     /*abstract*/ public class Projectile : Sprite, ICloneable
     {
-        protected Sprite parent;
+        public Sprite Parent;
 
         public Vector2 Direction;
-        public float speed = 8f;
+        public float Speed = 8f;
         public double Angle = 0;
 
         protected float timer = 0f;
@@ -32,17 +32,52 @@ namespace Myng.Graphics
         
         public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
-            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            UpdateTimer(gameTime);
+            CheckLifespan();
+            HandleAnimation(gameTime);
+            Move();
+            CheckCollisions(sprites);
+        }
 
+        private void UpdateTimer(GameTime gameTime)
+        {
+            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
+        private void CheckLifespan()
+        {
             if (timer > lifespan)
             {
                 ToRemove = true;
             }
-            if(animationManager != null)
+        }
+
+        private void HandleAnimation(GameTime gameTime)
+        {
+            if (animationManager != null)
             {
                 animationManager.Update(gameTime);
             }
-            Position += Direction * speed;
+        }
+
+        private void Move()
+        {
+            Position += Direction * Speed;
+        }
+
+        private void CheckCollisions(List<Sprite> sprites)
+        {
+            foreach (var sprite in sprites)
+            {
+                if (CollisionPolygon.Intersects(sprite.CollisionPolygon)
+                    && sprite != Parent
+                    && sprite != this
+                    && sprite.GetType() != Parent.GetType()
+                    && sprite.GetType() != this.GetType())
+                {
+                    ToRemove = true;
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

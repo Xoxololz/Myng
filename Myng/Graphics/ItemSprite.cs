@@ -35,7 +35,7 @@ namespace Myng.Graphics
 
             foreach (var sprite in sprites)
             {
-                player = (Player)sprite;
+                player = sprite as Player;
 
                 if (player != null) break;
             }
