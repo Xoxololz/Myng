@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Graphics.Enemies;
 using Myng.Helpers;
 using System;
 using System.Collections.Generic;
@@ -8,14 +9,24 @@ namespace Myng.Graphics
 {
     /*abstract*/ public class Projectile : Sprite, ICloneable
     {
+        #region Properties
+
         public Sprite Parent;
 
         public Vector2 Direction;
         public float Speed = 8f;
         public double Angle = 0;
 
+        #endregion
+
+        #region Fields
+
         protected float timer = 0f;
         protected float lifespan = 3f;
+
+        #endregion
+
+        #region Constructors
 
         public Projectile(Texture2D texture2D, Vector2 position)
             : base(texture2D,position)
@@ -29,7 +40,10 @@ namespace Myng.Graphics
             layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);
         }
-        
+
+        #endregion
+
+        #region Methods
         public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
             UpdateTimer(gameTime);
@@ -75,6 +89,11 @@ namespace Myng.Graphics
                     && sprite.GetType() != Parent.GetType()
                     && sprite.GetType() != this.GetType())
                 {
+                    if(sprite is Character)
+                    {
+                        var character = (Character)sprite;
+                        character.Health -= 10;
+                    }
                     ToRemove = true;
                 }
             }
@@ -96,5 +115,7 @@ namespace Myng.Graphics
 
             return projectile;
         }
+
+        #endregion
     }
 }

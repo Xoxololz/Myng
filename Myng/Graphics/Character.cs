@@ -44,18 +44,28 @@ namespace Myng.Graphics
         public Character(Texture2D texture2D, Vector2 position)
             : base(texture2D, position)
         {
+            Health = MaxHealth;
             layer = Layers.Character;
             origin = new Vector2(texture.Width * Scale / 2, texture.Height * Scale / 2);
         }
 
         public Character(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
+            Health = MaxHealth;
             origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
         }
 
         #endregion
 
         #region Methods
+
+        public override void Update(GameTime gameTime, List<Sprite> sprites)
+        {
+            if (Health <= 0)
+            {
+                ToRemove = true;
+            }
+        }
 
         public override void Draw(SpriteBatch spriteBatch)
         {

@@ -8,7 +8,6 @@ using Myng.Items.Interfaces;
 using Myng.States;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Myng.Graphics
@@ -60,8 +59,43 @@ namespace Myng.Graphics
             origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
             attackDirection = new Vector2(0, -1);
             Inventory = new Inventory();
-            Health = MaxHealth;
 
+            InitAutoattack();
+            InitSpells();
+        }        
+
+        #endregion
+
+        #region Methods
+
+        private void InitSpells()
+        {
+            //testing function 
+            Action<List<Sprite>> spell = (sprites) =>
+            {
+                var fireballAnimation = new Dictionary<string, Animation>()
+                {
+                    { "fireball", new Animation(State.Content.Load<Texture2D>("fireball"), 1, 6)
+                        {
+                            FrameSpeed = 0.05f
+                        }
+                    }
+                };
+                var animation = new AnimationSprite(fireballAnimation, CollisionPolygon.Origin);
+                sprites.Add(animation);
+            };
+
+            Spells = new List<Spell>
+            {
+                new Spell(spell),
+                new Spell(spell),
+                new Spell(spell),
+                new Spell(spell)
+            };
+        }
+
+        private void InitAutoattack()
+        {
             Action<List<Sprite>> autoAttackAction = (sprites) =>
             {
                 var b = Bullet.Clone() as Projectile;
@@ -77,43 +111,28 @@ namespace Myng.Graphics
                 b.Parent = this;
                 sprites.Add(b);
             };
-
-            autoAttack = new Spell(autoAttackAction);
-
-            //testing function 
-            Action<List<Sprite>> spell = (sprites) =>
-            {
-                var fireballAnimation = new Dictionary<string, Animation>()
-                {
-                    { "fireball", new Animation(State.Content.Load<Texture2D>("fireball"), 1, 6)
-                        {
-                            FrameSpeed = 0.05f
-                        }
-                    }
-                };
-
-                var animation = new AnimationSprite(fireballAnimation,CollisionPolygon.Origin);
-                sprites.Add(animation);
+            Func<bool> canExecute = () =>
+            {                
+                var coolDown = timer > attackSpeed;
+                if (coolDown)
+                    timer = 0;
+                return coolDown;
             };
 
-            Spells = new List<Spell>
-            {
-                new Spell(spell),
-                new Spell(spell),
-                new Spell(spell),
-                new Spell(spell)
-            };
+            autoAttack = new Spell(autoAttackAction,canExecute);
         }
-
-        #endregion
-
-        #region Methods
 
         public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            // just temporary solution until we somehow handle player dying
+            if (Health <= 0)
+            {
+                Health = MaxHealth;
+            }
 
             Move();
             HandleAnimation();
@@ -129,7 +148,7 @@ namespace Myng.Graphics
                 if (item is IUpdatable)
                     ((IUpdatable)item).Update(sprites);
             }
-
+            base.Update(gameTime, sprites);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -203,12 +222,8 @@ namespace Myng.Graphics
         }
 
         private void CastAutoAttack(List<Sprite> sprites)
-        {
-            if (timer > attackSpeed)
-            {
+        {           
                 autoAttack.Cast(sprites);
-                timer = 0;
-            }
         }
 
         private void Move()

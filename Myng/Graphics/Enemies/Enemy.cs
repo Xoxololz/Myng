@@ -79,6 +79,7 @@ namespace Myng.Graphics.Enemies
             HandleAnimation();
             animationManager.Update(gameTime);
             CastAutoattack(sprites);
+            base.Update(gameTime, sprites);
         }
 
         private void UpdateTimer(GameTime gameTime)
