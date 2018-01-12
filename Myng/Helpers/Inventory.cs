@@ -1,6 +1,10 @@
-﻿using Myng.Items;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Myng.Items;
 using Myng.Items.Interfaces;
+using Myng.States;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Myng.Helpers
 {
@@ -16,13 +20,19 @@ namespace Myng.Helpers
 
         private int maxsize=6;
 
+        private Texture2D texture;
+
+        private SpriteFont font;
+
         #endregion
 
         #region Constructors
 
         public Inventory()
         {
+            texture = State.Content.Load<Texture2D>("itembar");
             Items = new List<Item>();
+            font = State.Content.Load<SpriteFont>("Font");
         }
 
         #endregion
@@ -58,8 +68,8 @@ namespace Myng.Helpers
             {
                 if (Items.Count >= maxsize) return false;
 
-                if (item is IStatImprover statImprover)
-                    statImprover.ImproveStats();
+                if (item is IStatImprover)
+                    ((IStatImprover)item).ImproveStats();
 
                 Items.Add(item);
 
@@ -93,9 +103,28 @@ namespace Myng.Helpers
             }
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
+            Vector2 Position = new Vector2()
+            {
+                X = GameState.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2,
+                Y = GameState.ScreenHeight - Camera.ScreenOffset.Y - texture.Height
+            };
+            spriteBatch.Draw(texture: texture, position: Position, color: Color.White * 0.4f, layerDepth: Layers.Inventory);
 
+            Position.Y += 10;
+            for (int i = 0; i < Items.Count; i++)
+            {
+                Position.X = GameState.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2 + 10 + ( 60 * i );
+                float scale = 40.0f / Items[i].Texture.Width;
+                Vector2 origin = new Vector2(Items[i].Texture.Width * scale/2 - 20, Items[i].Texture.Height * scale / 2 - 20);
+
+                spriteBatch.Draw(texture: Items[i].Texture, position: Position, sourceRectangle: null, color: Color.White,
+                   rotation: 0, origin: origin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
+
+                Vector2 textPosition = new Vector2(Position.X + 50, Position.Y + 32);
+                spriteBatch.DrawString(font, Items[i].Count.ToString(), textPosition-new Vector2(Items[i].Count.ToString().Length*13,0), Color.Black);
+            }
         }
 
         #endregion

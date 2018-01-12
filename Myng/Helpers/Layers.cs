@@ -6,6 +6,10 @@ namespace Myng.Helpers
     {
         public static float AlwaysOnTop = 0f;
 
+        public static float InventoryItem = 0.01f;
+
+        public static float Inventory = 0.02f;
+
         public static float Character = 0.05f;
 
         public static float Projectile = 0.1f;

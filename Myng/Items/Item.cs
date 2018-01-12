@@ -20,6 +20,14 @@ namespace Myng.Items
 
         public Player Parent { get; set; }
 
+        public Texture2D Texture
+        {
+            get
+            {
+                return texture;
+            }
+        }
+
         #endregion
 
         #region Fields

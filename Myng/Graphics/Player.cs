@@ -126,19 +126,26 @@ namespace Myng.Graphics
 
             foreach(Item item in Inventory.Items)
             {
-                if (item is IUpdatable updatableItem)
-                    updatableItem.Update(sprites);
+                if (item is IUpdatable)
+                    ((IUpdatable)item).Update(sprites);
             }
 
         }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            Inventory.Draw(spriteBatch);
+            base.Draw(spriteBatch);
+        }
+
 
         private void UseItem(List<Sprite> sprites, int position)
         {
             // early exit if there is no item in this slot
             if (Inventory.Items.Count < position) return;
 
-            if (Inventory.Items[position - 1] is IUsable usableItem)
-                usableItem.Use(sprites);
+            if (Inventory.Items[position - 1] is IUsable)
+                ((IUsable)Inventory.Items[position - 1]).Use(sprites);
         }
 
         private void UseItems(List<Sprite> sprites)
