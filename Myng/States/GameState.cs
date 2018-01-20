@@ -107,7 +107,7 @@ namespace Myng.States
 
             Game1.Player = player;
 
-            TmxMap map = new TmxMap("Content/Maps/mapa.tmx");
+            TmxMap map = new TmxMap("Content/Maps/map2.tmx");
             Texture2D tileset = content.Load<Texture2D>(map.Tilesets[0].Name.ToString());
             tileMap = new TileMap(map, tileset);
 

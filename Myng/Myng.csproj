@@ -93,12 +93,20 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+    <None Include="Content\Maps\map2.tmx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Content\Maps\mapa.tmx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Content\Maps\hyptosis_tile-art-batch-1.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TiledSharp\TiledSharp.csproj">
       <Project>{e4130f8d-d301-4e0c-916d-489c4a23c9b1}</Project>
