@@ -54,6 +54,7 @@
     <Compile Include="Graphics\Projectile.cs" />
     <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Helpers\Camera.cs" />
+    <Compile Include="Helpers\Faction.cs" />
     <Compile Include="Helpers\Inventory.cs" />
     <Compile Include="Helpers\Layers.cs" />
     <Compile Include="Items\Armor.cs" />

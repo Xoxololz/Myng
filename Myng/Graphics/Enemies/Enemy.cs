@@ -38,6 +38,7 @@ namespace Myng.Graphics.Enemies
             Scale = 2f;
             speed = 1f;
             timer = attackSpeed;
+            Faction = Faction.ENEMY;
         }
 
         #endregion
@@ -56,7 +57,7 @@ namespace Myng.Graphics.Enemies
                 if (b.Direction.X < 0)
                     b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(45);
                 else b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(225);
-                b.Parent = this;
+                b.Faction = this.Faction;
                 sprites.Add(b);
             };
             Func<bool> canExecute = () =>

@@ -11,7 +11,7 @@ namespace Myng.Graphics
     {
         #region Properties
 
-        public Sprite Parent;
+        public Faction Faction { get; set; }
 
         public Vector2 Direction;
         public float Speed = 8f;
@@ -91,18 +91,19 @@ namespace Myng.Graphics
 
         private void CheckCollision(Sprite sprite)
         {
-            if (CollisionPolygon.Intersects(sprite.CollisionPolygon)
-                    && sprite != Parent
-                    && sprite != this
-                    && sprite.GetType() != Parent.GetType()
-                    && sprite.GetType() != this.GetType()
-               )
+            if (CollisionPolygon.Intersects(sprite.CollisionPolygon))
             {
-                if (sprite is Character)
+                if (sprite is Character characerSprite)
                 {
-                    ((Character)sprite).Health -= Damage;
+                    if(characerSprite.Faction != this.Faction)
+                    {
+                        characerSprite.Health -= Damage;
+                        ToRemove = true;
+                    }
+                } else
+                {
+                    ToRemove = true;
                 }
-                ToRemove = true;
             }
         }
 
@@ -118,7 +119,8 @@ namespace Myng.Graphics
         public virtual object Clone()
         {
             var projectile = this.MemberwiseClone() as Projectile;
-            projectile.animationManager = animationManager.Clone() as AnimationManager;
+            if(animationManager != null)
+                projectile.animationManager = animationManager.Clone() as AnimationManager;
 
             return projectile;
         }

@@ -58,6 +58,7 @@ namespace Myng.Graphics
             origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
             attackDirection = new Vector2(0, -1);
             Inventory = new Inventory();
+            Faction = Faction.FRIENDLY;
 
             InitAutoattack();
             InitSpells();
@@ -107,7 +108,7 @@ namespace Myng.Graphics
                 var lenght = b.Direction.Length();
                 b.Direction.X = b.Direction.X / lenght;
                 b.Direction.Y = b.Direction.Y / lenght;
-                b.Parent = this;
+                b.Faction = this.Faction;
                 sprites.Add(b);
             };
             Func<bool> canExecute = () =>

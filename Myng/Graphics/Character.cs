@@ -22,6 +22,8 @@ namespace Myng.Graphics
 
         #region Properties
 
+        public Faction Faction { get; set; }
+
         public int MaxHealth = 100;
 
         public int Health {
