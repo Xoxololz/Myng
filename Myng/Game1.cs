@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Myng.Graphics;
 using Myng.States;
+using System.Collections.Generic;
 
 namespace Myng
 {
@@ -16,6 +18,7 @@ namespace Myng
         private State currentState;
         private State nextState;
 
+        public static Player Player;
 
         public void ChangeState(State state)
         {
@@ -24,7 +27,6 @@ namespace Myng
 
         public Game1()
         {
-           
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             this.IsMouseVisible = false;
@@ -42,9 +44,6 @@ namespace Myng
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //sets state to be in after starting the app
-            currentState = new GameState(Content, graphics.GraphicsDevice, this);
-
             //setting window height and width
             graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
@@ -52,6 +51,9 @@ namespace Myng
             graphics.ApplyChanges();
 
             base.Initialize();
+
+            //sets state to be in after starting the app
+            currentState = new GameState(Content, graphics.GraphicsDevice, this);
         }
 
         /// <summary>
@@ -59,15 +61,8 @@ namespace Myng
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.           
+        {          
 
-            
-            /**
-             * 
-             *          TADY SE NALOADUJOU VSECHNY OBRAZKY A MAPY A NAINICIALIZUJE POSTAVA ATD
-             * 
-             * */
         }
 
         /// <summary>

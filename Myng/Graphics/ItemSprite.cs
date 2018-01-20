@@ -29,16 +29,9 @@ namespace Myng.Graphics
 
         #region Methods
 
-        public override void Update(GameTime gameTime, List<Sprite> sprites)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
-            Player player = null;
-
-            foreach (var sprite in sprites)
-            {
-                player = sprite as Player;
-
-                if (player != null) break;
-            }
+            Player player = Game1.Player;
 
             //exit if no player was found
             if (player == null) return;

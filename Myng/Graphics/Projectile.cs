@@ -1,13 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Myng.Graphics.Enemies;
 using Myng.Helpers;
 using System;
 using System.Collections.Generic;
 
 namespace Myng.Graphics
 {
-    /*abstract*/ public class Projectile : Sprite, ICloneable
+    /*abstract*/
+    public class Projectile : Sprite, ICloneable
     {
         #region Properties
 
@@ -16,6 +16,7 @@ namespace Myng.Graphics
         public Vector2 Direction;
         public float Speed = 8f;
         public double Angle = 0;
+        public int Damage = 10;
 
         #endregion
 
@@ -29,7 +30,7 @@ namespace Myng.Graphics
         #region Constructors
 
         public Projectile(Texture2D texture2D, Vector2 position)
-            : base(texture2D,position)
+            : base(texture2D, position)
         {
             layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);
@@ -44,13 +45,13 @@ namespace Myng.Graphics
         #endregion
 
         #region Methods
-        public override void Update(GameTime gameTime, List<Sprite> sprites)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             UpdateTimer(gameTime);
             CheckLifespan();
             HandleAnimation(gameTime);
             Move();
-            CheckCollisions(sprites);
+            CheckCollisions(hittableSprites);
         }
 
         private void UpdateTimer(GameTime gameTime)
@@ -83,29 +84,35 @@ namespace Myng.Graphics
         {
             foreach (var sprite in sprites)
             {
-                if (CollisionPolygon.Intersects(sprite.CollisionPolygon)
+                CheckCollision(sprite);
+            }
+            CheckCollision(Game1.Player);
+        }
+
+        private void CheckCollision(Sprite sprite)
+        {
+            if (CollisionPolygon.Intersects(sprite.CollisionPolygon)
                     && sprite != Parent
                     && sprite != this
                     && sprite.GetType() != Parent.GetType()
-                    && sprite.GetType() != this.GetType())
+                    && sprite.GetType() != this.GetType()
+               )
+            {
+                if (sprite is Character)
                 {
-                    if(sprite is Character)
-                    {
-                        var character = (Character)sprite;
-                        character.Health -= 10;
-                    }
-                    ToRemove = true;
+                    ((Character)sprite).Health -= Damage;
                 }
+                ToRemove = true;
             }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (texture != null)
-                spriteBatch.Draw(texture: texture,position: Position,sourceRectangle: null,color: Color.White,
-                    rotation: (float)Angle,origin: CollisionPolygon.Origin - Position,scale: Scale,
-                    effects: SpriteEffects.None,layerDepth: 0);
-            else animationManager.Draw(spriteBatch, Scale, Angle, CollisionPolygon.Origin - Position,layer);
+                spriteBatch.Draw(texture: texture, position: Position, sourceRectangle: null, color: Color.White,
+                    rotation: (float)Angle, origin: CollisionPolygon.Origin - Position, scale: Scale,
+                    effects: SpriteEffects.None, layerDepth: 0);
+            else animationManager.Draw(spriteBatch, Scale, Angle, CollisionPolygon.Origin - Position, layer);
         }
 
         public virtual object Clone()

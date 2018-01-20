@@ -14,7 +14,7 @@ namespace Myng.Graphics
 
         private Vector2 currentFrame;
 
-        #endregion Fields
+        #endregion
 
         #region Properties
 
@@ -32,8 +32,6 @@ namespace Myng.Graphics
 
         public Texture2D Texture{ get; private set; }
 
-        #endregion Properties
-
         public Vector2 CurrentFrame
         {
             get
@@ -46,6 +44,10 @@ namespace Myng.Graphics
             }
         }
 
+        #endregion
+
+        #region Constructors
+
         public Animation(Texture2D texture, int frameRowCount, int frameColumnCount)
         {
             Texture = texture;
@@ -56,6 +58,10 @@ namespace Myng.Graphics
             CurrentFrame = new Vector2(0);
         }
 
+        #endregion
+
+        #region Methods
+
         public void SetRow(int row)
         {
             currentFrame.Y = row;
@@ -65,6 +71,8 @@ namespace Myng.Graphics
         {
             currentFrame.X = column;
         }
+
+        #endregion
     }
 
 }

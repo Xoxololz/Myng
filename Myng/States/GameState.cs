@@ -14,7 +14,11 @@ namespace Myng.States
     {
         #region Fields
 
-        private List<Sprite> sprites;
+        //sprites, that can be colided with (like characters, spell-shield, etc)
+        private List<Sprite> hittableSprites;
+
+        //sprites, that don't collide with each other (items, projectile, spells, etc)
+        private List<Sprite> otherSprites;
 
         private TileMap tileMap;
 
@@ -35,11 +39,6 @@ namespace Myng.States
 
         public GameState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
-            var playerAnimations = new Dictionary<string, Animation>()
-            {
-                { "walking", new Animation(content.Load<Texture2D>("White_Male"), 4, 3) }
-            };
-
             var monsterAnimations = new Dictionary<string, Animation>()
             {
                 { "walking", new Animation(content.Load<Texture2D>("White_Male"), 4, 3) }
@@ -65,6 +64,11 @@ namespace Myng.States
                 }
             };
 
+            var playerAnimations = new Dictionary<string, Animation>()
+            {
+                { "walking", new Animation(Content.Load<Texture2D>("White_Male"), 4, 3) }
+            };
+
             Player player = new Player(playerAnimations, new Vector2(0f))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
@@ -80,15 +84,12 @@ namespace Myng.States
                 Bullet = new Projectile(fireballMonsterAnimation, new Vector2(200f))
             };
 
-            sprites = new List<Sprite>
+            otherSprites = new List<Sprite>
             {
-                player,
-
-                monster,
-
-                monster2,
-
                 new ItemSprite(content.Load<Texture2D>("HealthPotion"), new Vector2(1000f)
+                    , new HealthPotion(content.Load<Texture2D>("HealthPotion"))),
+
+                new ItemSprite(content.Load<Texture2D>("HealthPotion"), new Vector2(2500f)
                     , new HealthPotion(content.Load<Texture2D>("HealthPotion"))),
 
                 new ItemSprite(content.Load<Texture2D>("projectile"), new Vector2(500f)
@@ -97,6 +98,14 @@ namespace Myng.States
                 new ItemSprite(content.Load<Texture2D>("meta"), new Vector2(600f)
                     , new UpdatableTestItem(content.Load<Texture2D>("meta")))
             };
+
+            hittableSprites = new List<Sprite>
+            {
+                monster,
+                monster2
+            };
+
+            Game1.Player = player;
 
             TmxMap map = new TmxMap("Content/Maps/mapa.tmx");
             Texture2D tileset = content.Load<Texture2D>(map.Tilesets[0].Name.ToString());
@@ -108,7 +117,7 @@ namespace Myng.States
             ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
 
-            camera = new Camera(sprites[0]);
+            camera = new Camera(Game1.Player);
 
         }
 
@@ -118,18 +127,33 @@ namespace Myng.States
 
         public override void Update(GameTime gameTime)
         {
+            //update Player
+            Game1.Player.Update(gameTime, otherSprites, hittableSprites);
+
             //update all sprites
-            foreach (var sprite in sprites.ToArray())
-                sprite.Update(gameTime, sprites);
+            foreach (var sprite in hittableSprites.ToArray())
+                sprite.Update(gameTime, otherSprites, hittableSprites);
+
+            foreach (var sprite in otherSprites.ToArray())
+                sprite.Update(gameTime, otherSprites, hittableSprites);
 
             camera.Focus();
 
             //delete sprites that are marked for removal
-            for (int i = 0; i < sprites.Count; i++)
+            for (int i = 0; i < otherSprites.Count; i++)
             {
-                if (sprites[i].ToRemove)
+                if (otherSprites[i].ToRemove)
                 {
-                    sprites.RemoveAt(i);
+                    otherSprites.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            for (int i = 0; i < hittableSprites.Count; i++)
+            {
+                if (hittableSprites[i].ToRemove)
+                {
+                    hittableSprites.RemoveAt(i);
                     i--;
                 }
             }
@@ -141,7 +165,12 @@ namespace Myng.States
 
             tileMap.Draw(spriteBatch);
 
-            foreach (var sprite in sprites)
+            Game1.Player.Draw(spriteBatch);
+
+            foreach (var sprite in otherSprites)
+                sprite.Draw(spriteBatch);
+
+            foreach (var sprite in hittableSprites)
                 sprite.Draw(spriteBatch);
 
             spriteBatch.End();

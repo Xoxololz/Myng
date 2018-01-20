@@ -59,7 +59,7 @@ namespace Myng.Graphics
 
         #region Methods
 
-        public override void Update(GameTime gameTime, List<Sprite> sprites)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             if (Health <= 0)
             {

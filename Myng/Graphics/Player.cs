@@ -21,7 +21,6 @@ namespace Myng.Graphics
         public Inventory Inventory;
 
         public Projectile Bullet { get; set; }
-
         #endregion
 
         #region Fields
@@ -122,7 +121,7 @@ namespace Myng.Graphics
             autoAttack = new Spell(autoAttackAction,canExecute);
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> sprites)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
@@ -137,8 +136,8 @@ namespace Myng.Graphics
             Move();
             HandleAnimation();
             animationManager.Update(gameTime);
-            UseItems(sprites);
-            CastSpells(sprites);
+            UseItems(otherSprites);
+            CastSpells(otherSprites);
             Position += velocity;
             velocity = Vector2.Zero;
             Inventory.ClearEmptyItems();
@@ -146,9 +145,9 @@ namespace Myng.Graphics
             foreach(Item item in Inventory.Items)
             {
                 if (item is IUpdatable)
-                    ((IUpdatable)item).Update(sprites);
+                    ((IUpdatable)item).Update(otherSprites);
             }
-            base.Update(gameTime, sprites);
+            base.Update(gameTime, otherSprites, hittableSprites);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

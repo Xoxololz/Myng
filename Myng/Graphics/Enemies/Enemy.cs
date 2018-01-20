@@ -71,36 +71,21 @@ namespace Myng.Graphics.Enemies
             autoAttack = new Spell(autoAttackAction, canExecute);
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> sprites)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             UpdateTimer(gameTime);
-            playerPosition = FindPlayer(sprites).Position;
+            playerPosition = Game1.Player.Position;
             Move();
             HandleAnimation();
             animationManager.Update(gameTime);
-            CastAutoattack(sprites);
-            base.Update(gameTime, sprites);
+            CastAutoattack(otherSprites);
+            base.Update(gameTime, otherSprites, hittableSprites);
         }
 
         private void UpdateTimer(GameTime gameTime)
         {
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
-
-        private Player FindPlayer(List<Sprite> sprites)
-        {
-            Player player = null;
-
-            foreach (var sprite in sprites)
-            {
-                player = sprite as Player;
-                if (player != null) break;
-            }
-            if (player == null) throw new Exception("player not found in sprites");
-
-            return player;
-        }
-
 
         private void Move()
         {
