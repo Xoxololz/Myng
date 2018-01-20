@@ -128,14 +128,14 @@ namespace Myng.States
         public override void Update(GameTime gameTime)
         {
             //update Player
-            Game1.Player.Update(gameTime, otherSprites, hittableSprites);
+            Game1.Player.Update(gameTime, otherSprites, hittableSprites, tileMap.CollisionPolygons);
 
             //update all sprites
             foreach (var sprite in hittableSprites.ToArray())
-                sprite.Update(gameTime, otherSprites, hittableSprites);
+                sprite.Update(gameTime, otherSprites, hittableSprites, tileMap.CollisionPolygons);
 
             foreach (var sprite in otherSprites.ToArray())
-                sprite.Update(gameTime, otherSprites, hittableSprites);
+                sprite.Update(gameTime, otherSprites, hittableSprites, tileMap.CollisionPolygons);
 
             camera.Focus();
 

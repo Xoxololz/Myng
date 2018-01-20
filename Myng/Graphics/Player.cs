@@ -122,7 +122,7 @@ namespace Myng.Graphics
             autoAttack = new Spell(autoAttackAction,canExecute);
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, List<Polygon> collisionPolygons)
         {
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
@@ -148,7 +148,7 @@ namespace Myng.Graphics
                 if (item is IUpdatable)
                     ((IUpdatable)item).Update(otherSprites);
             }
-            base.Update(gameTime, otherSprites, hittableSprites);
+            base.Update(gameTime, otherSprites, hittableSprites, collisionPolygons);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -228,6 +228,8 @@ namespace Myng.Graphics
 
         private void Move()
         {
+            
+
             if (currentKey.IsKeyDown(input.Left))
             {
                 velocity.X -= 1f;

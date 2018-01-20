@@ -72,7 +72,7 @@ namespace Myng.Graphics.Enemies
             autoAttack = new Spell(autoAttackAction, canExecute);
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, List<Polygon> collisionPolygons)
         {
             UpdateTimer(gameTime);
             playerPosition = Game1.Player.Position;
@@ -80,7 +80,7 @@ namespace Myng.Graphics.Enemies
             HandleAnimation();
             animationManager.Update(gameTime);
             CastAutoattack(otherSprites);
-            base.Update(gameTime, otherSprites, hittableSprites);
+            base.Update(gameTime, otherSprites, hittableSprites, collisionPolygons);
         }
 
         private void UpdateTimer(GameTime gameTime)

@@ -95,11 +95,11 @@ namespace Myng.Helpers
         private void AddPolygonToCollisionPolygons(TmxObject tmxObject, Vector2 offset)
         {           
             var points = new Vector2[tmxObject.Points.Count];
-            for(int i=0;i<tmxObject.Points.Count; i++)
+            for(int i=0 ; i<tmxObject.Points.Count; i++)
             {
                 points[i].X = (float)(tmxObject.Points[i].X + tmxObject.X);
                 points[i].Y = (float)(tmxObject.Points[i].Y + tmxObject.Y);
-                points[i] += offset;
+                //points[i] += offset;
             }
             CollisionPolygons.Add(new Polygon(points, new Vector2(0)));
         }

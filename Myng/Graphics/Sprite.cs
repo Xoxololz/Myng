@@ -108,7 +108,7 @@ namespace Myng.Graphics
         #region Methods
         //this method will take care of pretty much everything thats happening
         //should be overridden in every child class (unless the child has no functionality whatsoever)
-        public virtual void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
+        public virtual void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, List<Polygon> collisionPolygons)
         {
 
         }

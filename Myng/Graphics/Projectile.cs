@@ -14,7 +14,7 @@ namespace Myng.Graphics
         public Faction Faction { get; set; }
 
         public Vector2 Direction;
-        public float Speed = 8f;
+        public float Speed = 3f;
         public double Angle = 0;
         public int Damage = 10;
 
@@ -45,13 +45,13 @@ namespace Myng.Graphics
         #endregion
 
         #region Methods
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, List<Polygon> collisionPolygons)
         {
             UpdateTimer(gameTime);
             CheckLifespan();
             HandleAnimation(gameTime);
             Move();
-            CheckCollisions(hittableSprites);
+            CheckCollisions(hittableSprites, collisionPolygons);
         }
 
         private void UpdateTimer(GameTime gameTime)
@@ -80,13 +80,25 @@ namespace Myng.Graphics
             Position += Direction * Speed;
         }
 
-        private void CheckCollisions(List<Sprite> sprites)
+        private void CheckCollisions(List<Sprite> sprites, List<Polygon> collisionPolygons)
         {
             foreach (var sprite in sprites)
             {
                 CheckCollision(sprite);
             }
             CheckCollision(Game1.Player);
+            CheckCollisionWithTerrain(collisionPolygons);
+        }
+
+        private void CheckCollisionWithTerrain(List<Polygon> collisionPolygons)
+        {
+            foreach (var polygon in collisionPolygons)
+            {
+                if (CollisionPolygon.Intersects(polygon))
+                {
+                    ToRemove = true;
+                }
+            }
         }
 
         private void CheckCollision(Sprite sprite)

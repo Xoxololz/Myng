@@ -29,7 +29,7 @@ namespace Myng.Graphics
 
         #region Methods
 
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, List<Polygon> collisionPolygons)
         {
             Player player = Game1.Player;
 
