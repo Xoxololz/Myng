@@ -99,7 +99,7 @@ namespace Myng.Graphics
         public void Draw(SpriteBatch spriteBatch, float scale, double angle, Vector2 origin, float layer)
         {
             spriteBatch.Draw(animation.Texture,
-                             Position,
+                             Position + new Vector2(Animation.FrameWidth, Animation.FrameHeight)/2,
                              new Rectangle((int)animation.CurrentFrame.X * animation.FrameWidth,
                                            (int)animation.CurrentFrame.Y * animation.FrameHeight,
                                            animation.FrameWidth,

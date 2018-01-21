@@ -72,7 +72,7 @@ namespace Myng.Graphics
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (animationManager != null)
-                animationManager.Draw(spriteBatch, Scale,layer);
+                animationManager.Draw(spriteBatch, Scale, layer);
             else if (texture != null)
                 spriteBatch.Draw(texture: texture,position: Position,sourceRectangle: null,color: Color.White,
                     rotation: 0,origin: origin,scale: Scale,effects: SpriteEffects.None,layerDepth: layer);
