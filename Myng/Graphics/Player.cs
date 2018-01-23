@@ -99,7 +99,7 @@ namespace Myng.Graphics
             Action<List<Sprite>> autoAttackAction = (sprites) =>
             {
                 var b = Bullet.Clone() as Projectile;
-                b.Position = CollisionPolygon.Origin;
+                b.Position = animationManager.Position + new Vector2(animationManager.Animation.FrameWidth, animationManager.Animation.FrameHeight)/2;
 
                 b.Direction = attackDirection;
                 if (b.Direction.X < 0)

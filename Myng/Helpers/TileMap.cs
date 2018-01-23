@@ -99,9 +99,9 @@ namespace Myng.Helpers
             {
                 points[i].X = (float)(tmxObject.Points[i].X + tmxObject.X);
                 points[i].Y = (float)(tmxObject.Points[i].Y + tmxObject.Y);
-                //points[i] += offset;
+                points[i] += offset;
             }
-            CollisionPolygons.Add(new Polygon(points, new Vector2(0)));
+            CollisionPolygons.Add(new Polygon(points, new Vector2((float)tmxObject.X,(float)tmxObject.Y) + offset));
         }
 
         private void AddRectangleToCollisionPolygons(TmxObject tmxObject, Vector2 offset)

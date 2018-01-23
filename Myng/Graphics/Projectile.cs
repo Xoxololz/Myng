@@ -14,7 +14,7 @@ namespace Myng.Graphics
         public Faction Faction { get; set; }
 
         public Vector2 Direction;
-        public float Speed = 3f;
+        public float Speed = 6f;
         public double Angle = 0;
         public int Damage = 10;
 
@@ -34,12 +34,14 @@ namespace Myng.Graphics
         {
             layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);
+            CollisionPolygon.Rotate((float)Angle);
         }
 
         public Projectile(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);
+            CollisionPolygon.Rotate((float)Angle);
         }
 
         #endregion

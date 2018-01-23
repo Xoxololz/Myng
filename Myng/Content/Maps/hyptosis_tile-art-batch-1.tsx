@@ -15,6 +15,18 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="366">
+  <objectgroup draworder="index">
+   <object id="1" x="0.181818" y="0">
+    <polygon points="0,0 0,31.4545 31.4545,31.6364 31.6364,0.181818"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="368">
+  <objectgroup draworder="index">
+   <object id="3" x="0.181818" y="0.545455" width="31.4545" height="30.7273"/>
+  </objectgroup>
+ </tile>
  <tile id="475">
   <objectgroup draworder="index">
    <object id="1" x="0" y="0.25">

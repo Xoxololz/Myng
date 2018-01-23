@@ -9,7 +9,7 @@ namespace Myng.Helpers
     public class Polygon
     {
 
-        #region variables
+        #region Properties
         /// <summary>
         /// array of polygon points
         /// </summary>
@@ -18,6 +18,8 @@ namespace Myng.Helpers
         /// point to rotate around
         /// </summary>
         public Vector2 Origin { get; private set; }
+
+        public float Radius { get; private set; }
         #endregion
 
         #region Constructors
@@ -30,7 +32,9 @@ namespace Myng.Helpers
         {
             this.Points = points;
             this.Origin = origin;
+            InitRadius();
         }
+
         /// <summary>
         /// create polygon to represent rectangle rotating around center with angle=0
         /// </summary>
@@ -80,11 +84,26 @@ namespace Myng.Helpers
             Points[3].Y = rectangle.Y + rectangle.Height;
 
             this.Rotate(angle);
+            InitRadius();
         }
 
         #endregion
 
         #region Methods
+
+
+        private void InitRadius()
+        {
+            Radius = 0;
+            foreach (var point in Points)
+            {
+                var distance = (point - Origin).Length();
+                if (distance > Radius)
+                {
+                    Radius = distance;
+                }
+            }
+        }
         /// <summary>
         /// translate the polygon
         /// </summary>
@@ -118,6 +137,8 @@ namespace Myng.Helpers
         public bool Intersects(Polygon a)
         {
             var b = this;
+
+            if ((a.Origin - Origin).Length() > a.Radius + Radius) return false;
             
             foreach (var polygon in new[] { a, b })
             {
