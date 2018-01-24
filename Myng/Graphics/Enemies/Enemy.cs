@@ -21,7 +21,7 @@ namespace Myng.Graphics.Enemies
 
         protected float timer;
 
-        protected float attackSpeed = 10f;
+        protected float attackSpeed = 1f;
 
         protected Vector2 velocity;
 

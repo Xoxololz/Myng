@@ -41,17 +41,17 @@ namespace Myng.States
         {
             var monsterAnimations = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(content.Load<Texture2D>("./Characters/Zombie"), 4, 3) }
+                { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
             };
 
             var monsterAnimations2 = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(content.Load<Texture2D>("./Characters/Skeleton"), 4, 6) }
+                { "walking", new Animation(content.Load<Texture2D>("Characters/Skeleton"), 4, 6) }
             };
 
             var fireballAnimation = new Dictionary<string, Animation>()
             {
-                { "fireball", new Animation(content.Load<Texture2D>("fireball"), 1, 6)
+                { "fireball", new Animation(content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
 
                     {
                         FrameSpeed = 0.05f
@@ -61,7 +61,7 @@ namespace Myng.States
 
             var fireballMonsterAnimation = new Dictionary<string, Animation>()
             {
-                { "fireball", new Animation(content.Load<Texture2D>("fireball"), 1, 6)
+                { "fireball", new Animation(content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
 
                     {
                         FrameSpeed = 0.05f
@@ -71,7 +71,7 @@ namespace Myng.States
 
             var playerAnimations = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(Content.Load<Texture2D>("./Characters/White_Male"), 4, 3) }
+                { "walking", new Animation(Content.Load<Texture2D>("Characters/White_Male"), 4, 3) }
             };
 
             Player player = new Player(playerAnimations, new Vector2(0f))
@@ -91,17 +91,14 @@ namespace Myng.States
 
             otherSprites = new List<Sprite>
             {
-                new ItemSprite(content.Load<Texture2D>("HealthPotion"), new Vector2(1000f)
-                    , new HealthPotion(content.Load<Texture2D>("HealthPotion"))),
+                new ItemSprite(content.Load<Texture2D>("Items/HealthPotion"), new Vector2(100f)
+                    , new HealthPotion(content.Load<Texture2D>("Items/HealthPotion"))),
 
-                new ItemSprite(content.Load<Texture2D>("HealthPotion"), new Vector2(2500f)
-                    , new HealthPotion(content.Load<Texture2D>("HealthPotion"))),
+                new ItemSprite(content.Load<Texture2D>("Items/HealthPotion"), new Vector2(250f)
+                    , new HealthPotion(content.Load<Texture2D>("Items/HealthPotion"))),
 
-                new ItemSprite(content.Load<Texture2D>("projectile"), new Vector2(500f)
-                    , new Armor(content.Load<Texture2D>("projectile"))),
-
-                new ItemSprite(content.Load<Texture2D>("meta"), new Vector2(600f)
-                    , new UpdatableTestItem(content.Load<Texture2D>("meta")))
+                new ItemSprite(content.Load<Texture2D>("Projectiles/projectile"), new Vector2(500f)
+                    , new Armor(content.Load<Texture2D>("Projectiles/projectile")))
             };
 
             hittableSprites = new List<Sprite>
