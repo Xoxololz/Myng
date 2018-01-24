@@ -16,7 +16,9 @@ namespace Myng.Helpers
 
         public static float Item = 0.2f;
 
-        public static float Accesories = 0.8f;
+        public static float Accesories = 0.7f;
+
+        public static float Road = 0.8f;
 
         public static float Vegatation = 0.9f;
 

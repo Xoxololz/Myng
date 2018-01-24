@@ -41,7 +41,12 @@ namespace Myng.States
         {
             var monsterAnimations = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(content.Load<Texture2D>("White_Male"), 4, 3) }
+                { "walking", new Animation(content.Load<Texture2D>("./Characters/Zombie"), 4, 3) }
+            };
+
+            var monsterAnimations2 = new Dictionary<string, Animation>()
+            {
+                { "walking", new Animation(content.Load<Texture2D>("./Characters/Skeleton"), 4, 6) }
             };
 
             var fireballAnimation = new Dictionary<string, Animation>()
@@ -66,7 +71,7 @@ namespace Myng.States
 
             var playerAnimations = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(Content.Load<Texture2D>("White_Male"), 4, 3) }
+                { "walking", new Animation(Content.Load<Texture2D>("./Characters/White_Male"), 4, 3) }
             };
 
             Player player = new Player(playerAnimations, new Vector2(0f))
@@ -79,7 +84,7 @@ namespace Myng.States
                 Bullet = new Projectile(fireballMonsterAnimation, new Vector2(100f))
             };
 
-            Enemy monster2 = new Enemy(monsterAnimations, new Vector2(400))
+            Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(400))
             {
                 Bullet = new Projectile(fireballMonsterAnimation, new Vector2(200f))
             };
@@ -107,9 +112,8 @@ namespace Myng.States
 
             Game1.Player = player;
 
-            TmxMap map = new TmxMap("Content/Maps/map2.tmx");
-            Texture2D tileset = content.Load<Texture2D>(map.Tilesets[0].Name.ToString());
-            tileMap = new TileMap(map, tileset);
+            TmxMap map = new TmxMap("Content/Maps/map2.tmx");            
+            tileMap = new TileMap(map);
 
             MapHeight = tileMap.MapHeight;
             MapWidth = tileMap.MapWidth;

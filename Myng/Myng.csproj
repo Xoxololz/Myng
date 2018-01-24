@@ -57,6 +57,7 @@
     <Compile Include="Helpers\Faction.cs" />
     <Compile Include="Helpers\Inventory.cs" />
     <Compile Include="Helpers\Layers.cs" />
+    <Compile Include="Helpers\Tileset.cs" />
     <Compile Include="Items\Armor.cs" />
     <Compile Include="Items\HealthPotion.cs" />
     <Compile Include="Items\Interfaces\IStatImprover.cs" />
@@ -81,31 +82,34 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Characters\Skeleton.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Characters\Zombie.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\HealthPotion.png" />
-    <Content Include="Content\hyptosis_tile-art-batch-1.png" />
     <Content Include="Content\meta.jpg" />
     <Content Include="Content\projectile.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\White_Male.png" />
-    <Content Include="Content\worm.png" />
+    <Content Include="Content\Characters\White_Male.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+    <None Include="Content\Maps\map1.tmx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Maps\map2.tmx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
-    <None Include="Content\Maps\mapa.tmx">
+    <None Include="Content\Maps\map3.tmx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Content\Maps\hyptosis_tile-art-batch-1.tsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -115,10 +119,22 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Maps\hyptosis_tile-art-batch-1.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Maps\meta.tsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Maps\Tiled-1.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Maps\tiled1.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Maps\tiled2.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Maps\tiled3.tsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

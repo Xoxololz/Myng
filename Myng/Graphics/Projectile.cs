@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace Myng.Graphics
 {
-    /*abstract*/
     public class Projectile : Sprite, ICloneable
     {
         #region Properties
@@ -21,7 +20,6 @@ namespace Myng.Graphics
         #endregion
 
         #region Fields
-
         protected float timer = 0f;
         protected float lifespan = 3f;
 
@@ -34,14 +32,12 @@ namespace Myng.Graphics
         {
             layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);
-            CollisionPolygon.Rotate((float)Angle);
         }
 
         public Projectile(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             layer = Layers.Projectile;
-            Angle = Math.Atan(Direction.Y / Direction.X);
-            CollisionPolygon.Rotate((float)Angle);
+            Angle = Math.Atan(Direction.Y / Direction.X);            
         }
 
         #endregion
@@ -80,6 +76,7 @@ namespace Myng.Graphics
         private void Move()
         {
             Position += Direction * Speed;
+            CollisionPolygon.Translate(Direction * Speed);
         }
 
         private void CheckCollisions(List<Sprite> sprites, List<Polygon> collisionPolygons)

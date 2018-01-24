@@ -12,12 +12,8 @@ namespace Myng.Helpers
         #region Fields
 
         private TmxMap map;
-        private Texture2D tileset;
 
-        private int tileWidth;
-        private int tileHeight;
-        private int tilesetTilesWide;
-        private int tilesetTilesHigh;
+        List<Tileset> tilesets; 
 
         #endregion
 
@@ -26,14 +22,14 @@ namespace Myng.Helpers
         public int MapWidth {
             get
             {
-                return map.Width * tileWidth;
+                return map.Width * map.Tilesets[0].TileWidth;
             }
         }
         public int MapHeight
         {
             get
             {
-                return map.Height * tileHeight;
+                return map.Height * map.Tilesets[0].TileHeight;
             }
         }
 
@@ -43,16 +39,20 @@ namespace Myng.Helpers
 
         #region Constructor
 
-        public TileMap(TmxMap map, Texture2D tileset)
+        public TileMap(TmxMap map)
         {
             this.map = map;
-            this.tileset = tileset;
+            tilesets = new List<Tileset>();
+            foreach (var tileset in map.Tilesets)
+            {
+                tilesets.Add(new Tileset(tileset));
+            }
 
-            tileWidth = map.Tilesets[0].TileWidth;
-            tileHeight = map.Tilesets[0].TileHeight;
+            //tileWidth = map.Tilesets[0].TileWidth;
+            //tileHeight = map.Tilesets[0].TileHeight;
 
-            tilesetTilesWide = tileset.Width / tileWidth;
-            tilesetTilesHigh = tileset.Height / tileHeight;
+            //tilesetTilesWide = tileset.Width / tileWidth;
+            //tilesetTilesHigh = tileset.Height / tileHeight;
 
             InitCollisionPolygons();
         }
@@ -64,19 +64,22 @@ namespace Myng.Helpers
 
         private void InitCollisionPolygons()
         {
+            Tileset currentTileset;
+
             for (var j = 0; j < map.Layers.Count; j++)
             {
                 for (var i = 0; i < map.Layers[j].Tiles.Count; i++)
                 {
                     int gid = map.Layers[j].Tiles[i].Gid;
-
-                    int tileFrame = gid - 1;                    
+                    currentTileset = tilesets[GetTilesetIndex(gid)];                  
+                    int tileFrame = gid - currentTileset.FirstGid;
 
                     float x = (i % map.Width) * map.TileWidth;
                     float y = (float)Math.Floor(i / (double)map.Width) * map.TileHeight;
 
                     TmxTilesetTile collisionTile;
-                    if (map.Tilesets[0].Tiles.TryGetValue(tileFrame, out collisionTile))
+                    if (currentTileset.Tiles.TryGetValue(tileFrame, out collisionTile) 
+                        && collisionTile.ObjectGroups.Count>0)
                     {
                         switch (collisionTile.ObjectGroups[0].Objects[0].ObjectType)
                         {
@@ -111,25 +114,39 @@ namespace Myng.Helpers
             CollisionPolygons.Add(new Polygon(rectangle));
         }
 
+        private int GetTilesetIndex(int gid)
+        {
+            for (int i = 0; i < tilesets.Count; i++)
+            {
+                if (i + 1 > tilesets.Count - 1) return i;
+
+                if (tilesets[i + 1].FirstGid >= gid) return i;
+            }
+
+            throw new Exception("invalid gid passed");
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
+            Tileset currentTileset;
 
             for (var j = 0; j < map.Layers.Count; j++)
             {
                 for (var i = 0; i < map.Layers[j].Tiles.Count; i++)
                 {
                     int gid = map.Layers[j].Tiles[i].Gid;
+                    currentTileset = tilesets[GetTilesetIndex(gid)];
                     
                     if (gid != 0)                   
                     {
-                        int tileFrame = gid - 1;
-                        int column = tileFrame % tilesetTilesWide;
-                        int row = (int)Math.Floor((double)tileFrame / (double)tilesetTilesWide);
+                        int tileFrame = gid - currentTileset.FirstGid;
+                        int column = tileFrame % currentTileset.TilesetTilesWide;
+                        int row = (int)Math.Floor((double)tileFrame / currentTileset.TilesetTilesWide);
 
                         float x = (i % map.Width) * map.TileWidth;
                         float y = (float)Math.Floor(i / (double)map.Width) * map.TileHeight;
- 
-                       Rectangle tilesetRec = new Rectangle(tileWidth * column, tileHeight * row, tileWidth, tileHeight);
+
+                        Rectangle tilesetRec = new Rectangle(currentTileset.TileWidth * column, currentTileset.TileHeight * row, currentTileset.TileWidth, currentTileset.TileHeight);
                         float layer;
                         switch (j)
                         {
@@ -140,14 +157,17 @@ namespace Myng.Helpers
                                 layer = Layers.Vegatation;
                                 break;
                             case 2:
+                                layer = Layers.Road;
+                                break;
+                            case 3:
                                 layer = Layers.Accesories;
-                                break;                           
+                                break;
                             default:
                                 throw new Exception("Too many layers in tile map");
                         }
 
-                        spriteBatch.Draw(texture: tileset,destinationRectangle: new Rectangle((int)x, (int)y,
-                            tileWidth, tileHeight),sourceRectangle: tilesetRec,color: Color.White,
+                        spriteBatch.Draw(texture: currentTileset.Texture, destinationRectangle: new Rectangle((int)x, (int)y,
+                            currentTileset.TileWidth, currentTileset.TileHeight), sourceRectangle: tilesetRec, color: Color.White,
                             layerDepth: layer);
                     }
                 }
