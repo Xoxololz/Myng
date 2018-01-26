@@ -30,7 +30,7 @@ namespace Myng.Helpers
 
         public Inventory()
         {
-            texture = State.Content.Load<Texture2D>("GUI/itembar");
+            texture = State.Content.Load<Texture2D>("GUI/inventory");
             Items = new List<Item>();
             font = State.Content.Load<SpriteFont>("Fonts/Font");
         }
@@ -110,19 +110,20 @@ namespace Myng.Helpers
                 X = GameState.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2,
                 Y = GameState.ScreenHeight - Camera.ScreenOffset.Y - texture.Height
             };
-            spriteBatch.Draw(texture: texture, position: Position, color: Color.White * 0.4f, layerDepth: Layers.Inventory);
+            spriteBatch.Draw(texture: texture, position: Position, color: Color.White, layerDepth: Layers.Inventory);
 
-            Position.Y += 10;
+            Position.Y += 16;
             for (int i = 0; i < Items.Count; i++)
             {
-                Position.X = GameState.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2 + 10 + ( 60 * i );
+                Position.X = GameState.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2 + 36 + ( 75 * i ) 
+                    + 4;
                 float scale = 40.0f / Items[i].Texture.Width;
                 Vector2 origin = new Vector2(Items[i].Texture.Width * scale/2 - 20, Items[i].Texture.Height * scale / 2 - 20);
 
                 spriteBatch.Draw(texture: Items[i].Texture, position: Position, sourceRectangle: null, color: Color.White,
                    rotation: 0, origin: origin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
 
-                Vector2 textPosition = new Vector2(Position.X + 50, Position.Y + 32);
+                Vector2 textPosition = new Vector2(Position.X + 46, Position.Y + 26);
                 spriteBatch.DrawString(font, Items[i].Count.ToString(), textPosition-new Vector2(Items[i].Count.ToString().Length*13,0), Color.Black);
             }
         }

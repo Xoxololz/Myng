@@ -59,6 +59,7 @@
     <Compile Include="Helpers\Inventory.cs" />
     <Compile Include="Helpers\Layers.cs" />
     <Compile Include="Helpers\Tileset.cs" />
+    <Compile Include="Items\Ring.cs" />
     <Compile Include="Items\Armor.cs" />
     <Compile Include="Items\HealthPotion.cs" />
     <Compile Include="Items\Interfaces\IStatImprover.cs" />

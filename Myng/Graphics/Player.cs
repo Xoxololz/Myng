@@ -22,6 +22,9 @@ namespace Myng.Graphics
 
         public Projectile Bullet { get; set; }
 
+        //The amount of time in seconds between attacks
+        public float AttackSpeed { get; set; }
+
         public int XP { get; set; }
 
         public int NextLevelXP
@@ -61,9 +64,6 @@ namespace Myng.Graphics
 
         private Vector2 attackDirection;
 
-        //The amount of time in seconds between attacks
-        private float attackSpeed;
-
         #endregion
 
         #region Constructor
@@ -75,8 +75,8 @@ namespace Myng.Graphics
             velocity = new Vector2(0f);
             input = new Input();
             Scale = 2f;
-            attackSpeed = 0.3f;
-            timer = attackSpeed;
+            AttackSpeed = 0.6f;
+            timer = AttackSpeed;
             origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
             attackDirection = new Vector2(0, -1);
             Inventory = new Inventory();
@@ -138,7 +138,7 @@ namespace Myng.Graphics
             };
             Func<bool> canExecute = () =>
             {                
-                var coolDown = timer > attackSpeed;
+                var coolDown = timer > AttackSpeed;
                 if (coolDown)
                     timer = 0;
                 return coolDown;

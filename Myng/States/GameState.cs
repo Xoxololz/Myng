@@ -89,8 +89,11 @@ namespace Myng.States
                 new ItemSprite(content.Load<Texture2D>("Items/HealthPotion"), new Vector2(250f)
                     , new HealthPotion(content.Load<Texture2D>("Items/HealthPotion"))),
 
-                new ItemSprite(content.Load<Texture2D>("Projectiles/projectile"), new Vector2(700f)
-                    , new Armor(content.Load<Texture2D>("Projectiles/projectile")))
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(700f)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(800f)
+                    , new Ring(content.Load<Texture2D>("Items/iron_ring")))
             };
 
             hittableSprites = new List<Sprite>
