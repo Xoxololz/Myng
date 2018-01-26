@@ -48,7 +48,11 @@ namespace Myng.States
 
             var monsterAnimations2 = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(content.Load<Texture2D>("Characters/Skeleton"), 4, 6) }
+                { "walking", new Animation(content.Load<Texture2D>("Characters/Skeleton2"), 4, 3)
+                    {
+                        FrameSpeed = 0.15f
+                    }
+                }
             };
 
             var fireballAnimation = new Dictionary<string, Animation>()
