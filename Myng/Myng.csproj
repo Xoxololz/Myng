@@ -49,6 +49,7 @@
     <Compile Include="Graphics\Character.cs" />
     <Compile Include="Graphics\Animation.cs" />
     <Compile Include="Graphics\Enemies\Enemy.cs" />
+    <Compile Include="Graphics\GUI.cs" />
     <Compile Include="Graphics\ItemSprite.cs" />
     <Compile Include="Graphics\Player.cs" />
     <Compile Include="Graphics\Projectile.cs" />

@@ -12,18 +12,21 @@ namespace Myng.Helpers
 
         private Func<bool> canExecute;
 
+        private int manaCost;
+
         #endregion
 
         #region Contructors
 
-        public Spell(Action<List<Sprite>> action, Func<bool> canExecute)
+        public Spell(Action<List<Sprite>> action, Func<bool> canExecute, int cost)
         {
             this.action = action;
             this.canExecute = canExecute;
+            this.manaCost = cost;
         }
 
-        public Spell(Action<List<Sprite>> action)
-            : this(action, null) { }
+        public Spell(Action<List<Sprite>> action, int cost)
+            : this(action, null, cost) { }
 
         #endregion
 
@@ -31,6 +34,8 @@ namespace Myng.Helpers
 
         public bool CanCast()
         {
+            if (Game1.Player.Mana < manaCost)
+                return false;
             if(canExecute==null)
                 return true;
             return canExecute();
@@ -40,7 +45,8 @@ namespace Myng.Helpers
         {
             if (!CanCast())
                 return;
-         
+
+            Game1.Player.Mana -= manaCost;
             action(parameter);
         }
 

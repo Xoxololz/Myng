@@ -121,23 +121,31 @@ namespace Myng.Helpers
         }
 
         public bool CheckCollisionWithTerrain(Polygon spritePolygon)
-        {         
-            var collision = false;
-            foreach (var layer in map.Layers)
+        {
+            try
             {
-                foreach(var point in spritePolygon.Points)
+                var collision = false;
+                foreach (var layer in map.Layers)
                 {
-                    var currentTile = GetCurrentTilesGid(point, layer);
-                    Polygon terrainPolygon;
-                    if (CollisionPolygons.TryGetValue(currentTile, out terrainPolygon))
+                    foreach (var point in spritePolygon.Points)
                     {
-                        var tileOrigin = GetCurrentTileOrigin(point);
-                        var polygonTileCoord = TransformPolygonToTileCoord(spritePolygon, tileOrigin);
-                        collision = polygonTileCoord.Intersects(terrainPolygon);
+                        var currentTile = GetCurrentTilesGid(point, layer);
+                        if (currentTile == -1) return true;
+                        Polygon terrainPolygon;
+                        if (CollisionPolygons.TryGetValue(currentTile, out terrainPolygon))
+                        {
+                            var tileOrigin = GetCurrentTileOrigin(point);
+                            var polygonTileCoord = TransformPolygonToTileCoord(spritePolygon, tileOrigin);
+                            collision = polygonTileCoord.Intersects(terrainPolygon);
+                        }
                     }
                 }
-            }            
-            return collision;
+                return collision;
+            }
+            catch (ArgumentOutOfRangeException) //being out of map counts as collision
+            {
+                return true;
+            }
         }        
 
         private Vector2 GetCurrentTileOrigin(Vector2 point)
@@ -175,7 +183,7 @@ namespace Myng.Helpers
             var row = (int)Math.Floor(position.Y / map.Tilesets[0].TileHeight) + 1;
             var column = (int)Math.Floor(position.X / map.Tilesets[0].TileWidth);
             var i = (row - 1) * map.Width + column;
-            return layer.Tiles[i].Gid;            
+            return layer.Tiles[i].Gid;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -205,7 +213,7 @@ namespace Myng.Helpers
                                 layer = Layers.Background;
                                 break;
                             case 1:
-                                layer = Layers.Vegatation;
+                                layer = Layers.Vegetation;
                                 break;
                             case 2:
                                 layer = Layers.Road;

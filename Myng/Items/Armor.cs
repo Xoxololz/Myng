@@ -12,7 +12,7 @@ namespace Myng.Items
 
         public void ImproveStats()
         {
-            Parent.Health += 50;
+            Parent.MaxHealth += 50;
         }
     }
 }

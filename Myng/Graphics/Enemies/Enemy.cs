@@ -13,6 +13,8 @@ namespace Myng.Graphics.Enemies
 
         public Projectile Bullet { get; set; }
 
+        public int XPDrop { get; set; }
+
         #endregion
 
         #region Fields
@@ -39,6 +41,7 @@ namespace Myng.Graphics.Enemies
             speed = 1f;
             timer = attackSpeed;
             Faction = Faction.ENEMY;
+            XPDrop = 10;
         }
 
         #endregion
@@ -51,6 +54,7 @@ namespace Myng.Graphics.Enemies
             {
                 var b = Bullet.Clone() as Projectile;
                 b.Position = CollisionPolygon.Origin;
+                b.Damage = 5;
 
                 b.Direction = -(Position - (playerPosition));
                 b.Direction.Normalize();
@@ -69,7 +73,7 @@ namespace Myng.Graphics.Enemies
                 return AutoattackRange && coolDown;
             };
 
-            autoAttack = new Spell(autoAttackAction, canExecute);
+            autoAttack = new Spell(autoAttackAction, canExecute, 0);
         }
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)

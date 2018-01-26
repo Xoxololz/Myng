@@ -20,7 +20,7 @@ namespace Myng.Helpers
 
         public static float Road = 0.8f;
 
-        public static float Vegatation = 0.9f;
+        public static float Vegetation = 0.9f;
 
         public static float Background = 1f;
     }

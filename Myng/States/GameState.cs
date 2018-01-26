@@ -24,6 +24,8 @@ namespace Myng.States
 
         private Camera camera;
 
+        private GUI gui;
+
         #endregion
 
         #region Properties
@@ -59,34 +61,24 @@ namespace Myng.States
                 }
             };
 
-            var fireballMonsterAnimation = new Dictionary<string, Animation>()
-            {
-                { "fireball", new Animation(content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
-
-                    {
-                        FrameSpeed = 0.05f
-                    }
-                }
-            };
-
             var playerAnimations = new Dictionary<string, Animation>()
             {
                 { "walking", new Animation(Content.Load<Texture2D>("Characters/White_Male"), 4, 3) }
             };
 
-            Player player = new Player(playerAnimations, new Vector2(0f))
+            Player player = new Player(playerAnimations, new Vector2(500f))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
             Enemy monster = new Enemy(monsterAnimations, new Vector2(200))
             {
-                Bullet = new Projectile(fireballMonsterAnimation, new Vector2(100f))
+                Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
             Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(400))
             {
-                Bullet = new Projectile(fireballMonsterAnimation, new Vector2(200f))
+                Bullet = new Projectile(fireballAnimation, new Vector2(200f))
             };
 
             otherSprites = new List<Sprite>
@@ -97,7 +89,7 @@ namespace Myng.States
                 new ItemSprite(content.Load<Texture2D>("Items/HealthPotion"), new Vector2(250f)
                     , new HealthPotion(content.Load<Texture2D>("Items/HealthPotion"))),
 
-                new ItemSprite(content.Load<Texture2D>("Projectiles/projectile"), new Vector2(500f)
+                new ItemSprite(content.Load<Texture2D>("Projectiles/projectile"), new Vector2(700f)
                     , new Armor(content.Load<Texture2D>("Projectiles/projectile")))
             };
 
@@ -109,7 +101,7 @@ namespace Myng.States
 
             Game1.Player = player;
 
-            TmxMap map = new TmxMap("Content/Maps/map2.tmx");            
+            TmxMap map = new TmxMap("Content/Maps/map3.tmx");            
             tileMap = new TileMap(map);
 
             MapHeight = tileMap.MapHeight;
@@ -119,6 +111,8 @@ namespace Myng.States
             ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
 
             camera = new Camera(Game1.Player);
+
+            gui = new GUI();
 
         }
 
@@ -162,17 +156,20 @@ namespace Myng.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.BackToFront);
+            spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend);
 
             tileMap.Draw(spriteBatch);
 
             Game1.Player.Draw(spriteBatch);
+            Game1.Player.Inventory.Draw(spriteBatch);
 
             foreach (var sprite in otherSprites)
                 sprite.Draw(spriteBatch);
 
             foreach (var sprite in hittableSprites)
                 sprite.Draw(spriteBatch);
+
+            gui.Draw(spriteBatch);
 
             spriteBatch.End();
 

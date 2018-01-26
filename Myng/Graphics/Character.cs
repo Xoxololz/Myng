@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Graphics.Enemies;
 using Myng.Helpers;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace Myng.Graphics
 
         protected int health;
 
+        protected int mana;
+
         //point the character rotates around
         protected Vector2 origin;
 
@@ -25,6 +28,7 @@ namespace Myng.Graphics
         public Faction Faction { get; set; }
 
         public int MaxHealth = 100;
+        public int MaxMana = 100;
 
         public int Health {
             get
@@ -33,9 +37,31 @@ namespace Myng.Graphics
             }
             set
             {
-                if (value > MaxHealth) return;
+                if (value > MaxHealth)
+                {
+                    health = MaxHealth;
+                    return;
+                }
 
                 health = value;
+            }
+        }
+
+        public int Mana
+        {
+            get
+            {
+                return mana;
+            }
+            set
+            {
+                if (value > MaxMana)
+                {
+                    mana = MaxMana;
+                    return;
+                }
+
+                mana = value;
             }
         }
 
@@ -47,6 +73,7 @@ namespace Myng.Graphics
             : base(texture2D, position)
         {
             Health = MaxHealth;
+            Mana = MaxMana;
             layer = Layers.Character;
             origin = new Vector2(texture.Width * Scale / 2, texture.Height * Scale / 2);
         }
@@ -54,6 +81,7 @@ namespace Myng.Graphics
         public Character(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             Health = MaxHealth;
+            Mana = MaxMana;
             origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
         }
 
@@ -65,6 +93,10 @@ namespace Myng.Graphics
         {
             if (Health <= 0)
             {
+                if(this is Enemy enemy)
+                {
+                    Game1.Player.XP += enemy.XPDrop;
+                }
                 ToRemove = true;
             }
         }

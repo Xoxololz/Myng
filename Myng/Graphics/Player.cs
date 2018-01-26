@@ -21,6 +21,16 @@ namespace Myng.Graphics
         public Inventory Inventory;
 
         public Projectile Bullet { get; set; }
+
+        public int XP { get; set; }
+
+        public int NextLevelXP
+        {
+            get
+            {
+                return nextLevelXP;
+            }
+        }
         #endregion
 
         #region Fields
@@ -36,6 +46,10 @@ namespace Myng.Graphics
         private Spell autoAttack;
 
         private float timer;
+
+        private int nextLevelXP;
+
+        private int level;
 
         private Vector2 attackDirection;
 
@@ -59,6 +73,9 @@ namespace Myng.Graphics
             attackDirection = new Vector2(0, -1);
             Inventory = new Inventory();
             Faction = Faction.FRIENDLY;
+            level = 1;
+            XP = 0;
+            nextLevelXP = 100;
 
             InitAutoattack();
             InitSpells();
@@ -75,7 +92,7 @@ namespace Myng.Graphics
             {
                 var fireballAnimation = new Dictionary<string, Animation>()
                 {
-                    { "fireball", new Animation(State.Content.Load<Texture2D>("fireball"), 1, 6)
+                    { "fireball", new Animation(State.Content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
                         {
                             FrameSpeed = 0.05f
                         }
@@ -87,10 +104,10 @@ namespace Myng.Graphics
 
             Spells = new List<Spell>
             {
-                new Spell(spell),
-                new Spell(spell),
-                new Spell(spell),
-                new Spell(spell)
+                new Spell(spell,15),
+                new Spell(spell,15),
+                new Spell(spell,15),
+                new Spell(spell,15)
             };
         }
 
@@ -119,7 +136,14 @@ namespace Myng.Graphics
                 return coolDown;
             };
 
-            autoAttack = new Spell(autoAttackAction,canExecute);
+            autoAttack = new Spell(autoAttackAction,canExecute,0);
+        }
+
+        public void LevelUp()
+        {
+            ++level;
+            XP = 0;
+            nextLevelXP = (int) (100 * Math.Pow(1.25, level));
         }
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
@@ -132,6 +156,11 @@ namespace Myng.Graphics
             if (Health <= 0)
             {
                 Health = MaxHealth;
+            }
+
+            if(XP >= nextLevelXP)
+            {
+                LevelUp();
             }
 
             Move();
@@ -150,13 +179,6 @@ namespace Myng.Graphics
             }
             base.Update(gameTime, otherSprites, hittableSprites, tileMap);
         }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            Inventory.Draw(spriteBatch);
-            base.Draw(spriteBatch);
-        }
-
 
         private void UseItem(List<Sprite> sprites, int position)
         {
