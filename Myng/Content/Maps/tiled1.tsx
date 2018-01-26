@@ -28,6 +28,9 @@
    <frame tileid="54" duration="200"/>
   </animation>
  </tile>
+ <tile id="464">
+  <objectgroup draworder="index"/>
+ </tile>
  <tile id="892" terrain="0,0,0,0"/>
  <tile id="1441">
   <objectgroup draworder="index">

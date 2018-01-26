@@ -122,7 +122,7 @@ namespace Myng.Graphics
             autoAttack = new Spell(autoAttackAction,canExecute);
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, List<Polygon> collisionPolygons)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
         {
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
@@ -148,7 +148,7 @@ namespace Myng.Graphics
                 if (item is IUpdatable)
                     ((IUpdatable)item).Update(otherSprites);
             }
-            base.Update(gameTime, otherSprites, hittableSprites, collisionPolygons);
+            base.Update(gameTime, otherSprites, hittableSprites, tileMap);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

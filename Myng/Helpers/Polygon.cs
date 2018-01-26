@@ -22,7 +22,7 @@ namespace Myng.Helpers
         public float Radius { get; private set; }
         #endregion
 
-        #region Constructors
+        #region Constructors        
         /// <summary>
         /// create general CONVEX polygon
         /// </summary>
@@ -138,7 +138,7 @@ namespace Myng.Helpers
         {
             var b = this;
 
-            if ((a.Origin - Origin).Length() > a.Radius + Radius) return false;
+            //if ((a.Origin - Origin).Length() > a.Radius + Radius) return false;
             
             foreach (var polygon in new[] { a, b })
             {

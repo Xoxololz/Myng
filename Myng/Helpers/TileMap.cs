@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TiledSharp;
 
 namespace Myng.Helpers
@@ -13,7 +14,7 @@ namespace Myng.Helpers
 
         private TmxMap map;
 
-        List<Tileset> tilesets; 
+        List<Tileset> tilesets;
 
         #endregion
 
@@ -33,7 +34,7 @@ namespace Myng.Helpers
             }
         }
 
-        public List<Polygon> CollisionPolygons = new List<Polygon>();
+        public Dictionary<int, Polygon> CollisionPolygons = new Dictionary<int, Polygon>();
 
         #endregion
 
@@ -71,47 +72,91 @@ namespace Myng.Helpers
                 for (var i = 0; i < map.Layers[j].Tiles.Count; i++)
                 {
                     int gid = map.Layers[j].Tiles[i].Gid;
-                    currentTileset = tilesets[GetTilesetIndex(gid)];                  
+                    currentTileset = tilesets[GetTilesetIndex(gid)];
                     int tileFrame = gid - currentTileset.FirstGid;
 
                     float x = (i % map.Width) * map.TileWidth;
                     float y = (float)Math.Floor(i / (double)map.Width) * map.TileHeight;
 
                     TmxTilesetTile collisionTile;
-                    if (currentTileset.Tiles.TryGetValue(tileFrame, out collisionTile) 
-                        && collisionTile.ObjectGroups.Count>0)
+                    if (currentTileset.Tiles.TryGetValue(tileFrame, out collisionTile)
+                        && collisionTile.ObjectGroups.Count > 0)
                     {
                         switch (collisionTile.ObjectGroups[0].Objects[0].ObjectType)
                         {
                             case TmxObjectType.Polygon:
-                                AddPolygonToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], new Vector2((int)x, (int)y));
+                                if (!CollisionPolygons.ContainsKey(gid))
+                                {
+                                    AddPolygonToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid);
+                                }                                
                                 break;
                             case TmxObjectType.Basic:
-                                AddRectangleToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], new Vector2((int)x, (int)y));
+                                if (!CollisionPolygons.ContainsKey(gid))
+                                {
+                                    AddRectangleToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid);
+                                }                                
                                 break;
                         }
                     }
                 }
-            }            
+            }
         }
 
-        private void AddPolygonToCollisionPolygons(TmxObject tmxObject, Vector2 offset)
-        {           
+        private void AddPolygonToCollisionPolygons(TmxObject tmxObject, int gid)
+        {
             var points = new Vector2[tmxObject.Points.Count];
-            for(int i=0 ; i<tmxObject.Points.Count; i++)
+            for (int i = 0; i < tmxObject.Points.Count; i++)
             {
                 points[i].X = (float)(tmxObject.Points[i].X + tmxObject.X);
                 points[i].Y = (float)(tmxObject.Points[i].Y + tmxObject.Y);
-                points[i] += offset;
             }
-            CollisionPolygons.Add(new Polygon(points, new Vector2((float)tmxObject.X,(float)tmxObject.Y) + offset));
+            CollisionPolygons.Add(gid, new Polygon(points, new Vector2((float)tmxObject.X, (float)tmxObject.Y)));
         }
 
-        private void AddRectangleToCollisionPolygons(TmxObject tmxObject, Vector2 offset)
+        private void AddRectangleToCollisionPolygons(TmxObject tmxObject, int gid)
         {
-            var rectangle = new Rectangle((int)(tmxObject.X + offset.X), (int)(tmxObject.Y + offset.Y),
-                (int)tmxObject.Width, (int)tmxObject.Height); 
-            CollisionPolygons.Add(new Polygon(rectangle));
+            var rectangle = new Rectangle((int)(tmxObject.X), (int)(tmxObject.Y),
+                (int)tmxObject.Width, (int)tmxObject.Height);
+            CollisionPolygons.Add(gid, new Polygon(rectangle));
+        }
+
+        public bool CheckCollisionWithTerrain(Polygon spritePolygon)
+        {         
+            var collision = false;
+            foreach (var layer in map.Layers)
+            {
+                foreach(var point in spritePolygon.Points)
+                {
+                    var currentTile = GetCurrentTilesGid(point, layer);
+                    Polygon terrainPolygon;
+                    if (CollisionPolygons.TryGetValue(currentTile, out terrainPolygon))
+                    {
+                        var tileOrigin = GetCurrentTileOrigin(point);
+                        var polygonTileCoord = TransformPolygonToTileCoord(spritePolygon, tileOrigin);
+                        collision = polygonTileCoord.Intersects(terrainPolygon);
+                    }
+                }
+            }            
+            return collision;
+        }        
+
+        private Vector2 GetCurrentTileOrigin(Vector2 point)
+        {
+            Vector2 origin;
+            origin.X = point.X - point.X % map.Tilesets[0].TileWidth;
+            origin.Y = point.Y - point.Y % map.Tilesets[0].TileHeight;
+            return origin;
+        }
+
+        private Polygon TransformPolygonToTileCoord(Polygon polygon, Vector2 tileOrigin)
+        {
+            Vector2[] points = new Vector2[polygon.Points.Length];
+            var origin = polygon.Origin;
+            for (int i = 0; i < polygon.Points.Length; i++)            
+            {
+                points[i] =polygon.Points[i] - tileOrigin;
+            }
+            return new Polygon(points, origin);
         }
 
         private int GetTilesetIndex(int gid)
@@ -122,8 +167,15 @@ namespace Myng.Helpers
 
                 if (tilesets[i + 1].FirstGid >= gid) return i;
             }
-
             throw new Exception("invalid gid passed");
+        }
+
+        private int GetCurrentTilesGid(Vector2 position, TmxLayer layer)
+        {
+            var row = (int)Math.Floor(position.Y / map.Tilesets[0].TileHeight) + 1;
+            var column = (int)Math.Floor(position.X / map.Tilesets[0].TileWidth);
+            var i = (row - 1) * map.Width + column;
+            return layer.Tiles[i].Gid;            
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -135,8 +187,7 @@ namespace Myng.Helpers
                 for (var i = 0; i < map.Layers[j].Tiles.Count; i++)
                 {
                     int gid = map.Layers[j].Tiles[i].Gid;
-                    currentTileset = tilesets[GetTilesetIndex(gid)];
-                    
+                    currentTileset = tilesets[GetTilesetIndex(gid)];                    
                     if (gid != 0)                   
                     {
                         int tileFrame = gid - currentTileset.FirstGid;
@@ -172,7 +223,6 @@ namespace Myng.Helpers
                     }
                 }
             }
-
         }
 
         #endregion

@@ -83,7 +83,7 @@ namespace Myng.Helpers
                     {
                         if (item.Count >= item.MaxCount) return false;
 
-                        item.Count++;
+                        a.Count++;
                         return true;
                     }
                 }

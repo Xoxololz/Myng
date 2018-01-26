@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Myng.Graphics
 {
@@ -43,13 +44,13 @@ namespace Myng.Graphics
         #endregion
 
         #region Methods
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, List<Polygon> collisionPolygons)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
         {
             UpdateTimer(gameTime);
             CheckLifespan();
             HandleAnimation(gameTime);
             Move();
-            CheckCollisions(hittableSprites, collisionPolygons);
+            CheckCollisions(hittableSprites, tileMap);
         }
 
         private void UpdateTimer(GameTime gameTime)
@@ -79,24 +80,21 @@ namespace Myng.Graphics
             CollisionPolygon.Translate(Direction * Speed);
         }
 
-        private void CheckCollisions(List<Sprite> sprites, List<Polygon> collisionPolygons)
+        private void CheckCollisions(List<Sprite> sprites, TileMap tileMap)
         {
             foreach (var sprite in sprites)
             {
                 CheckCollision(sprite);
             }
             CheckCollision(Game1.Player);
-            CheckCollisionWithTerrain(collisionPolygons);
+            CheckCollisionWithTerrain(tileMap);
         }
 
-        private void CheckCollisionWithTerrain(List<Polygon> collisionPolygons)
+        private void CheckCollisionWithTerrain(TileMap tileMap)
         {
-            foreach (var polygon in collisionPolygons)
+            if (tileMap.CheckCollisionWithTerrain(CollisionPolygon))
             {
-                if (CollisionPolygon.Intersects(polygon))
-                {
-                    ToRemove = true;
-                }
+                ToRemove = true;
             }
         }
 
@@ -111,7 +109,8 @@ namespace Myng.Graphics
                         characerSprite.Health -= Damage;
                         ToRemove = true;
                     }
-                } else
+                }
+                else
                 {
                     ToRemove = true;
                 }
