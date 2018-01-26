@@ -31,6 +31,14 @@ namespace Myng.Graphics
                 return nextLevelXP;
             }
         }
+
+        public int Level
+        {
+            get
+            {
+                return level;
+            }
+        }
         #endregion
 
         #region Fields

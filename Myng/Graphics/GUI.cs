@@ -7,6 +7,7 @@ namespace Myng.Graphics
 {
     public class GUI
     {
+        #region Fiels
         private Texture2D gui;
         private Texture2D hpBar;
         private Texture2D manaBar;
@@ -17,21 +18,28 @@ namespace Myng.Graphics
         private Vector2 manaOrigin;
         private Vector2 xpOrigin;
 
-        private float scale;
+        private SpriteFont font;
 
+        private float scale;
+        #endregion
+
+        #region Constructors
         public GUI()
         {
             gui = State.Content.Load<Texture2D>("GUI/MyngGUI");
             hpBar = State.Content.Load<Texture2D>("GUI/HPBar");
             manaBar = State.Content.Load<Texture2D>("GUI/ManaBar");
             xpBar = State.Content.Load<Texture2D>("GUI/XPBar");
+            font = State.Content.Load<SpriteFont>("Fonts/Font");
             scale = 1.5f;
             guiOrigin = new Vector2((float)gui.Width / 2, (float)gui.Height / 2);
             hpOrigin = new Vector2((float)hpBar.Width / 2, (float)hpBar.Height / 2);
             manaOrigin = new Vector2((float)manaBar.Width / 2, (float)manaBar.Height / 2);
             xpOrigin = new Vector2((float)xpBar.Width / 2, (float)xpBar.Height / 2);
         }
+        #endregion
 
+        #region Methods
         public void Draw(SpriteBatch spriteBatch)
         {
             Vector2 guiPosition = -Camera.ScreenOffset + new Vector2(40,10);
@@ -52,6 +60,18 @@ namespace Myng.Graphics
             Rectangle xpSource = new Rectangle(0, 0, (int)((xpBar.Width * Game1.Player.XP) / Game1.Player.NextLevelXP), xpBar.Height);
             spriteBatch.Draw(texture: xpBar, position: xpPosition + xpOrigin, sourceRectangle: xpSource, color: Color.White,
                    rotation: 0, origin: xpOrigin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
+
+            if (Game1.Player.Level > 9)
+            {
+                Vector2 levelTextPosition = guiPosition + new Vector2(66, 1 + 45 * scale);
+                spriteBatch.DrawString(font, Game1.Player.Level.ToString(), levelTextPosition - new Vector2(Game1.Player.Level.ToString().Length * 13, 0), Color.Black);
+            }
+            else
+            {
+                Vector2 levelTextPosition = guiPosition + new Vector2(46, 1 + 45 * scale);
+                spriteBatch.DrawString(font, Game1.Player.Level.ToString(), levelTextPosition, Color.Black);
+            }
         }
+        #endregion
     }
 }
