@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Helpers.Enums;
 using Myng.States;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace Myng.Helpers
         private TmxMap map;
 
         List<Tileset> tilesets;
+
+        private Dictionary<int, Tuple<Polygon, Collision>> CollisionPolygons = new Dictionary<int, Tuple<Polygon,Collision>>();
 
         private int screenWidthTiles;
         private int screenHeightTiles;
@@ -37,9 +40,7 @@ namespace Myng.Helpers
             {
                 return map.Height * map.Tilesets[0].TileHeight;
             }
-        }
-
-        public Dictionary<int, Polygon> CollisionPolygons = new Dictionary<int, Polygon>();
+        }        
 
         #endregion
 
@@ -80,22 +81,24 @@ namespace Myng.Helpers
                     float x = (i % map.Width) * map.TileWidth;
                     float y = (float)Math.Floor(i / (double)map.Width) * map.TileHeight;
 
+
                     TmxTilesetTile collisionTile;
                     if (currentTileset.Tiles.TryGetValue(tileFrame, out collisionTile)
                         && collisionTile.ObjectGroups.Count > 0)
                     {
+                        Collision collisionType = GetCollisionType(collisionTile);
                         switch (collisionTile.ObjectGroups[0].Objects[0].ObjectType)
                         {
                             case TmxObjectType.Polygon:
                                 if (!CollisionPolygons.ContainsKey(gid))
                                 {
-                                    AddPolygonToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid);
+                                    AddPolygonToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid, collisionType);
                                 }                                
                                 break;
                             case TmxObjectType.Basic:
                                 if (!CollisionPolygons.ContainsKey(gid))
                                 {
-                                    AddRectangleToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid);
+                                    AddRectangleToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid, collisionType);
                                 }                                
                                 break;
                         }
@@ -104,7 +107,15 @@ namespace Myng.Helpers
             }
         }
 
-        private void AddPolygonToCollisionPolygons(TmxObject tmxObject, int gid)
+        private Collision GetCollisionType(TmxTilesetTile collisionTile)
+        {
+            string collisionType;
+            if (!collisionTile.Properties.TryGetValue("Collision", out collisionType)) return Collision.Solid;
+            if (collisionType == "Water") return Collision.Water;
+            else return Collision.Solid;
+        }
+
+        private void AddPolygonToCollisionPolygons(TmxObject tmxObject, int gid, Collision collision)
         {
             var points = new Vector2[tmxObject.Points.Count];
             for (int i = 0; i < tmxObject.Points.Count; i++)
@@ -112,33 +123,37 @@ namespace Myng.Helpers
                 points[i].X = (float)(tmxObject.Points[i].X + tmxObject.X);
                 points[i].Y = (float)(tmxObject.Points[i].Y + tmxObject.Y);
             }
-            CollisionPolygons.Add(gid, new Polygon(points, new Vector2((float)tmxObject.X, (float)tmxObject.Y)));
+            Tuple<Polygon, Collision> terrainCollision = new Tuple<Polygon, Collision>(new Polygon(points, new Vector2((float)tmxObject.X, (float)tmxObject.Y)), collision);
+            CollisionPolygons.Add(gid, terrainCollision);
         }
 
-        private void AddRectangleToCollisionPolygons(TmxObject tmxObject, int gid)
+        private void AddRectangleToCollisionPolygons(TmxObject tmxObject, int gid, Collision collision)
         {
             var rectangle = new Rectangle((int)(tmxObject.X), (int)(tmxObject.Y),
                 (int)tmxObject.Width, (int)tmxObject.Height);
-            CollisionPolygons.Add(gid, new Polygon(rectangle));
+            Tuple<Polygon, Collision> terrainCollision = new Tuple<Polygon, Collision>(new Polygon(rectangle), collision);
+            CollisionPolygons.Add(gid, terrainCollision);
         }
 
-        public bool CheckCollisionWithTerrain(Polygon spritePolygon)
+        public Collision CheckCollisionWithTerrain(Polygon spritePolygon)
         {
             try
             {
-                var collision = false;
+                var collision = Collision.None;
                 foreach (var layer in map.Layers)
                 {
                     foreach (var point in spritePolygon.Points)
                     {
                         var currentTile = GetCurrentTilesGid(point, layer);
-                        if (currentTile == -1) return true;
-                        Polygon terrainPolygon;
+                        Tuple<Polygon,Collision> terrainPolygon;
                         if (CollisionPolygons.TryGetValue(currentTile, out terrainPolygon))
                         {
                             var tileOrigin = GetCurrentTileOrigin(point);
                             var polygonTileCoord = TransformPolygonToTileCoord(spritePolygon, tileOrigin);
-                            collision = polygonTileCoord.Intersects(terrainPolygon);
+                            if (polygonTileCoord.Intersects(terrainPolygon.Item1))
+                            {
+                                collision = terrainPolygon.Item2;
+                            }
                         }
                     }
                 }
@@ -146,7 +161,7 @@ namespace Myng.Helpers
             }
             catch (ArgumentOutOfRangeException) //being out of map counts as collision
             {
-                return true;
+                return Collision.Solid;
             }
         }        
 
