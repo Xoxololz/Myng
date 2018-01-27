@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,10 @@ namespace Myng.Helpers
 
         List<Tileset> tilesets;
 
+        private int screenWidthTiles;
+        private int screenHeightTiles;
+        private int leftColumn;
+        private int upperRow;
         #endregion
 
         #region Variables
@@ -49,11 +54,8 @@ namespace Myng.Helpers
                 tilesets.Add(new Tileset(tileset));
             }
 
-            //tileWidth = map.Tilesets[0].TileWidth;
-            //tileHeight = map.Tilesets[0].TileHeight;
-
-            //tilesetTilesWide = tileset.Width / tileWidth;
-            //tilesetTilesHigh = tileset.Height / tileHeight;
+            screenWidthTiles = (int)Math.Floor((float)GameState.ScreenWidth / map.Tilesets[0].TileWidth) + 10;
+            screenHeightTiles = (int)Math.Floor((float)GameState.ScreenHeight / map.Tilesets[0].TileWidth) + 10;
 
             InitCollisionPolygons();
         }
@@ -65,7 +67,7 @@ namespace Myng.Helpers
 
         private void InitCollisionPolygons()
         {
-            Tileset currentTileset;
+            Tileset currentTileset;            
 
             for (var j = 0; j < map.Layers.Count; j++)
             {
@@ -188,16 +190,18 @@ namespace Myng.Helpers
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            leftColumn = (int)Math.Floor(-Camera.ScreenOffset.X / map.Tilesets[0].TileWidth);
+            upperRow = (int)Math.Floor(-Camera.ScreenOffset.Y / map.Tilesets[0].TileHeight);
             Tileset currentTileset;
 
             for (var j = 0; j < map.Layers.Count; j++)
             {
                 for (var i = 0; i < map.Layers[j].Tiles.Count; i++)
                 {
-                    int gid = map.Layers[j].Tiles[i].Gid;
-                    currentTileset = tilesets[GetTilesetIndex(gid)];                    
-                    if (gid != 0)                   
+                    int gid = map.Layers[j].Tiles[i].Gid;                                       
+                    if (gid != 0 && TileIsOnScreen(i))                   
                     {
+                        currentTileset = tilesets[GetTilesetIndex(gid)];
                         int tileFrame = gid - currentTileset.FirstGid;
                         int column = tileFrame % currentTileset.TilesetTilesWide;
                         int row = (int)Math.Floor((double)tileFrame / currentTileset.TilesetTilesWide);
@@ -231,6 +235,16 @@ namespace Myng.Helpers
                     }
                 }
             }
+        }
+
+        private bool TileIsOnScreen(int i)
+        {
+            var column = i % map.Width;
+            var row = Math.Floor((float)i / map.Width) + 1;                        
+            return (row >= upperRow
+                && row <= upperRow + screenHeightTiles
+                && column >= leftColumn
+                && column <= leftColumn + screenWidthTiles);
         }
 
         #endregion

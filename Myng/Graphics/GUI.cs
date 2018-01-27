@@ -7,7 +7,7 @@ namespace Myng.Graphics
 {
     public class GUI
     {
-        #region Fiels
+        #region Fields
         private Texture2D gui;
         private Texture2D hpBar;
         private Texture2D manaBar;
