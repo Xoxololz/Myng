@@ -103,7 +103,7 @@ namespace Myng.Graphics
                         }
                     }
                 };
-                var animation = new AnimationSprite(fireballAnimation, animationManager.Animation.FrameOrigin);
+                var animation = new AnimationSprite(fireballAnimation, Position + Origin);
                 sprites.Add(animation);
             };
 
