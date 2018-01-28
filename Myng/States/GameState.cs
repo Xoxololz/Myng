@@ -106,18 +106,18 @@ namespace Myng.States
                 monster2
             };
 
-            Game1.Player = player;
-
-            TmxMap map = new TmxMap("Content/Maps/map3.tmx");            
-            tileMap = new TileMap(map);
-
-            MapHeight = tileMap.MapHeight;
-            MapWidth = tileMap.MapWidth;
+            Game1.Player = player;                        
 
             ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
 
             camera = new Camera(Game1.Player);
+
+            TmxMap map = new TmxMap("Content/Maps/map3.tmx");
+            tileMap = new TileMap(map);
+
+            MapHeight = tileMap.MapHeight;
+            MapWidth = tileMap.MapWidth;
 
             gui = new GUI();
 

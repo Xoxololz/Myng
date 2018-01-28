@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Helpers.Enums;
+using Myng.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,12 @@ namespace Myng.Helpers
 
         List<Tileset> tilesets;
 
+        private Dictionary<int, Tuple<Polygon, Collision>> CollisionPolygons = new Dictionary<int, Tuple<Polygon,Collision>>();
+
+        private int screenWidthTiles;
+        private int screenHeightTiles;
+        private int leftColumn;
+        private int upperRow;
         #endregion
 
         #region Variables
@@ -32,9 +40,7 @@ namespace Myng.Helpers
             {
                 return map.Height * map.Tilesets[0].TileHeight;
             }
-        }
-
-        public Dictionary<int, Polygon> CollisionPolygons = new Dictionary<int, Polygon>();
+        }        
 
         #endregion
 
@@ -49,11 +55,8 @@ namespace Myng.Helpers
                 tilesets.Add(new Tileset(tileset));
             }
 
-            //tileWidth = map.Tilesets[0].TileWidth;
-            //tileHeight = map.Tilesets[0].TileHeight;
-
-            //tilesetTilesWide = tileset.Width / tileWidth;
-            //tilesetTilesHigh = tileset.Height / tileHeight;
+            screenWidthTiles = (int)Math.Floor((float)GameState.ScreenWidth / map.Tilesets[0].TileWidth) + 10;
+            screenHeightTiles = (int)Math.Floor((float)GameState.ScreenHeight / map.Tilesets[0].TileWidth) + 10;
 
             InitCollisionPolygons();
         }
@@ -65,7 +68,7 @@ namespace Myng.Helpers
 
         private void InitCollisionPolygons()
         {
-            Tileset currentTileset;
+            Tileset currentTileset;            
 
             for (var j = 0; j < map.Layers.Count; j++)
             {
@@ -78,22 +81,24 @@ namespace Myng.Helpers
                     float x = (i % map.Width) * map.TileWidth;
                     float y = (float)Math.Floor(i / (double)map.Width) * map.TileHeight;
 
+
                     TmxTilesetTile collisionTile;
                     if (currentTileset.Tiles.TryGetValue(tileFrame, out collisionTile)
                         && collisionTile.ObjectGroups.Count > 0)
                     {
+                        Collision collisionType = GetCollisionType(collisionTile);
                         switch (collisionTile.ObjectGroups[0].Objects[0].ObjectType)
                         {
                             case TmxObjectType.Polygon:
                                 if (!CollisionPolygons.ContainsKey(gid))
                                 {
-                                    AddPolygonToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid);
+                                    AddPolygonToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid, collisionType);
                                 }                                
                                 break;
                             case TmxObjectType.Basic:
                                 if (!CollisionPolygons.ContainsKey(gid))
                                 {
-                                    AddRectangleToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid);
+                                    AddRectangleToCollisionPolygons(collisionTile.ObjectGroups[0].Objects[0], gid, collisionType);
                                 }                                
                                 break;
                         }
@@ -102,7 +107,15 @@ namespace Myng.Helpers
             }
         }
 
-        private void AddPolygonToCollisionPolygons(TmxObject tmxObject, int gid)
+        private Collision GetCollisionType(TmxTilesetTile collisionTile)
+        {
+            string collisionType;
+            if (!collisionTile.Properties.TryGetValue("Collision", out collisionType)) return Collision.Solid;
+            if (collisionType == "Water") return Collision.Water;
+            else return Collision.Solid;
+        }
+
+        private void AddPolygonToCollisionPolygons(TmxObject tmxObject, int gid, Collision collision)
         {
             var points = new Vector2[tmxObject.Points.Count];
             for (int i = 0; i < tmxObject.Points.Count; i++)
@@ -110,33 +123,37 @@ namespace Myng.Helpers
                 points[i].X = (float)(tmxObject.Points[i].X + tmxObject.X);
                 points[i].Y = (float)(tmxObject.Points[i].Y + tmxObject.Y);
             }
-            CollisionPolygons.Add(gid, new Polygon(points, new Vector2((float)tmxObject.X, (float)tmxObject.Y)));
+            Tuple<Polygon, Collision> terrainCollision = new Tuple<Polygon, Collision>(new Polygon(points, new Vector2((float)tmxObject.X, (float)tmxObject.Y)), collision);
+            CollisionPolygons.Add(gid, terrainCollision);
         }
 
-        private void AddRectangleToCollisionPolygons(TmxObject tmxObject, int gid)
+        private void AddRectangleToCollisionPolygons(TmxObject tmxObject, int gid, Collision collision)
         {
             var rectangle = new Rectangle((int)(tmxObject.X), (int)(tmxObject.Y),
                 (int)tmxObject.Width, (int)tmxObject.Height);
-            CollisionPolygons.Add(gid, new Polygon(rectangle));
+            Tuple<Polygon, Collision> terrainCollision = new Tuple<Polygon, Collision>(new Polygon(rectangle), collision);
+            CollisionPolygons.Add(gid, terrainCollision);
         }
 
-        public bool CheckCollisionWithTerrain(Polygon spritePolygon)
+        public Collision CheckCollisionWithTerrain(Polygon spritePolygon)
         {
             try
             {
-                var collision = false;
+                var collision = Collision.None;
                 foreach (var layer in map.Layers)
                 {
                     foreach (var point in spritePolygon.Points)
                     {
                         var currentTile = GetCurrentTilesGid(point, layer);
-                        if (currentTile == -1) return true;
-                        Polygon terrainPolygon;
+                        Tuple<Polygon,Collision> terrainPolygon;
                         if (CollisionPolygons.TryGetValue(currentTile, out terrainPolygon))
                         {
                             var tileOrigin = GetCurrentTileOrigin(point);
                             var polygonTileCoord = TransformPolygonToTileCoord(spritePolygon, tileOrigin);
-                            collision = polygonTileCoord.Intersects(terrainPolygon);
+                            if (polygonTileCoord.Intersects(terrainPolygon.Item1))
+                            {
+                                collision = terrainPolygon.Item2;
+                            }
                         }
                     }
                 }
@@ -144,7 +161,7 @@ namespace Myng.Helpers
             }
             catch (ArgumentOutOfRangeException) //being out of map counts as collision
             {
-                return true;
+                return Collision.Solid;
             }
         }        
 
@@ -188,16 +205,18 @@ namespace Myng.Helpers
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            leftColumn = (int)Math.Floor(-Camera.ScreenOffset.X / map.Tilesets[0].TileWidth);
+            upperRow = (int)Math.Floor(-Camera.ScreenOffset.Y / map.Tilesets[0].TileHeight);
             Tileset currentTileset;
 
             for (var j = 0; j < map.Layers.Count; j++)
             {
                 for (var i = 0; i < map.Layers[j].Tiles.Count; i++)
                 {
-                    int gid = map.Layers[j].Tiles[i].Gid;
-                    currentTileset = tilesets[GetTilesetIndex(gid)];                    
-                    if (gid != 0)                   
+                    int gid = map.Layers[j].Tiles[i].Gid;                                       
+                    if (gid != 0 && TileIsOnScreen(i))                   
                     {
+                        currentTileset = tilesets[GetTilesetIndex(gid)];
                         int tileFrame = gid - currentTileset.FirstGid;
                         int column = tileFrame % currentTileset.TilesetTilesWide;
                         int row = (int)Math.Floor((double)tileFrame / currentTileset.TilesetTilesWide);
@@ -231,6 +250,16 @@ namespace Myng.Helpers
                     }
                 }
             }
+        }
+
+        private bool TileIsOnScreen(int i)
+        {
+            var column = i % map.Width;
+            var row = Math.Floor((float)i / map.Width) + 1;                        
+            return (row >= upperRow
+                && row <= upperRow + screenHeightTiles
+                && column >= leftColumn
+                && column <= leftColumn + screenWidthTiles);
         }
 
         #endregion

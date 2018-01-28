@@ -21,6 +21,7 @@ namespace Myng.Graphics
         //point the character rotates around
         protected Vector2 origin;
 
+        protected Vector2 velocity;
         #endregion
 
         #region Properties
@@ -99,6 +100,7 @@ namespace Myng.Graphics
                 }
                 ToRemove = true;
             }
+            //TryMove();
         }
 
         public override void Draw(SpriteBatch spriteBatch)

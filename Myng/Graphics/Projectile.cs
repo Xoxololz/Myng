@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
+using Myng.Helpers.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,7 +93,7 @@ namespace Myng.Graphics
 
         private void CheckCollisionWithTerrain(TileMap tileMap)
         {
-            if (tileMap.CheckCollisionWithTerrain(CollisionPolygon))
+            if (tileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Solid)
             {
                 ToRemove = true;
             }

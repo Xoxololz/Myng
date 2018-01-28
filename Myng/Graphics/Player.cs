@@ -52,8 +52,6 @@ namespace Myng.Graphics
 
         private KeyboardState previousKey;
 
-        private Vector2 velocity;
-
         private Spell autoAttack;
 
         private float timer;
@@ -74,7 +72,7 @@ namespace Myng.Graphics
             previousKey = Keyboard.GetState();
             velocity = new Vector2(0f);
             input = new Input();
-            Scale = 2f;
+            Scale = 1.5f;
             AttackSpeed = 0.6f;
             timer = AttackSpeed;
             origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);

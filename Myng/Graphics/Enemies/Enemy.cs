@@ -25,8 +25,6 @@ namespace Myng.Graphics.Enemies
 
         protected float attackSpeed = 1f;
 
-        protected Vector2 velocity;
-
         protected float attackRange=500;
 
         protected Vector2 playerPosition;
@@ -37,7 +35,7 @@ namespace Myng.Graphics.Enemies
         public Enemy(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             InitAutoattack();
-            Scale = 2f;
+            Scale = 1.5f;
             speed = 1f;
             timer = attackSpeed;
             Faction = Faction.ENEMY;
@@ -80,7 +78,7 @@ namespace Myng.Graphics.Enemies
         {
             UpdateTimer(gameTime);
             playerPosition = Game1.Player.Position;
-            Move();
+            DetermineVelocity();
             HandleAnimation();
             animationManager.Update(gameTime);
             CastAutoattack(otherSprites);
@@ -92,7 +90,7 @@ namespace Myng.Graphics.Enemies
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
-        private void Move()
+        private void DetermineVelocity()
         {
             velocity = playerPosition - Position;
             float tolerance = 5f;
