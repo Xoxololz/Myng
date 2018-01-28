@@ -137,9 +137,9 @@ namespace Myng.Helpers
 
         public Collision CheckCollisionWithTerrain(Polygon spritePolygon)
         {
+            var collision = Collision.None;
             try
-            {
-                var collision = Collision.None;
+            {                
                 foreach (var layer in map.Layers)
                 {
                     foreach (var point in spritePolygon.Points)
@@ -156,13 +156,13 @@ namespace Myng.Helpers
                             }
                         }
                     }
-                }
-                return collision;
+                }                
             }
             catch (ArgumentOutOfRangeException) //being out of map counts as collision
             {
                 return Collision.Solid;
             }
+            return collision;
         }        
 
         private Vector2 GetCurrentTileOrigin(Vector2 point)
@@ -199,6 +199,7 @@ namespace Myng.Helpers
         {
             var row = (int)Math.Floor(position.Y / map.Tilesets[0].TileHeight) + 1;
             var column = (int)Math.Floor(position.X / map.Tilesets[0].TileWidth);
+            if (column > map.Width || column < 0) throw new ArgumentOutOfRangeException();
             var i = (row - 1) * map.Width + column;
             return layer.Tiles[i].Gid;
         }
