@@ -163,7 +163,7 @@ namespace Myng.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend);
+            spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.BackToFront, blendState: BlendState.AlphaBlend);
 
             tileMap.Draw(spriteBatch);
 

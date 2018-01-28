@@ -18,9 +18,6 @@ namespace Myng.Graphics
 
         protected int mana;
 
-        //point the character rotates around
-        protected Vector2 origin;
-
         protected Vector2 velocity;
         #endregion
 
@@ -76,14 +73,13 @@ namespace Myng.Graphics
             Health = MaxHealth;
             Mana = MaxMana;
             layer = Layers.Character;
-            origin = new Vector2(texture.Width * Scale / 2, texture.Height * Scale / 2);
         }
 
         public Character(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             Health = MaxHealth;
             Mana = MaxMana;
-            origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
+            layer = Layers.Character;
         }
 
         #endregion
@@ -108,8 +104,8 @@ namespace Myng.Graphics
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale, layer);
             else if (texture != null)
-                spriteBatch.Draw(texture: texture,position: Position,sourceRectangle: null,color: Color.White,
-                    rotation: 0,origin: origin,scale: Scale,effects: SpriteEffects.None,layerDepth: layer);
+                spriteBatch.Draw(texture: texture,position: Position + Scale*Origin,sourceRectangle: null,color: Color.White,
+                    rotation: 0,origin: Origin,scale: Scale,effects: SpriteEffects.None,layerDepth: layer);
             else throw new Exception("No texture or animation manager set for Character");
         }
 

@@ -46,29 +46,29 @@ namespace Myng.Graphics
             spriteBatch.Draw(texture: gui, position: guiPosition+scale*guiOrigin, sourceRectangle: null, color: Color.White,
                    rotation: 0, origin: guiOrigin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.Inventory);
 
-            Vector2 hpPosition = guiPosition + new Vector2(73, 8)*scale;
+            Vector2 hpPosition = guiPosition + new Vector2(73, 8) * scale;
             Rectangle hpSource = new Rectangle(0, 0, (int) ((hpBar.Width*Game1.Player.Health)/Game1.Player.MaxHealth), hpBar.Height);
-            spriteBatch.Draw(texture: hpBar, position: hpPosition + scale*hpOrigin, sourceRectangle: hpSource, color: Color.White,
+            spriteBatch.Draw(texture: hpBar, position: hpPosition + scale * hpOrigin, sourceRectangle: hpSource, color: Color.White,
                    rotation: 0, origin: hpOrigin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
 
             Vector2 manaPosition = guiPosition + new Vector2(73, 28)*scale;
             Rectangle manaSource = new Rectangle(0, 0, (int)((manaBar.Width * Game1.Player.Mana) / Game1.Player.MaxMana), manaBar.Height);
-            spriteBatch.Draw(texture: manaBar, position: manaPosition + scale*manaOrigin, sourceRectangle: manaSource, color: Color.White,
+            spriteBatch.Draw(texture: manaBar, position: manaPosition + scale * manaOrigin, sourceRectangle: manaSource, color: Color.White,
                    rotation: 0, origin: manaOrigin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
 
-            Vector2 xpPosition = guiPosition + new Vector2(73, 48) * scale;
+            Vector2 xpPosition = guiPosition + new Vector2(73, 48)*scale;
             Rectangle xpSource = new Rectangle(0, 0, (int)((xpBar.Width * Game1.Player.XP) / Game1.Player.NextLevelXP), xpBar.Height);
-            spriteBatch.Draw(texture: xpBar, position: xpPosition +scale*xpOrigin, sourceRectangle: xpSource, color: Color.White,
+            spriteBatch.Draw(texture: xpBar, position: xpPosition + scale * xpOrigin, sourceRectangle: xpSource, color: Color.White,
                    rotation: 0, origin: xpOrigin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
 
             if (Game1.Player.Level > 9)
             {
-                Vector2 levelTextPosition = guiPosition + new Vector2(54, 47)*scale;
+                Vector2 levelTextPosition = guiPosition + new Vector2(54, 47) * scale;
                 spriteBatch.DrawString(font, Game1.Player.Level.ToString(), levelTextPosition - new Vector2(6, 0), Color.Black);
             }
             else
             {
-                Vector2 levelTextPosition = guiPosition + new Vector2(54,47)*scale;
+                Vector2 levelTextPosition = guiPosition + new Vector2(54, 47) * scale;
                 spriteBatch.DrawString(font, Game1.Player.Level.ToString(), levelTextPosition, Color.Black);
             }
         }

@@ -8,6 +8,7 @@ namespace Myng.Graphics
         #region Fields
 
         private Vector2 currentFrame;
+
         private Vector2 frameOrigin;
 
         #endregion
@@ -26,14 +27,6 @@ namespace Myng.Graphics
 
         public bool IsLooping { get; set; }
 
-        public Vector2 FrameOrigin
-        {
-            get
-            {
-                return frameOrigin;
-            }
-        }
-
         public Texture2D Texture{ get; private set; }
 
         public Vector2 CurrentFrame
@@ -45,6 +38,14 @@ namespace Myng.Graphics
             set
             {
                 currentFrame = value;
+            }
+        }
+
+        public Vector2 FrameOrigin
+        {
+            get
+            {
+                return frameOrigin;
             }
         }
 

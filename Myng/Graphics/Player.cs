@@ -75,7 +75,6 @@ namespace Myng.Graphics
             Scale = 1.5f;
             AttackSpeed = 0.6f;
             timer = AttackSpeed;
-            origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
             attackDirection = new Vector2(0, -1);
             Inventory = new Inventory();
             Faction = Faction.FRIENDLY;

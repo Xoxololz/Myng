@@ -39,7 +39,7 @@ namespace Myng.Graphics
         public Projectile(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             layer = Layers.Projectile;
-            Angle = Math.Atan(Direction.Y / Direction.X);
+            Angle = Math.Atan(Direction.Y / Direction.X);            
         }
 
         #endregion
@@ -121,8 +121,8 @@ namespace Myng.Graphics
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (texture != null)
-                spriteBatch.Draw(texture: texture, position: Position, sourceRectangle: null, color: Color.White,
-                    rotation: (float)Angle, origin: CollisionPolygon.Origin - Position, scale: Scale,
+                spriteBatch.Draw(texture: texture, position: Position + Scale*Origin, sourceRectangle: null, color: Color.White,
+                    rotation: (float)Angle, origin: Origin, scale: Scale,
                     effects: SpriteEffects.None, layerDepth: 0);
             else animationManager.Draw(spriteBatch, Scale, Angle, layer);
         }
