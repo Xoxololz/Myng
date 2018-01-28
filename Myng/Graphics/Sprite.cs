@@ -120,7 +120,7 @@ namespace Myng.Graphics
         //default Draw method
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            DrawFrame(spriteBatch,0f);
+            //DrawFrame(spriteBatch);
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale,layer);
             else if (texture != null)
@@ -129,11 +129,10 @@ namespace Myng.Graphics
 
         }
 
-        protected void DrawFrame(SpriteBatch spriteBatch, float angle)
+        protected void DrawFrame(SpriteBatch spriteBatch)
         {
             Rectangle rectangle = ConvertPolygonToRectangle(CollisionPolygon);
-            spriteBatch.Draw(texture: frame, destinationRectangle: rectangle, layerDepth: Layers.AlwaysOnTop,color: Color.White
-                /*, rotation: angle,origin: CollisionPolygon.Origin - Position*/);
+            spriteBatch.Draw(texture: frame, destinationRectangle: rectangle, layerDepth: Layers.AlwaysOnTop,color: Color.White);
         }
 
         private Rectangle ConvertPolygonToRectangle(Polygon collisionPolygon)

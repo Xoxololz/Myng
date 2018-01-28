@@ -83,6 +83,7 @@ namespace Myng.Graphics
         {
             Health = MaxHealth;
             Mana = MaxMana;
+            layer = Layers.Character;
             origin = new Vector2(animations.First().Value.FrameWidth * Scale / 2, animations.First().Value.FrameHeight * Scale / 2);
         }
 
