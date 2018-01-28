@@ -79,14 +79,14 @@ namespace Myng.Graphics
         public void Draw(SpriteBatch spriteBatch, float scale, float layer)
         { 
             spriteBatch.Draw(texture: animation.Texture,
-                             position: Position,
+                             position: Position + animation.FrameOrigin,
                              sourceRectangle: new Rectangle((int)animation.CurrentFrame.X * animation.FrameWidth,
                                            (int)animation.CurrentFrame.Y * animation.FrameHeight,
                                            animation.FrameWidth,
                                            animation.FrameHeight),
                              color: Color.White,                             
                              rotation: 0f,
-                             origin: Vector2.Zero,
+                             origin: animation.FrameOrigin,
                              scale: scale,
                              effects: SpriteEffects.None,
                              layerDepth: layer);

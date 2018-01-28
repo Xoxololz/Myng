@@ -104,7 +104,7 @@ namespace Myng.Graphics
                         }
                     }
                 };
-                var animation = new AnimationSprite(fireballAnimation, CollisionPolygon.Origin);
+                var animation = new AnimationSprite(fireballAnimation, animationManager.Animation.FrameOrigin);
                 sprites.Add(animation);
             };
 
@@ -122,7 +122,7 @@ namespace Myng.Graphics
             Action<List<Sprite>> autoAttackAction = (sprites) =>
             {
                 var b = Bullet.Clone() as Projectile;
-                b.Position = animationManager.Position + new Vector2(animationManager.Animation.FrameWidth, animationManager.Animation.FrameHeight)/2;
+                b.Position = animationManager.Position + Origin - Bullet.Origin*Bullet.Scale;
 
                 b.Direction = attackDirection;
                 if (b.Direction.X < 0)

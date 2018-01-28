@@ -84,6 +84,22 @@ namespace Myng.Graphics
                     animationManager.Position = value;
             }
         }
+
+        public Vector2 Origin
+        {
+            get
+            {
+                if(texture != null)
+                {
+                    return new Vector2(texture.Width / 2, texture.Height / 2);
+                }
+                if(animationManager != null)
+                {
+                    return animationManager.Animation.FrameOrigin;
+                }
+                return Vector2.Zero;
+            }
+        }
         #endregion
 
         #region Constructors

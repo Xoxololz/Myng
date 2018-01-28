@@ -272,18 +272,6 @@
 /processorParam:TextureFormat=Color
 /build:GUI/XPBar.png
 
-#begin GUI/MyngGUI.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:GUI/MyngGUI.png
-
 #begin GUI/inventory.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -332,7 +320,7 @@
 /processorParam:TextureFormat=Color
 /build:Characters/Skeleton2.png
 
-#begin GUI/MyngGUI2.png
+#begin GUI/MyngGUI.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -342,5 +330,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:GUI/MyngGUI2.png
+/build:GUI/MyngGUI.png
 

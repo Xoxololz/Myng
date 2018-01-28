@@ -115,12 +115,11 @@ namespace Myng.Helpers
             Position.Y += 16;
             for (int i = 0; i < Items.Count; i++)
             {
-                Position.X = GameState.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2 + 36 + ( 75 * i ) 
-                    + 4;
+                Position.X = GameState.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2 + 36 + ( 75 * i ) + 4;
                 float scale = 40.0f / Items[i].Texture.Width;
-                Vector2 origin = new Vector2(Items[i].Texture.Width * scale/2 - 20, Items[i].Texture.Height * scale / 2 - 20);
+                Vector2 origin = new Vector2(Items[i].Texture.Width/2, Items[i].Texture.Height/2);
 
-                spriteBatch.Draw(texture: Items[i].Texture, position: Position, sourceRectangle: null, color: Color.White,
+                spriteBatch.Draw(texture: Items[i].Texture, position: Position + origin*scale, sourceRectangle: null, color: Color.White,
                    rotation: 0, origin: origin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
 
                 Vector2 textPosition = new Vector2(Position.X + 46, Position.Y + 26);

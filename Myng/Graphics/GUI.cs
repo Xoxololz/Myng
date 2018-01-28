@@ -26,7 +26,7 @@ namespace Myng.Graphics
         #region Constructors
         public GUI()
         {
-            gui = State.Content.Load<Texture2D>("GUI/MyngGUI2");
+            gui = State.Content.Load<Texture2D>("GUI/MyngGUI");
             hpBar = State.Content.Load<Texture2D>("GUI/HPBar");
             manaBar = State.Content.Load<Texture2D>("GUI/ManaBar");
             xpBar = State.Content.Load<Texture2D>("GUI/XPBar");
@@ -42,7 +42,7 @@ namespace Myng.Graphics
         #region Methods
         public void Draw(SpriteBatch spriteBatch)
         {
-            Vector2 guiPosition = -Camera.ScreenOffset;
+            Vector2 guiPosition = -Camera.ScreenOffset + new Vector2(10, 10);
             spriteBatch.Draw(texture: gui, position: guiPosition+scale*guiOrigin, sourceRectangle: null, color: Color.White,
                    rotation: 0, origin: guiOrigin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.Inventory);
 
