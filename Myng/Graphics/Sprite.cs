@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
+using Myng.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace Myng.Graphics
 
         protected Texture2D texture;
 
+        protected Texture2D frame;
+
         protected Vector2 position;
 
         protected float layer=0f;
@@ -30,7 +33,7 @@ namespace Myng.Graphics
         public bool ToRemove = false;
         
         // Polygon to check collisions
-        public Polygon CollisionPolygon
+        public  Polygon CollisionPolygon
         {
             get
             {
@@ -89,6 +92,7 @@ namespace Myng.Graphics
         #region Constructors
         public Sprite(Texture2D texture2D, Vector2 position)
         {
+            frame = State.Content.Load<Texture2D>("frame");
             this.texture = texture2D;
             this.Position = position;
             Scale = 1f;
@@ -97,7 +101,7 @@ namespace Myng.Graphics
         public Sprite(Dictionary<string, Animation> animations, Vector2 position)
         {
             this.animations = animations;
-            
+            frame = State.Content.Load<Texture2D>("frame");
             Scale = 1f;
             //if you are changing this, there might be trouble in Character origin, so dont do that unless it is necessary
             animationManager = new AnimationManager(animations.First().Value);
@@ -116,12 +120,30 @@ namespace Myng.Graphics
         //default Draw method
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+            DrawFrame(spriteBatch,0f);
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale,layer);
             else if (texture != null)
                 spriteBatch.Draw(texture: texture,position: Position, color: Color.White, layerDepth: layer);
             else throw new Exception("No texture or animation manager set for Sprite");
 
+        }
+
+        protected void DrawFrame(SpriteBatch spriteBatch, float angle)
+        {
+            Rectangle rectangle = ConvertPolygonToRectangle(CollisionPolygon);
+            spriteBatch.Draw(texture: frame, destinationRectangle: rectangle, layerDepth: Layers.AlwaysOnTop,color: Color.White
+                /*, rotation: angle,origin: CollisionPolygon.Origin - Position*/);
+        }
+
+        private Rectangle ConvertPolygonToRectangle(Polygon collisionPolygon)
+        {
+            var x = (int)collisionPolygon.Points[0].X;
+            var y = (int)collisionPolygon.Points[0].Y;
+            var width = (int)collisionPolygon.Points[1].X - (int)collisionPolygon.Points[0].X;
+            var height = (int)(collisionPolygon.Points[2].Y - collisionPolygon.Points[0].Y);
+            var rectangle = new Rectangle(x, y, width, height);
+            return rectangle;
         }
         #endregion
     }
