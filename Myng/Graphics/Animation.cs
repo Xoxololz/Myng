@@ -8,6 +8,7 @@ namespace Myng.Graphics
         #region Fields
 
         private Vector2 currentFrame;
+        private Vector2 frameOrigin;
 
         #endregion
 
@@ -24,6 +25,14 @@ namespace Myng.Graphics
         public int FrameWidth { get { return Texture.Width / FrameColumnCount; } }
 
         public bool IsLooping { get; set; }
+
+        public Vector2 FrameOrigin
+        {
+            get
+            {
+                return frameOrigin;
+            }
+        }
 
         public Texture2D Texture{ get; private set; }
 
@@ -51,6 +60,7 @@ namespace Myng.Graphics
             IsLooping = true;
             FrameSpeed = 0.2f;
             CurrentFrame = new Vector2(0);
+            frameOrigin = new Vector2(Texture.Width / FrameColumnCount / 2, Texture.Height / FrameRowCount / 2);
         }
 
         #endregion

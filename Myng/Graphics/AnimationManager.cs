@@ -92,17 +92,17 @@ namespace Myng.Graphics
                              layerDepth: layer);
         }
 
-        public void Draw(SpriteBatch spriteBatch, float scale, double angle, Vector2 origin, float layer)
+        public void Draw(SpriteBatch spriteBatch, float scale, double angle, float layer)
         {
             spriteBatch.Draw(animation.Texture,
-                             Position + new Vector2(Animation.FrameWidth, Animation.FrameHeight)/2,
+                             Position + animation.FrameOrigin*scale,
                              new Rectangle((int)animation.CurrentFrame.X * animation.FrameWidth,
                                            (int)animation.CurrentFrame.Y * animation.FrameHeight,
                                            animation.FrameWidth,
                                            animation.FrameHeight),
                              Color.White,
                              (float)angle,
-                             origin,
+                             animation.FrameOrigin,
                              scale,
                              SpriteEffects.None,
                              layer);
