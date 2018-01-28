@@ -24,6 +24,7 @@ namespace Myng.Graphics
 
         public AnimationSprite(Dictionary<string, Animation> animations, Vector2 position): base(animations, position)
         {
+            layer = Layers.Projectile;
         }
 
         #endregion
