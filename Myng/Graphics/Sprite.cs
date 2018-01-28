@@ -108,7 +108,7 @@ namespace Myng.Graphics
         #region Constructors
         public Sprite(Texture2D texture2D, Vector2 position)
         {
-            //frame = State.Content.Load<Texture2D>("frame");
+            frame = State.Content.Load<Texture2D>("frame");
             this.texture = texture2D;
             this.Position = position;
             Scale = 1f;
@@ -117,7 +117,7 @@ namespace Myng.Graphics
         public Sprite(Dictionary<string, Animation> animations, Vector2 position)
         {
             this.animations = animations;
-            //frame = State.Content.Load<Texture2D>("frame");
+            frame = State.Content.Load<Texture2D>("frame");
             Scale = 1f;
             //if you are changing this, there might be trouble in Character origin, so dont do that unless it is necessary
             animationManager = new AnimationManager(animations.First().Value);
@@ -136,7 +136,7 @@ namespace Myng.Graphics
         //default Draw method
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            //DrawFrame(spriteBatch);
+            DrawFrame(spriteBatch);
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale,layer);
             else if (texture != null)

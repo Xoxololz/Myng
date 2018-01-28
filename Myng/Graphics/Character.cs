@@ -101,6 +101,7 @@ namespace Myng.Graphics
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            DrawFrame(spriteBatch);
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale, layer);
             else if (texture != null)
