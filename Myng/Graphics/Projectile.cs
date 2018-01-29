@@ -120,7 +120,6 @@ namespace Myng.Graphics
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            DrawFrame(spriteBatch);
             if (texture != null)
                 spriteBatch.Draw(texture: texture, position: Position + Scale*Origin, sourceRectangle: null, color: Color.White,
                     rotation: (float)Angle, origin: Origin, scale: Scale,

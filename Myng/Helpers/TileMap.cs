@@ -199,7 +199,7 @@ namespace Myng.Helpers
         {
             var row = (int)Math.Floor(position.Y / map.Tilesets[0].TileHeight) + 1;
             var column = (int)Math.Floor(position.X / map.Tilesets[0].TileWidth);
-            if (column > map.Width || column < 0) throw new ArgumentOutOfRangeException();
+            if (column >= map.Width || column < 0) throw new ArgumentOutOfRangeException();
             var i = (row - 1) * map.Width + column;
             return layer.Tiles[i].Gid;
         }

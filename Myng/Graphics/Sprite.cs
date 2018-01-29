@@ -28,7 +28,7 @@ namespace Myng.Graphics
         #endregion
 
         #region Properties
-        public float Scale { get; set; }
+        public virtual float Scale { get; set; }
         //use this to mark sprite for removal
         public bool ToRemove = false;
         
@@ -135,8 +135,7 @@ namespace Myng.Graphics
 
         //default Draw method
         public virtual void Draw(SpriteBatch spriteBatch)
-        {
-            DrawFrame(spriteBatch);
+        {            
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale,layer);
             else if (texture != null)
