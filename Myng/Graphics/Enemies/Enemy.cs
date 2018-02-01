@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Myng.Helpers;
+using Myng.Helpers.Enums;
 
 namespace Myng.Graphics.Enemies
 {
@@ -25,7 +26,7 @@ namespace Myng.Graphics.Enemies
 
         protected float attackSpeed = 1f;
 
-        protected float attackRange=500;
+        protected float attackRange = 500;
 
         protected Vector2 playerPosition;
 
@@ -51,7 +52,7 @@ namespace Myng.Graphics.Enemies
             Action<List<Sprite>> autoAttackAction = (sprites) =>
             {
                 var b = Bullet.Clone() as Projectile;
-                b.Position = animationManager.Position + Origin - Bullet.Origin * Bullet.Scale;
+                b.Position = animationManager.Position + Origin * scale - Bullet.Origin * Bullet.Scale;
                 b.Damage = 5;
 
                 b.Direction = -(Position - (playerPosition));
@@ -78,7 +79,7 @@ namespace Myng.Graphics.Enemies
         {
             UpdateTimer(gameTime);
             playerPosition = Game1.Player.Position;
-            DetermineVelocity();
+            DetermineVelocity(hittableSprites, tileMap);
             HandleAnimation();
             animationManager.Update(gameTime);
             CastAutoattack(otherSprites);
@@ -90,7 +91,7 @@ namespace Myng.Graphics.Enemies
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
-        private void DetermineVelocity()
+        private void DetermineVelocity(List<Sprite> hittableSprites, TileMap tileMap)
         {
             velocity = playerPosition - Position;
             float tolerance = 5f;
@@ -102,24 +103,110 @@ namespace Myng.Graphics.Enemies
             {
                 velocity.Y = 0;
             }
-            if (velocity.X > 0)
+
+            if (velocity != Vector2.Zero)
             {
-                velocity.X = 1;
+                velocity.Normalize();
             }
-            else if(velocity.X<0)
-            {
-                velocity.X = -1;
-            }
-            if (velocity.Y > 0)
-            {
-                velocity.Y = 1;
-            }
-            else if (velocity.Y < 0)
-            {
-                velocity.Y = -1;
-            }
+
             velocity *= speed;
+            if (CollidesWithNewPosition(hittableSprites, tileMap))
+                DealWithCollisions(hittableSprites, tileMap);
+        }
+
+        private bool CollidesWithNewPosition(List<Sprite> hittableSprites, TileMap tileMap)
+        {
             Position += velocity;
+            if (CheckCollisions(hittableSprites, tileMap) == true)
+            {
+                Position -= velocity;
+                return true;
+            }
+            return false;
+        }
+
+        private void DealWithCollisions(List<Sprite> hittableSprites, TileMap tileMap)
+        {
+            Vector2 velocityCopy = new Vector2(velocity.X, velocity.Y);
+
+            if (Math.Abs(velocityCopy.X) > Math.Abs(velocityCopy.Y))
+            {
+                ChangeVelocity(new Vector2(velocityCopy.X, 0));
+                if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                    return;
+                else
+                {
+                    ChangeVelocity(new Vector2(0, velocityCopy.Y));
+                    if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                        return;
+                    else
+                    {
+                        ChangeVelocity(new Vector2(-velocityCopy.X, 0));
+                        if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                            return;
+                        else
+                        {
+                            ChangeVelocity(new Vector2(0, -velocityCopy.Y));
+                            if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                                return;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ChangeVelocity(new Vector2(0, velocityCopy.Y));
+                if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                    return;
+                else
+                {
+                    ChangeVelocity(new Vector2(velocityCopy.X, 0));
+                    if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                        return;
+                    else
+                    {
+                        ChangeVelocity(new Vector2(0, -velocityCopy.Y));
+                        if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                            return;
+                        else
+                        {
+                            ChangeVelocity(new Vector2(-velocityCopy.X, 0));
+                            CollidesWithNewPosition(hittableSprites, tileMap);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ChangeVelocity(Vector2 vector2)
+        {
+            velocity = vector2;
+            if (vector2 != Vector2.Zero)
+                velocity.Normalize();
+            velocity *= speed;
+        }
+
+        private bool CheckCollisions(List<Sprite> sprites, TileMap tileMap)
+        {
+            foreach (var sprite in sprites)
+            {
+                if (CheckCollision(sprite))
+                    return true;
+            }
+            if (CheckCollision(Game1.Player) || CheckCollisionWithTerrain(tileMap))
+                return true;
+            return false;
+        }
+
+        private bool CheckCollision(Sprite sprite)
+        {
+            int minDistance = 45;
+            if (Vector2.Distance(CollisionPolygon.Origin, sprite.CollisionPolygon.Origin) < minDistance)
+            {
+                if (sprite != this)
+                    return true;
+            }
+            return false;
         }
 
         private void HandleAnimation()
@@ -141,7 +228,7 @@ namespace Myng.Graphics.Enemies
         {
             autoAttack.Cast(sprites);
         }
-        
+
         #endregion
     }
 }

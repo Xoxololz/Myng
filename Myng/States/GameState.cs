@@ -75,12 +75,12 @@ namespace Myng.States
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
-            Enemy monster = new Enemy(monsterAnimations, new Vector2(200))
+            Enemy monster = new Enemy(monsterAnimations, new Vector2(250))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
-            Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(400))
+            Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(450))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(200f))
             };

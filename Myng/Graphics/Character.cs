@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Graphics.Enemies;
 using Myng.Helpers;
+using Myng.Helpers.Enums;
 using Myng.States;
 using System;
 using System.Collections.Generic;
@@ -121,7 +122,12 @@ namespace Myng.Graphics
                 }
                 ToRemove = true;
             }
-            //TryMove();
+        }
+
+        protected bool CheckCollisionWithTerrain(TileMap tileMap)
+        {
+            return tileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Solid || tileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Water;
+
         }
 
         public override void Draw(SpriteBatch spriteBatch)

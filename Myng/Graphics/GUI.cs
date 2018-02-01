@@ -53,7 +53,7 @@ namespace Myng.Graphics
             spriteBatch.Draw(texture: hpBar, position: hpPosition + scale * hpOrigin, sourceRectangle: hpSource, color: Color.White,
                    rotation: 0, origin: hpOrigin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);            
             var hpText = string.Format("{0} / {1}", Game1.Player.Health.ToString(), Game1.Player.MaxHealth.ToString());
-            Vector2 hpTextPosition = hpPosition + scale * new Vector2(hpBar.Width, hpBar.Height)/2 - textScale * font.MeasureString(hpText) / 2;
+            Vector2 hpTextPosition = Vector2.One + hpPosition + scale * new Vector2(hpBar.Width, hpBar.Height)/2 - textScale * font.MeasureString(hpText) / 2;
             spriteBatch.DrawString(spriteFont: font,text: hpText,position: hpTextPosition,color: Color.Black, rotation: 0f,
                 origin:new Vector2(0),scale: textScale,effects: SpriteEffects.None,layerDepth: Layers.AlwaysOnTop);
 
@@ -62,7 +62,7 @@ namespace Myng.Graphics
             spriteBatch.Draw(texture: manaBar, position: manaPosition + scale * manaOrigin, sourceRectangle: manaSource, color: Color.White,
                    rotation: 0, origin: manaOrigin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);            
             var manaText = string.Format("{0} / {1}", Game1.Player.Mana.ToString(), Game1.Player.MaxMana.ToString());
-            Vector2 manaTextPosition = manaPosition + scale * new Vector2(manaBar.Width, manaBar.Height) / 2 - textScale * font.MeasureString(manaText) / 2;
+            Vector2 manaTextPosition = Vector2.One + manaPosition + scale * new Vector2(manaBar.Width, manaBar.Height) / 2 - textScale * font.MeasureString(manaText) / 2;
             spriteBatch.DrawString(spriteFont: font, text: manaText, position: manaTextPosition, color: Color.Black, rotation: 0f,
                 origin: new Vector2(0), scale: textScale, effects: SpriteEffects.None, layerDepth: Layers.AlwaysOnTop);
 
@@ -71,16 +71,9 @@ namespace Myng.Graphics
             spriteBatch.Draw(texture: xpBar, position: xpPosition + scale * xpOrigin, sourceRectangle: xpSource, color: Color.White,
                    rotation: 0, origin: xpOrigin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
 
-            if (Game1.Player.Level > 9)
-            {
-                Vector2 levelTextPosition = guiPosition + new Vector2(54, 47) * scale;
-                spriteBatch.DrawString(font, Game1.Player.Level.ToString(), levelTextPosition - new Vector2(6, 0), Color.Black);
-            }
-            else
-            {
-                Vector2 levelTextPosition = guiPosition + new Vector2(54, 47) * scale;
-                spriteBatch.DrawString(font, Game1.Player.Level.ToString(), levelTextPosition, Color.Black);
-            }
+
+            Vector2 levelTextPosition = guiPosition + new Vector2(57, 54) * scale - textScale * font.MeasureString(Game1.Player.Level.ToString()) / 2;
+            spriteBatch.DrawString(font, Game1.Player.Level.ToString(), levelTextPosition, Color.Black);
         }
         #endregion
     }

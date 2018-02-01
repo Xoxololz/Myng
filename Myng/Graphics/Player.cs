@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
 using Myng.Helpers;
+using Myng.Helpers.Enums;
 using Myng.Items;
 using Myng.Items.Interfaces;
 using Myng.States;
@@ -104,7 +105,7 @@ namespace Myng.Graphics
                     }
                 };
                 var animation = new AnimationSprite(fireballAnimation, animationManager.Position);
-                animation.Position += Origin - animation.Origin * animation.Scale / 2; 
+                animation.Position += Origin*scale - animation.Origin * animation.Scale; 
                 sprites.Add(animation);
             };
 
@@ -122,7 +123,7 @@ namespace Myng.Graphics
             Action<List<Sprite>> autoAttackAction = (sprites) =>
             {
                 var b = Bullet.Clone() as Projectile;
-                b.Position = animationManager.Position + Origin - Bullet.Origin*Bullet.Scale/2;
+                b.Position = animationManager.Position + Origin*scale - Bullet.Origin*Bullet.Scale;
 
                 b.Direction = attackDirection;
                 if (b.Direction.X < 0)
@@ -169,13 +170,11 @@ namespace Myng.Graphics
                 LevelUp();
             }
 
-            Move();
+            Move(hittableSprites, tileMap);
             HandleAnimation();
             animationManager.Update(gameTime);
             UseItems(otherSprites);
             CastSpells(otherSprites);
-            Position += velocity;
-            velocity = Vector2.Zero;
             Inventory.ClearEmptyItems();
 
             foreach(Item item in Inventory.Items)
@@ -254,10 +253,8 @@ namespace Myng.Graphics
                 autoAttack.Cast(sprites);
         }
 
-        private void Move()
+        private void Move(List<Sprite> hittableSprites, TileMap tileMap)
         {
-            
-
             if (currentKey.IsKeyDown(input.Left))
             {
                 velocity.X -= 1f;
@@ -280,6 +277,32 @@ namespace Myng.Graphics
                 velocity.Normalize();
                 velocity *= speed;
             }
+
+            Position += velocity;
+            if (CheckCollisions(hittableSprites, tileMap) == true)
+                Position -= velocity;
+        }
+
+        private bool CheckCollisions(List<Sprite> sprites, TileMap tileMap)
+        {
+            foreach (var sprite in sprites)
+            {
+                if (CheckCollision(sprite))
+                    return true;
+            }
+            if (CheckCollisionWithTerrain(tileMap))
+                return true;
+            return false;
+        }
+
+        private bool CheckCollision(Sprite sprite)
+        {
+            int minDistance = 35;
+            if (Vector2.Distance(CollisionPolygon.Origin, sprite.CollisionPolygon.Origin) < minDistance)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void HandleAnimation()
@@ -294,6 +317,7 @@ namespace Myng.Graphics
             else if (velocity.Y < 0)
                 animationManager.Animation.SetRow(3); //walking up
             else animationManager.Animation.IsLooping = false;
+            velocity = Vector2.Zero;
         }
 
         #endregion

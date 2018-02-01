@@ -65,12 +65,11 @@ namespace Myng.Helpers
             }
             else
             {
-                Vector2 tmp = new Vector2
+                Origin = new Vector2
                 {
                     X = rectangle.X + rectangle.Width/2,
                     Y = rectangle.Y + rectangle.Height / 2
                 };
-                this.Origin = tmp;
             }
           
             Points = new Vector2[4];
