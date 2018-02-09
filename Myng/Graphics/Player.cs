@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
 using Myng.Helpers;
 using Myng.Helpers.Enums;
+using Myng.Helpers.SoundHandlers;
 using Myng.Items;
 using Myng.Items.Interfaces;
 using Myng.States;
@@ -123,16 +124,16 @@ namespace Myng.Graphics
             Action<List<Sprite>> autoAttackAction = (sprites) =>
             {
                 var b = Bullet.Clone() as Projectile;
-                b.Position = animationManager.Position + Origin*scale - Bullet.Origin*Bullet.Scale;
+                var bPosition = animationManager.Position + Origin*scale - Bullet.Origin*Bullet.Scale;
+               
+                double bAngle;
+                if (attackDirection.X < 0)
+                    bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
+                else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);                
 
-                b.Direction = attackDirection;
-                if (b.Direction.X < 0)
-                    b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(45);
-                else b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(225);
-                var lenght = b.Direction.Length();
-                b.Direction.X = b.Direction.X / lenght;
-                b.Direction.Y = b.Direction.Y / lenght;
-                b.Faction = this.Faction;
+                b.Initialize(bPosition, 10, attackDirection, Faction, bAngle,
+                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance());
+
                 sprites.Add(b);
             };
             Func<bool> canExecute = () =>

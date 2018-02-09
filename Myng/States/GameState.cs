@@ -7,12 +7,17 @@ using TiledSharp;
 using Myng.Helpers;
 using Myng.Items;
 using Myng.Graphics.Enemies;
+using Myng.Helpers.SoundHandlers;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Myng.States
 {
     public class GameState : State
     {
         #region Fields
+
+        private SoundEffect soundEffect;
 
         //sprites, that can be colided with (like characters, spell-shield, etc)
         private List<Sprite> hittableSprites;
@@ -25,6 +30,8 @@ namespace Myng.States
         private Camera camera;
 
         private GUI gui;
+
+        private BackgroundMusic backgroundMusic;
 
         #endregion
 
@@ -121,6 +128,12 @@ namespace Myng.States
 
             gui = new GUI();
 
+            var songs = new List<Song>
+            {
+                State.Content.Load<Song>("Sounds/NE"),
+                State.Content.Load<Song>("Sounds/RM")
+            };
+            backgroundMusic = new BackgroundMusic(songs);
         }
 
         #endregion

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Myng.Helpers;
 using Myng.Helpers.Enums;
+using Myng.Helpers.SoundHandlers;
 
 namespace Myng.Graphics.Enemies
 {
@@ -52,15 +53,17 @@ namespace Myng.Graphics.Enemies
             Action<List<Sprite>> autoAttackAction = (sprites) =>
             {
                 var b = Bullet.Clone() as Projectile;
-                b.Position = animationManager.Position + Origin * scale - Bullet.Origin * Bullet.Scale;
-                b.Damage = 5;
+                var bPosition = animationManager.Position + Origin * scale - Bullet.Origin * Bullet.Scale;
 
-                b.Direction = -(Position - (playerPosition));
-                b.Direction.Normalize();
-                if (b.Direction.X < 0)
-                    b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(45);
-                else b.Angle = Math.Atan(b.Direction.Y / b.Direction.X) + MathHelper.ToRadians(225);
-                b.Faction = this.Faction;
+                 var attackDirection= -(Position - (playerPosition));
+                double bAngle;
+                if (attackDirection.X < 0)
+                    bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
+                else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);
+
+                b.Initialize(bPosition, 5, attackDirection, Faction, bAngle,
+                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance());
+
                 sprites.Add(b);
             };
             Func<bool> canExecute = () =>

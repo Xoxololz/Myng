@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
 using Myng.Helpers.Enums;
+using Myng.Helpers.SoundHandlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +27,14 @@ namespace Myng.Graphics
         protected float timer = 0f;
         protected float lifespan = 3f;
 
+        protected SoundEffect2D flyingSound;
+        protected SoundEffect2D hitSound;
+
         #endregion
 
         #region Constructors
 
-        public Projectile(Texture2D texture2D, Vector2 position)
-            : base(texture2D, position)
+        public Projectile(Texture2D texture2D, Vector2 position): base(texture2D, position)
         {
             layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);
@@ -45,9 +49,33 @@ namespace Myng.Graphics
         #endregion
 
         #region Methods
+
+        public virtual void Initialize(Vector2 position, int damage, Vector2 direction, Faction faction, double angle
+            , SoundEffectInstance flyingSoundInstance, SoundEffectInstance hitSoundInstance)
+        {
+            Position = position;
+            Damage = damage;
+            Direction = direction;
+            Direction.Normalize();
+            Faction = faction;
+            Angle = angle;
+            flyingSound = new SoundEffect2D(flyingSoundInstance, this)
+            {
+                IsLooping = true,
+                Volume = 1f
+            };
+            hitSound = new SoundEffect2D(hitSoundInstance, this)
+            {
+                IsLooping = false,
+                Volume = 1f
+            };            
+            flyingSound.Play();
+        }
+
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
         {
             UpdateTimer(gameTime);
+            flyingSound.Update3DEffect();
             CheckLifespan();
             HandleAnimation(gameTime);
             Move();
@@ -64,6 +92,7 @@ namespace Myng.Graphics
             if (timer > lifespan)
             {
                 ToRemove = true;
+                flyingSound.Stop();
             }
         }
 
@@ -89,15 +118,7 @@ namespace Myng.Graphics
             }
             CheckCollision(Game1.Player);
             CheckCollisionWithTerrain(tileMap);
-        }
-
-        private void CheckCollisionWithTerrain(TileMap tileMap)
-        {
-            if (tileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Solid)
-            {
-                ToRemove = true;
-            }
-        }
+        }        
 
         private void CheckCollision(Sprite sprite)
         {
@@ -107,14 +128,31 @@ namespace Myng.Graphics
                 {
                     if(characerSprite.Faction != this.Faction)
                     {
+                        flyingSound.Stop();
+                        hitSound.Update3DEffect();
+                        hitSound.Play();
                         characerSprite.Health -= Damage;
                         ToRemove = true;
                     }
                 }
                 else
                 {
+                    flyingSound.Stop();
+                    hitSound.Update3DEffect();
+                    hitSound.Play();
                     ToRemove = true;
                 }
+            }
+        }
+
+        private void CheckCollisionWithTerrain(TileMap tileMap)
+        {
+            if (tileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Solid)
+            {
+                ToRemove = true;
+                flyingSound.Stop();
+                hitSound.Update3DEffect();
+                hitSound.Play();
             }
         }
 

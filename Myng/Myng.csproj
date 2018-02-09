@@ -59,6 +59,9 @@
     <Compile Include="Helpers\Enums\Faction.cs" />
     <Compile Include="Helpers\Inventory.cs" />
     <Compile Include="Helpers\Enums\Layers.cs" />
+    <Compile Include="Helpers\SoundHandlers\BackgroundMusic.cs" />
+    <Compile Include="Helpers\SoundHandlers\SoundEffect2D.cs" />
+    <Compile Include="Helpers\SoundHandlers\SoundsDepository.cs" />
     <Compile Include="Helpers\Tileset.cs" />
     <Compile Include="Items\Ring.cs" />
     <Compile Include="Items\Armor.cs" />
@@ -143,7 +146,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Content\Sounds\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -132,7 +132,7 @@ namespace Myng.Graphics
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            DrawFrame(spriteBatch);
+            //DrawFrame(spriteBatch);
             DrawHPBar(spriteBatch);
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale, layer);
