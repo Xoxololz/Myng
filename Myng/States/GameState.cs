@@ -79,8 +79,8 @@ namespace Myng.States
 
             Player player = new Player(playerAnimations, new Vector2(500f))
             {
-                Bullet = new Projectile(fireballAnimation, new Vector2(100f))
-            };
+                Bullet = new Projectile(fireballAnimation, new Vector2(100f))                
+            };            
 
             Enemy monster = new Enemy(monsterAnimations, new Vector2(250))
             {
@@ -130,8 +130,8 @@ namespace Myng.States
 
             var songs = new List<Song>
             {
-                State.Content.Load<Song>("Sounds/NE"),
-                State.Content.Load<Song>("Sounds/RM")
+                Content.Load<Song>("Sounds/NE"),
+                Content.Load<Song>("Sounds/RM")
             };
             backgroundMusic = new BackgroundMusic(songs);
         }

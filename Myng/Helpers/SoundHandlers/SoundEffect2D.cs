@@ -18,7 +18,7 @@ namespace Myng.Helpers.SoundHandlers
             {
                 var listener = new AudioListener
                 {
-                    Position = new Vector3(Game1.Player.Position, 0f)
+                    Position = new Vector3(Game1.Player.Position, 0f)/ DistanceDivider
                 };
                 return listener;
             }
@@ -30,7 +30,7 @@ namespace Myng.Helpers.SoundHandlers
             {
                 var emitter = new AudioEmitter
                 {
-                    Position = new Vector3(Parent.Position, 0f)
+                    Position = new Vector3(Parent.Position, 0f)/ DistanceDivider
                 };
                 return emitter;
             }
@@ -57,6 +57,16 @@ namespace Myng.Helpers.SoundHandlers
             }
         }
 
+        public SoundState State
+        {
+            get
+            {
+                return soundEffect.State;
+            }
+        }
+
+        public int DistanceDivider { get; set; }
+
         #endregion
 
         #region Constructor
@@ -65,6 +75,7 @@ namespace Myng.Helpers.SoundHandlers
         {
             this.soundEffect = soundEffect;
             Parent = parent;
+            DistanceDivider = 10;
         }
 
         #endregion
@@ -90,7 +101,17 @@ namespace Myng.Helpers.SoundHandlers
         public void Stop()
         {
             soundEffect.Stop();
-        }        
+        }
+
+        public void Pause()
+        {
+            soundEffect.Pause();
+        }
+
+        public void Resume()
+        {
+            soundEffect.Resume();
+        }
         #endregion
     }
 }

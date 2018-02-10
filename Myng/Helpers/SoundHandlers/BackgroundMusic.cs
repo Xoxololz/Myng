@@ -33,9 +33,9 @@ namespace Myng.Helpers.SoundHandlers
         {
             this.songs = songs;
 
-            Volume = 0.01f;
+            Volume = 0.05f;
             MediaPlayer.IsRepeating = false;
-            MediaPlayer.Play(songs[0],new TimeSpan(0,0,2,35));
+            MediaPlayer.Play(songs[0]);
             MediaPlayer.MediaStateChanged  += NextSong;
         }        
 

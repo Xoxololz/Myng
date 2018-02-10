@@ -368,3 +368,9 @@
 /processorParam:Quality=Best
 /build:Sounds/fireballFlying.wav
 
+#begin Sounds/walking.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/walking.wav
+

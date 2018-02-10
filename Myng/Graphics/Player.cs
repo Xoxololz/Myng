@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
@@ -62,7 +63,7 @@ namespace Myng.Graphics
 
         private int level;
 
-        private Vector2 attackDirection;
+        private Vector2 attackDirection;        
 
         #endregion
 
@@ -83,7 +84,7 @@ namespace Myng.Graphics
             level = 1;
             XP = 0;
             nextLevelXP = 100;
-
+            
             InitAutoattack();
             InitSpells();
         }        
@@ -256,6 +257,7 @@ namespace Myng.Graphics
 
         private void Move(List<Sprite> hittableSprites, TileMap tileMap)
         {
+            velocity = Vector2.Zero;
             if (currentKey.IsKeyDown(input.Left))
             {
                 velocity.X -= 1f;
@@ -278,11 +280,10 @@ namespace Myng.Graphics
                 velocity.Normalize();
                 velocity *= speed;
             }
-
             Position += velocity;
             if (CheckCollisions(hittableSprites, tileMap) == true)
                 Position -= velocity;
-        }
+        }        
 
         private bool CheckCollisions(List<Sprite> sprites, TileMap tileMap)
         {
@@ -318,7 +319,7 @@ namespace Myng.Graphics
             else if (velocity.Y < 0)
                 animationManager.Animation.SetRow(3); //walking up
             else animationManager.Animation.IsLooping = false;
-            velocity = Vector2.Zero;
+            
         }
 
         #endregion

@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Graphics.Enemies;
 using Myng.Helpers;
 using Myng.Helpers.Enums;
+using Myng.Helpers.SoundHandlers;
 using Myng.States;
 using System;
 using System.Collections.Generic;
@@ -27,6 +29,8 @@ namespace Myng.Graphics
         protected Texture2D hpBar;
 
         protected float scale;
+
+        protected SoundEffect2D walkingSound;
         #endregion
 
         #region Properties
@@ -109,11 +113,17 @@ namespace Myng.Graphics
             Health = MaxHealth;
             Mana = MaxMana;
             layer = Layers.Character;            
-            hpBar = State.Content.Load<Texture2D>("GUI/HPBar");            
+            hpBar = State.Content.Load<Texture2D>("GUI/HPBar");
+            walkingSound = new SoundEffect2D(SoundsDepository.walking.CreateInstance(), this);
+            walkingSound.Volume = 0.3f;
+            walkingSound.IsLooping = true;
+            walkingSound.DistanceDivider = 20;
         }
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
         {
+            HandleWalkingSound();
+
             if (Health <= 0)
             {
                 if(this is Enemy enemy)
@@ -121,6 +131,31 @@ namespace Myng.Graphics
                     Game1.Player.XP += enemy.XPDrop;
                 }
                 ToRemove = true;
+            }
+        }
+
+        private void HandleWalkingSound()
+        {
+            walkingSound.Update3DEffect();
+            if(velocity != Vector2.Zero)
+            {
+                PlayWalkingSound();
+            }
+            else
+            {
+                walkingSound.Pause();
+            }
+        }
+
+        private void PlayWalkingSound()
+        {
+            if (walkingSound.State == SoundState.Paused)
+            {
+                walkingSound.Resume();
+            }
+            else if (walkingSound.State == SoundState.Stopped)
+            {
+                walkingSound.Play();
             }
         }
 

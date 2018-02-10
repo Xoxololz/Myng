@@ -62,7 +62,7 @@ namespace Myng.Graphics
             flyingSound = new SoundEffect2D(flyingSoundInstance, this)
             {
                 IsLooping = true,
-                Volume = 1f
+                Volume = 0.9f
             };
             hitSound = new SoundEffect2D(hitSoundInstance, this)
             {
