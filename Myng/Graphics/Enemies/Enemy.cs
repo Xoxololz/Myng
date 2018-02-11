@@ -53,7 +53,7 @@ namespace Myng.Graphics.Enemies
             Action<List<Sprite>> autoAttackAction = (sprites) =>
             {
                 var b = Bullet.Clone() as Projectile;
-                var bPosition = animationManager.Position + Origin * scale - Bullet.Origin * Bullet.Scale;
+                var bPosition = GlobalOrigin - Bullet.Origin * Bullet.Scale;
 
                  var attackDirection= -(Position - (playerPosition));
                 double bAngle;

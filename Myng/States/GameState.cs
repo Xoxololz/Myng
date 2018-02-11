@@ -130,6 +130,7 @@ namespace Myng.States
 
             var songs = new List<Song>
             {
+                Content.Load<Song>("Sounds/LYbeat"),
                 Content.Load<Song>("Sounds/NE"),
                 Content.Load<Song>("Sounds/RM")
             };

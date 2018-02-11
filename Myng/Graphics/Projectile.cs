@@ -62,12 +62,12 @@ namespace Myng.Graphics
             flyingSound = new SoundEffect2D(flyingSoundInstance, this)
             {
                 IsLooping = true,
-                Volume = 0.9f
+                Volume = 0.4f
             };
             hitSound = new SoundEffect2D(hitSoundInstance, this)
             {
                 IsLooping = false,
-                Volume = 1f
+                Volume = 0.5f
             };            
             flyingSound.Play();
         }
@@ -159,7 +159,7 @@ namespace Myng.Graphics
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (texture != null)
-                spriteBatch.Draw(texture: texture, position: Position + Scale*Origin, sourceRectangle: null, color: Color.White,
+                spriteBatch.Draw(texture: texture, position: GlobalOrigin, sourceRectangle: null, color: Color.White,
                     rotation: (float)Angle, origin: Origin, scale: Scale,
                     effects: SpriteEffects.None, layerDepth: 0);
             else animationManager.Draw(spriteBatch, Scale, Angle, layer);

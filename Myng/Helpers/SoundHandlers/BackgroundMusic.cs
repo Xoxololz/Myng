@@ -33,7 +33,7 @@ namespace Myng.Helpers.SoundHandlers
         {
             this.songs = songs;
 
-            Volume = 0.05f;
+            Volume = 0.2f;
             MediaPlayer.IsRepeating = false;
             MediaPlayer.Play(songs[0]);
             MediaPlayer.MediaStateChanged  += NextSong;

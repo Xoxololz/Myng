@@ -374,3 +374,9 @@
 /processorParam:Quality=Best
 /build:Sounds/walking.wav
 
+#begin Sounds/LYbeat.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/LYbeat.mp3
+
