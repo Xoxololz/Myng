@@ -102,6 +102,11 @@
     <Content Include="Content\Characters\White_Male.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Sounds\explosion.wav" />
+    <Content Include="Content\Sounds\fireballFlying.wav" />
+    <Content Include="Content\Sounds\NE.mp3" />
+    <Content Include="Content\Sounds\RM.mp3" />
+    <Content Include="Content\Sounds\walking.wav" />
     <Content Include="Content\Weapons\scythe.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
@@ -146,9 +151,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\Sounds\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

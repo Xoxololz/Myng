@@ -374,3 +374,9 @@
 /processorParam:Quality=Best
 /build:Sounds/walking.wav
 
+#begin Sounds/backgroundMusic1.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/backgroundMusic1.wav
+
