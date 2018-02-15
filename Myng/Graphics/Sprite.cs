@@ -103,6 +103,14 @@ namespace Myng.Graphics
                 return Vector2.Zero;
             }
         }
+
+        public Vector2 GlobalOrigin
+        {
+            get
+            {
+                return Position + Origin * Scale;
+            }
+        }
         #endregion
 
         #region Constructors

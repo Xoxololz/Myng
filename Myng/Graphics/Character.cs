@@ -172,7 +172,7 @@ namespace Myng.Graphics
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale, layer);
             else if (texture != null)
-                spriteBatch.Draw(texture: texture,position: Position + Scale*Origin,sourceRectangle: null,color: Color.White,
+                spriteBatch.Draw(texture: texture,position: GlobalOrigin,sourceRectangle: null,color: Color.White,
                     rotation: 0,origin: Origin,scale: Scale,effects: SpriteEffects.None,layerDepth: layer);
             else throw new Exception("No texture or animation manager set for Character");
         }
