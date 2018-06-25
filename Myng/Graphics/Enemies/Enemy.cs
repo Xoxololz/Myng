@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Myng.Helpers;
-using Myng.Helpers.Enums;
 using Myng.Helpers.SoundHandlers;
+using Myng.AI.Movement;
 
 namespace Myng.Graphics.Enemies
 {
@@ -31,10 +31,12 @@ namespace Myng.Graphics.Enemies
 
         protected Vector2 playerPosition;
 
+        protected MovementAI movementAI;
+
         #endregion
 
         #region Constructors
-        public Enemy(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
+        public Enemy(Dictionary<string, Animation> animations, Vector2 position, TileMap tileMap) : base(animations, position)
         {
             InitAutoattack();
             Scale = 1.5f;
@@ -42,6 +44,8 @@ namespace Myng.Graphics.Enemies
             timer = attackSpeed;
             Faction = Faction.ENEMY;
             XPDrop = 10;
+            movementAI = new MovementAI(tileMap, CollisionPolygon, this);
+            movementAI.SetGoalDestination(new Vector2(3148,Position.Y));
         }
 
         #endregion
@@ -72,7 +76,7 @@ namespace Myng.Graphics.Enemies
                 var coolDown = timer > attackSpeed;
                 if (coolDown)
                     timer = 0;
-                return AutoattackRange && coolDown;
+                return AutoattackRange && coolDown;                
             };
 
             autoAttack = new Spell(autoAttackAction, canExecute, 0);
@@ -83,6 +87,11 @@ namespace Myng.Graphics.Enemies
             UpdateTimer(gameTime);
             playerPosition = Game1.Player.Position;
             DetermineVelocity(hittableSprites, tileMap);
+            if (velocity == Vector2.Zero)
+            {
+                movementAI.SetGoalDestination(new Vector2(1, Position.Y));
+            }
+
             HandleAnimation();
             animationManager.Update(gameTime);
             CastAutoattack(otherSprites);
@@ -96,22 +105,7 @@ namespace Myng.Graphics.Enemies
 
         private void DetermineVelocity(List<Sprite> hittableSprites, TileMap tileMap)
         {
-            velocity = playerPosition - Position;
-            float tolerance = 5f;
-            if (Math.Abs(velocity.X) < tolerance)
-            {
-                velocity.X = 0;
-            }
-            if (Math.Abs(velocity.Y) < tolerance)
-            {
-                velocity.Y = 0;
-            }
-
-            if (velocity != Vector2.Zero)
-            {
-                velocity.Normalize();
-            }
-
+            velocity = movementAI.GetVelocity();
             velocity *= speed;
             if (CollidesWithNewPosition(hittableSprites, tileMap))
                 DealWithCollisions(hittableSprites, tileMap);
@@ -193,11 +187,18 @@ namespace Myng.Graphics.Enemies
         {
             foreach (var sprite in sprites)
             {
-                if (CheckCollision(sprite))
-                    return true;
+                //TODO: somehow handle AIs crashing into each other
+                //if (CheckCollision(sprite))
+                //{
+                //    //movementAI.RecalculatePath();
+                //    return true;
+                //}
             }
-            if (CheckCollision(Game1.Player) || CheckCollisionWithTerrain(tileMap))
+            if (CheckCollision(Game1.Player))
+            {
                 return true;
+            }
+
             return false;
         }
 

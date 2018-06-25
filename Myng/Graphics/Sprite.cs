@@ -25,10 +25,24 @@ namespace Myng.Graphics
         protected float layer=0f;
 
         protected Polygon collisionPolygon;
+
+        protected float scale = 1;
         #endregion
 
         #region Properties
-        public virtual float Scale { get; set; }
+        public virtual float Scale
+        {
+            get
+            {
+                return scale;
+            }
+            set
+            {
+                if (collisionPolygon != null)
+                    collisionPolygon.Scale(value / scale);
+                scale = value;
+            }
+        }
         //use this to mark sprite for removal
         public bool ToRemove = false;
         
@@ -85,6 +99,8 @@ namespace Myng.Graphics
                 position = value;
                 if (animationManager != null)
                     animationManager.Position = value;
+                if (collisionPolygon != null)
+                    collisionPolygon.MoveTo(value);
             }
         }
 
@@ -152,6 +168,7 @@ namespace Myng.Graphics
 
         }
 
+        //method just for debugging to see the frame around sprites
         protected void DrawFrame(SpriteBatch spriteBatch)
         {
             Rectangle rectangle = ConvertPolygonToRectangle(CollisionPolygon);
@@ -160,10 +177,10 @@ namespace Myng.Graphics
 
         private Rectangle ConvertPolygonToRectangle(Polygon collisionPolygon)
         {
-            var x = (int)collisionPolygon.Points[0].X;
-            var y = (int)collisionPolygon.Points[0].Y;
-            var width = (int)collisionPolygon.Points[1].X - (int)collisionPolygon.Points[0].X;
-            var height = (int)(collisionPolygon.Points[2].Y - collisionPolygon.Points[0].Y);
+            var x = (int)collisionPolygon.Vertices[0].X;
+            var y = (int)collisionPolygon.Vertices[0].Y;
+            var width = (int)collisionPolygon.Vertices[1].X - (int)collisionPolygon.Vertices[0].X;
+            var height = (int)(collisionPolygon.Vertices[2].Y - collisionPolygon.Vertices[0].Y);
             var rectangle = new Rectangle(x, y, width, height);
             return rectangle;
         }

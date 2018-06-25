@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Myng.AI.Movement;
 using Myng.Graphics;
 using Myng.States;
 using System.Collections.Generic;
@@ -29,8 +30,7 @@ namespace Myng
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            this.IsMouseVisible = false;
-
+            this.IsMouseVisible = false;            
         }
 
         /// <summary>

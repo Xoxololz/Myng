@@ -42,6 +42,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AI\Movement\MovementAI.cs" />
+    <Compile Include="AI\Movement\Node.cs" />
+    <Compile Include="AI\Movement\NodeMap.cs" />
+    <Compile Include="AI\Movement\NodeMapRepository.cs" />
+    <Compile Include="AI\Movement\PathFinder.cs" />
     <Compile Include="Controller\Input.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Graphics\AnimationManager.cs" />
@@ -59,6 +64,7 @@
     <Compile Include="Helpers\Enums\Faction.cs" />
     <Compile Include="Helpers\Inventory.cs" />
     <Compile Include="Helpers\Enums\Layers.cs" />
+    <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\SoundHandlers\BackgroundMusic.cs" />
     <Compile Include="Helpers\SoundHandlers\SoundEffect2D.cs" />
     <Compile Include="Helpers\SoundHandlers\SoundsDepository.cs" />

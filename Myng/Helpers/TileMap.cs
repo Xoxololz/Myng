@@ -4,7 +4,6 @@ using Myng.Helpers.Enums;
 using Myng.States;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TiledSharp;
 
 namespace Myng.Helpers
@@ -20,10 +19,11 @@ namespace Myng.Helpers
 
         private Dictionary<int, Tuple<Polygon, Collision>> CollisionPolygons = new Dictionary<int, Tuple<Polygon,Collision>>();
 
-        private int screenWidthTiles;
-        private int screenHeightTiles;
         private int leftColumn;
         private int upperRow;
+
+        private int screenWidthTiles;
+        private int screenHeightTiles;
         #endregion
 
         #region Variables
@@ -42,6 +42,25 @@ namespace Myng.Helpers
             }
         }        
 
+        public int MapWidthTiles { get; private set; }
+
+        public int MapHeightTiles { get; private set; }
+
+        public int TileHeight
+        {
+            get
+            {
+                return tilesets[0].TileHeight;
+            }
+        }
+
+        public int TileWidth
+        {
+            get
+            {
+                return tilesets[0].TileWidth;
+            }
+        }
         #endregion
 
         #region Constructor
@@ -59,6 +78,9 @@ namespace Myng.Helpers
             screenHeightTiles = (int)Math.Floor((float)GameState.ScreenHeight / map.Tilesets[0].TileWidth) + 10;
 
             InitCollisionPolygons();
+
+            MapHeightTiles = map.Height;
+            MapWidthTiles = map.Width;
         }
 
         #endregion
@@ -138,15 +160,15 @@ namespace Myng.Helpers
         public Collision CheckCollisionWithTerrain(Polygon spritePolygon)
         {
             var collision = Collision.None;
+            
             try
-            {                
+            {
                 foreach (var layer in map.Layers)
                 {
-                    foreach (var point in spritePolygon.Points)
+                    foreach (var point in spritePolygon.Vertices)
                     {
                         var currentTile = GetCurrentTilesGid(point, layer);
-                        Tuple<Polygon,Collision> terrainPolygon;
-                        if (CollisionPolygons.TryGetValue(currentTile, out terrainPolygon))
+                        if (CollisionPolygons.TryGetValue(currentTile, out Tuple<Polygon, Collision> terrainPolygon))
                         {
                             var tileOrigin = GetCurrentTileOrigin(point);
                             var polygonTileCoord = TransformPolygonToTileCoord(spritePolygon, tileOrigin);
@@ -163,7 +185,7 @@ namespace Myng.Helpers
                 return Collision.Solid;
             }
             return collision;
-        }        
+        }                
 
         private Vector2 GetCurrentTileOrigin(Vector2 point)
         {
@@ -175,11 +197,11 @@ namespace Myng.Helpers
 
         private Polygon TransformPolygonToTileCoord(Polygon polygon, Vector2 tileOrigin)
         {
-            Vector2[] points = new Vector2[polygon.Points.Length];
+            Vector2[] points = new Vector2[polygon.Vertices.Length];
             var origin = polygon.Origin;
-            for (int i = 0; i < polygon.Points.Length; i++)            
+            for (int i = 0; i < polygon.Vertices.Length; i++)            
             {
-                points[i] =polygon.Points[i] - tileOrigin;
+                points[i] =polygon.Vertices[i] - tileOrigin;
             }
             return new Polygon(points, origin);
         }

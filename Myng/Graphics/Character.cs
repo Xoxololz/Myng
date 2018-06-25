@@ -8,7 +8,6 @@ using Myng.Helpers.SoundHandlers;
 using Myng.States;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Myng.Graphics
 {
@@ -27,8 +26,6 @@ namespace Myng.Graphics
         protected float hpScale;
 
         protected Texture2D hpBar;
-
-        protected float scale;
 
         protected SoundEffect2D walkingSound;
         #endregion
@@ -83,8 +80,8 @@ namespace Myng.Graphics
             }
             set
             {
-                hpScale *= value/scale;
-                scale = value;                
+                hpScale *= value / scale;
+                base.Scale = value;                                
             }
         }
 
@@ -96,12 +93,20 @@ namespace Myng.Graphics
             : base(texture2D, position)
         {
             InitProperties();
+            collisionPolygon = new Polygon(new Rectangle((int)Position.X,
+                      (int)Position.Y,
+                      (int)(texture.Width * Scale),
+                      (int)(texture.Height * Scale)));
             hpScale = (texture.Width * Scale) / hpBar.Width;            
         }
 
         public Character(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             InitProperties();
+            collisionPolygon = new Polygon(new Rectangle((int)Position.X,
+                      (int)Position.Y,
+                      (int)(animationManager.Animation.FrameWidth * Scale),
+                      (int)(animationManager.Animation.FrameHeight * Scale)));
             hpScale = (animationManager.Animation.FrameWidth * Scale) / hpBar.Width ;
         }
 

@@ -10,6 +10,7 @@ using Myng.Graphics.Enemies;
 using Myng.Helpers.SoundHandlers;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
+using Myng.AI.Movement;
 
 namespace Myng.States
 {
@@ -48,6 +49,12 @@ namespace Myng.States
 
         public GameState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
+            ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;            
+
+            TmxMap map = new TmxMap("Content/Maps/map3.tmx");
+            tileMap = new TileMap(map);
+
             var monsterAnimations = new Dictionary<string, Animation>()
             {
                 { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
@@ -77,20 +84,20 @@ namespace Myng.States
                 { "walking", new Animation(Content.Load<Texture2D>("Characters/White_Male"), 4, 3) }
             };
 
-            Player player = new Player(playerAnimations, new Vector2(500f))
+            Player player = new Player(playerAnimations, new Vector2(3050,700))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))                
             };            
 
-            Enemy monster = new Enemy(monsterAnimations, new Vector2(250))
+            Enemy monster = new Enemy(monsterAnimations, new Vector2(3050,700), tileMap)
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
-            Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(450))
-            {
-                Bullet = new Projectile(fireballAnimation, new Vector2(200f))
-            };
+            //Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(100), tileMap)
+            //{
+            //    Bullet = new Projectile(fireballAnimation, new Vector2(200f))
+            //};
 
             otherSprites = new List<Sprite>
             {
@@ -109,19 +116,26 @@ namespace Myng.States
 
             hittableSprites = new List<Sprite>
             {
-                monster,
-                monster2
+                //monster
+                //monster2
             };
+            for (int i = 240; i < 1500; i += 150)
+            {
+                var monsterAnimations3 = new Dictionary<string, Animation>()
+                {
+                    { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
+                };
 
-            Game1.Player = player;                        
+                Enemy monster3 = new Enemy(monsterAnimations3, new Vector2(1, i), tileMap)
+                {
+                    Bullet = new Projectile(fireballAnimation, new Vector2(100f))
+                };
 
-            ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                hittableSprites.Add(monster3);
+            }
+            Game1.Player = player;
 
             camera = new Camera(Game1.Player);
-
-            TmxMap map = new TmxMap("Content/Maps/map3.tmx");
-            tileMap = new TileMap(map);
 
             MapHeight = tileMap.MapHeight;
             MapWidth = tileMap.MapWidth;
@@ -134,7 +148,7 @@ namespace Myng.States
                 Content.Load<Song>("Sounds/NE"),
                 Content.Load<Song>("Sounds/RM")
             };
-            backgroundMusic = new BackgroundMusic(songs);
+            //backgroundMusic = new BackgroundMusic(songs);
         }
 
         #endregion
@@ -145,6 +159,8 @@ namespace Myng.States
         {
             //update Player
             Game1.Player.Update(gameTime, otherSprites, hittableSprites, tileMap);
+
+            NodeMapRepository.Update(hittableSprites);
 
             //update all sprites
             foreach (var sprite in hittableSprites.ToArray())
