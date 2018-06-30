@@ -92,21 +92,13 @@ namespace Myng.Graphics
         public Character(Texture2D texture2D, Vector2 position)
             : base(texture2D, position)
         {
-            InitProperties();
-            collisionPolygon = new Polygon(new Rectangle((int)Position.X,
-                      (int)Position.Y,
-                      (int)(texture.Width * Scale),
-                      (int)(texture.Height * Scale)));
+            InitProperties();            
             hpScale = (texture.Width * Scale) / hpBar.Width;            
         }
 
         public Character(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
-            InitProperties();
-            collisionPolygon = new Polygon(new Rectangle((int)Position.X,
-                      (int)Position.Y,
-                      (int)(animationManager.Animation.FrameWidth * Scale),
-                      (int)(animationManager.Animation.FrameHeight * Scale)));
+            InitProperties();            
             hpScale = (animationManager.Animation.FrameWidth * Scale) / hpBar.Width ;
         }
 
@@ -125,7 +117,7 @@ namespace Myng.Graphics
             walkingSound.DistanceDivider = 20;
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             HandleWalkingSound();
 
@@ -164,15 +156,16 @@ namespace Myng.Graphics
             }
         }
 
-        protected bool CheckCollisionWithTerrain(TileMap tileMap)
+        protected bool CheckCollisionWithTerrain()
         {
-            return tileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Solid || tileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Water;
+            return GameState.TileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Solid
+                || GameState.TileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Water;
 
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            //DrawFrame(spriteBatch);
+            DrawFrame(spriteBatch);
             DrawHPBar(spriteBatch);
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale, layer);

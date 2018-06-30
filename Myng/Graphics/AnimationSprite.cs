@@ -31,7 +31,7 @@ namespace Myng.Graphics
 
         #region Methods
 
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 

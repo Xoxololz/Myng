@@ -24,9 +24,7 @@ namespace Myng.States
         private List<Sprite> hittableSprites;
 
         //sprites, that don't collide with each other (items, projectile, spells, etc)
-        private List<Sprite> otherSprites;
-
-        private TileMap tileMap;
+        private List<Sprite> otherSprites;        
 
         private Camera camera;
 
@@ -40,8 +38,8 @@ namespace Myng.States
 
         public static int ScreenHeight;
         public static int ScreenWidth;
-        public static int MapHeight;
-        public static int MapWidth;
+
+        public static TileMap TileMap { get; private set; }
 
         #endregion
 
@@ -53,7 +51,7 @@ namespace Myng.States
             ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;            
 
             TmxMap map = new TmxMap("Content/Maps/map3.tmx");
-            tileMap = new TileMap(map);
+            TileMap = new TileMap(map);
 
             var monsterAnimations = new Dictionary<string, Animation>()
             {
@@ -89,7 +87,7 @@ namespace Myng.States
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))                
             };            
 
-            Enemy monster = new Enemy(monsterAnimations, new Vector2(3050,700), tileMap)
+            Enemy monster = new Enemy(monsterAnimations, new Vector2(3050,700))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
@@ -126,7 +124,7 @@ namespace Myng.States
                     { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
                 };
 
-                Enemy monster3 = new Enemy(monsterAnimations3, new Vector2(1, i), tileMap)
+                Enemy monster3 = new Enemy(monsterAnimations3, new Vector2(1, i))
                 {
                     Bullet = new Projectile(fireballAnimation, new Vector2(100f))
                 };
@@ -136,9 +134,6 @@ namespace Myng.States
             Game1.Player = player;
 
             camera = new Camera(Game1.Player);
-
-            MapHeight = tileMap.MapHeight;
-            MapWidth = tileMap.MapWidth;
 
             gui = new GUI();
 
@@ -158,16 +153,16 @@ namespace Myng.States
         public override void Update(GameTime gameTime)
         {
             //update Player
-            Game1.Player.Update(gameTime, otherSprites, hittableSprites, tileMap);
+            Game1.Player.Update(gameTime, otherSprites, hittableSprites);
 
             NodeMapRepository.Update(hittableSprites);
 
             //update all sprites
             foreach (var sprite in hittableSprites.ToArray())
-                sprite.Update(gameTime, otherSprites, hittableSprites, tileMap);
+                sprite.Update(gameTime, otherSprites, hittableSprites);
 
             foreach (var sprite in otherSprites.ToArray())
-                sprite.Update(gameTime, otherSprites, hittableSprites, tileMap);
+                sprite.Update(gameTime, otherSprites, hittableSprites);
 
             camera.Focus();
 
@@ -195,7 +190,7 @@ namespace Myng.States
         {
             spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.BackToFront, blendState: BlendState.AlphaBlend);
 
-            tileMap.Draw(spriteBatch);
+            TileMap.Draw(spriteBatch);
 
             Game1.Player.Draw(spriteBatch);
             Game1.Player.Inventory.Draw(spriteBatch);

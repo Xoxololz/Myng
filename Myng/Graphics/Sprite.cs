@@ -136,6 +136,10 @@ namespace Myng.Graphics
             this.texture = texture2D;
             this.Position = position;
             Scale = 1f;
+            collisionPolygon = new Polygon(new Rectangle((int)Position.X,
+                      (int)Position.Y,
+                      (int)(texture.Width * Scale),
+                      (int)(texture.Height * Scale)));
         }
 
         public Sprite(Dictionary<string, Animation> animations, Vector2 position)
@@ -146,13 +150,17 @@ namespace Myng.Graphics
             //if you are changing this, there might be trouble in Character origin, so dont do that unless it is necessary
             animationManager = new AnimationManager(animations.First().Value);
             this.Position = position;
+            collisionPolygon = new Polygon(new Rectangle((int)Position.X,
+                      (int)Position.Y,
+                      (int)(animationManager.Animation.FrameWidth * Scale),
+                      (int)(animationManager.Animation.FrameHeight * Scale)));
         }
         #endregion
 
         #region Methods
         //this method will take care of pretty much everything thats happening
         //should be overridden in every child class (unless the child has no functionality whatsoever)
-        public virtual void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
+        public virtual void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
 
         }

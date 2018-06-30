@@ -28,7 +28,7 @@ namespace Myng.Helpers
         /// </summary>
         public Vector2[] Vertices { get; private set; }
         /// <summary>
-        /// points that needs to be checked for collision
+        /// points that needs to be checked for collision with terrain
         /// </summary>
         public Vector2[] CollisionPoints
         {

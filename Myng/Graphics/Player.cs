@@ -155,7 +155,7 @@ namespace Myng.Graphics
             nextLevelXP = (int) (100 * Math.Pow(1.25, level));
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
@@ -172,7 +172,7 @@ namespace Myng.Graphics
                 LevelUp();
             }
 
-            Move(hittableSprites, tileMap);
+            Move(hittableSprites);
             HandleAnimation();
             animationManager.Update(gameTime);
             UseItems(otherSprites);
@@ -184,7 +184,7 @@ namespace Myng.Graphics
                 if (item is IUpdatable)
                     ((IUpdatable)item).Update(otherSprites);
             }
-            base.Update(gameTime, otherSprites, hittableSprites, tileMap);
+            base.Update(gameTime, otherSprites, hittableSprites);
         }
 
         private void UseItem(List<Sprite> sprites, int position)
@@ -255,7 +255,7 @@ namespace Myng.Graphics
                 autoAttack.Cast(sprites);
         }
 
-        private void Move(List<Sprite> hittableSprites, TileMap tileMap)
+        private void Move(List<Sprite> hittableSprites)
         {
             velocity = Vector2.Zero;
             if (currentKey.IsKeyDown(input.Left))
@@ -281,18 +281,18 @@ namespace Myng.Graphics
                 velocity *= speed;
             }
             Position += velocity;
-            if (CheckCollisions(hittableSprites, tileMap) == true)
+            if (CheckCollisions(hittableSprites) == true)
                 Position -= velocity;
         }        
 
-        private bool CheckCollisions(List<Sprite> sprites, TileMap tileMap)
+        private bool CheckCollisions(List<Sprite> sprites)
         {
             foreach (var sprite in sprites)
             {
                 if (CheckCollision(sprite))
                     return true;
             }
-            if (CheckCollisionWithTerrain(tileMap))
+            if (CheckCollisionWithTerrain())
                 return true;
             return false;
         }

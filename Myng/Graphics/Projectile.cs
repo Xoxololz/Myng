@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
 using Myng.Helpers.Enums;
 using Myng.Helpers.SoundHandlers;
+using Myng.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,14 +73,14 @@ namespace Myng.Graphics
             flyingSound.Play();
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             UpdateTimer(gameTime);
             flyingSound.Update3DEffect();
             CheckLifespan();
             HandleAnimation(gameTime);
             Move();
-            CheckCollisions(hittableSprites, tileMap);
+            CheckCollisions(hittableSprites);
         }
 
         private void UpdateTimer(GameTime gameTime)
@@ -110,14 +111,14 @@ namespace Myng.Graphics
             CollisionPolygon.Translate(Direction * Speed);
         }
 
-        private void CheckCollisions(List<Sprite> sprites, TileMap tileMap)
+        private void CheckCollisions(List<Sprite> sprites)
         {
             foreach (var sprite in sprites)
             {
                 CheckCollision(sprite);
             }
             CheckCollision(Game1.Player);
-            CheckCollisionWithTerrain(tileMap);
+            CheckCollisionWithTerrain();
         }        
 
         private void CheckCollision(Sprite sprite)
@@ -145,9 +146,9 @@ namespace Myng.Graphics
             }
         }
 
-        private void CheckCollisionWithTerrain(TileMap tileMap)
+        private void CheckCollisionWithTerrain()
         {
-            if (tileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Solid)
+            if (GameState.TileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Solid)
             {
                 ToRemove = true;
                 flyingSound.Stop();

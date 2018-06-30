@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Myng.Helpers;
 using Myng.Helpers.SoundHandlers;
 using Myng.AI.Movement;
+using Myng.States;
 
 namespace Myng.Graphics.Enemies
 {
@@ -36,7 +37,7 @@ namespace Myng.Graphics.Enemies
         #endregion
 
         #region Constructors
-        public Enemy(Dictionary<string, Animation> animations, Vector2 position, TileMap tileMap) : base(animations, position)
+        public Enemy(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             InitAutoattack();
             Scale = 1.5f;
@@ -44,7 +45,7 @@ namespace Myng.Graphics.Enemies
             timer = attackSpeed;
             Faction = Faction.ENEMY;
             XPDrop = 10;
-            movementAI = new MovementAI(tileMap, CollisionPolygon, this);
+            movementAI = new MovementAI(GameState.TileMap, CollisionPolygon, this);
             movementAI.SetGoalDestination(new Vector2(3148,Position.Y));
         }
 
@@ -82,11 +83,11 @@ namespace Myng.Graphics.Enemies
             autoAttack = new Spell(autoAttackAction, canExecute, 0);
         }
 
-        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites, TileMap tileMap)
+        public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             UpdateTimer(gameTime);
             playerPosition = Game1.Player.Position;
-            DetermineVelocity(hittableSprites, tileMap);
+            DetermineVelocity(hittableSprites);
             if (velocity == Vector2.Zero)
             {
                 movementAI.SetGoalDestination(new Vector2(1, Position.Y));
@@ -95,7 +96,7 @@ namespace Myng.Graphics.Enemies
             HandleAnimation();
             animationManager.Update(gameTime);
             CastAutoattack(otherSprites);
-            base.Update(gameTime, otherSprites, hittableSprites, tileMap);
+            base.Update(gameTime, otherSprites, hittableSprites);
         }
 
         private void UpdateTimer(GameTime gameTime)
@@ -103,18 +104,18 @@ namespace Myng.Graphics.Enemies
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
-        private void DetermineVelocity(List<Sprite> hittableSprites, TileMap tileMap)
+        private void DetermineVelocity(List<Sprite> hittableSprites)
         {
             velocity = movementAI.GetVelocity();
             velocity *= speed;
-            if (CollidesWithNewPosition(hittableSprites, tileMap))
-                DealWithCollisions(hittableSprites, tileMap);
+            if (CollidesWithNewPosition(hittableSprites))
+                DealWithCollisions(hittableSprites);
         }
 
-        private bool CollidesWithNewPosition(List<Sprite> hittableSprites, TileMap tileMap)
+        private bool CollidesWithNewPosition(List<Sprite> hittableSprites)
         {
             Position += velocity;
-            if (CheckCollisions(hittableSprites, tileMap) == true)
+            if (CheckCollisions(hittableSprites) == true)
             {
                 Position -= velocity;
                 return true;
@@ -122,29 +123,29 @@ namespace Myng.Graphics.Enemies
             return false;
         }
 
-        private void DealWithCollisions(List<Sprite> hittableSprites, TileMap tileMap)
+        private void DealWithCollisions(List<Sprite> hittableSprites)
         {
             Vector2 velocityCopy = new Vector2(velocity.X, velocity.Y);
 
             if (Math.Abs(velocityCopy.X) > Math.Abs(velocityCopy.Y))
             {
                 ChangeVelocity(new Vector2(velocityCopy.X, 0));
-                if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                if (!CollidesWithNewPosition(hittableSprites))
                     return;
                 else
                 {
                     ChangeVelocity(new Vector2(0, velocityCopy.Y));
-                    if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                    if (!CollidesWithNewPosition(hittableSprites))
                         return;
                     else
                     {
                         ChangeVelocity(new Vector2(-velocityCopy.X, 0));
-                        if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                        if (!CollidesWithNewPosition(hittableSprites))
                             return;
                         else
                         {
                             ChangeVelocity(new Vector2(0, -velocityCopy.Y));
-                            if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                            if (!CollidesWithNewPosition(hittableSprites))
                                 return;
                         }
                     }
@@ -153,22 +154,22 @@ namespace Myng.Graphics.Enemies
             else
             {
                 ChangeVelocity(new Vector2(0, velocityCopy.Y));
-                if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                if (!CollidesWithNewPosition(hittableSprites))
                     return;
                 else
                 {
                     ChangeVelocity(new Vector2(velocityCopy.X, 0));
-                    if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                    if (!CollidesWithNewPosition(hittableSprites))
                         return;
                     else
                     {
                         ChangeVelocity(new Vector2(0, -velocityCopy.Y));
-                        if (!CollidesWithNewPosition(hittableSprites, tileMap))
+                        if (!CollidesWithNewPosition(hittableSprites))
                             return;
                         else
                         {
                             ChangeVelocity(new Vector2(-velocityCopy.X, 0));
-                            CollidesWithNewPosition(hittableSprites, tileMap);
+                            CollidesWithNewPosition(hittableSprites);
                         }
                     }
                 }
@@ -183,7 +184,7 @@ namespace Myng.Graphics.Enemies
             velocity *= speed;
         }
 
-        private bool CheckCollisions(List<Sprite> sprites, TileMap tileMap)
+        private bool CheckCollisions(List<Sprite> sprites)
         {
             foreach (var sprite in sprites)
             {

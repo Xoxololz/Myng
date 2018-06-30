@@ -49,9 +49,9 @@ namespace Myng.Helpers
             {
                 x = Matrix.CreateTranslation(-GameState.ScreenWidth/2,0,0);
             }
-            else if (Target.CollisionPolygon.Origin.X + GameState.ScreenWidth / 2 >= GameState.MapWidth)
+            else if (Target.CollisionPolygon.Origin.X + GameState.ScreenWidth / 2 >= GameState.TileMap.MapWidth)
             {
-                x = Matrix.CreateTranslation(-(GameState.MapWidth - GameState.ScreenWidth/2),0,0);
+                x = Matrix.CreateTranslation(-(GameState.TileMap.MapWidth - GameState.ScreenWidth/2),0,0);
             }
             else
             {
@@ -61,9 +61,9 @@ namespace Myng.Helpers
             {
                 y = Matrix.CreateTranslation(0,-GameState.ScreenHeight/2,0);
             }
-            else if(Target.CollisionPolygon.Origin.Y + GameState.ScreenHeight / 2 >= GameState.MapHeight)
+            else if(Target.CollisionPolygon.Origin.Y + GameState.ScreenHeight / 2 >= GameState.TileMap.MapHeight)
             {
-                y = Matrix.CreateTranslation(0, -(GameState.MapHeight - GameState.ScreenHeight/2),0);
+                y = Matrix.CreateTranslation(0, -(GameState.TileMap.MapHeight - GameState.ScreenHeight/2),0);
             }
             else
             {
