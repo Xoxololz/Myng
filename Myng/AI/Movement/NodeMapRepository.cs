@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Myng.Graphics;
 using Myng.Helpers;
+using Myng.States;
 using System.Collections.Generic;
 
 namespace Myng.AI.Movement
@@ -9,14 +10,14 @@ namespace Myng.AI.Movement
     {
         private static Dictionary<Polygon, NodeMap> nodeMaps = new Dictionary<Polygon, NodeMap>(new PolygonComparer());
 
-        public static NodeMap GetNodeMap(Polygon collisionPolygon, TileMap tileMap)
+        public static NodeMap GetNodeMap(Polygon collisionPolygon)
         {           
             var polygon = (Polygon)collisionPolygon.Clone();
             polygon.MoveTo(Vector2.Zero);
 
             if (nodeMaps.TryGetValue(polygon, out NodeMap nodeMap)) return nodeMap;
 
-            var map = NodeMap.CreateFromTileMap(tileMap, polygon);
+            var map = NodeMap.CreateFromTileMap(GameState.TileMap, polygon);
             polygon.MoveTo(Vector2.Zero);
             nodeMaps.Add(polygon , map);
             return map;

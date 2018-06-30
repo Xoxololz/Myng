@@ -92,7 +92,7 @@ namespace Myng.States
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
-            //Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(100), tileMap)
+            //Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(100))
             //{
             //    Bullet = new Projectile(fireballAnimation, new Vector2(200f))
             //};

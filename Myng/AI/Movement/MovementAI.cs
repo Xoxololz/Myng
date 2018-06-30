@@ -2,6 +2,7 @@
 using Myng.Graphics.Enemies;
 using Myng.Helpers;
 using Myng.Helpers.Enums;
+using Myng.States;
 using System;
 using System.Collections.Generic;
 
@@ -21,8 +22,6 @@ namespace Myng.AI.Movement
 
         private Enemy parent;
 
-        private TileMap tileMap;
-
         private int tolerance = 5;        
         #endregion
 
@@ -35,10 +34,9 @@ namespace Myng.AI.Movement
 
         #region Constructors
 
-        public MovementAI(TileMap tileMap, Polygon collisionPolygon, Enemy parent)
+        public MovementAI(Polygon collisionPolygon, Enemy parent)
         {
-            this.tileMap = tileMap;
-            nodeMap = NodeMapRepository.GetNodeMap(collisionPolygon, tileMap);
+            nodeMap = NodeMapRepository.GetNodeMap(collisionPolygon);
             pathFinder = new PathFinder();
             this.parent = parent;
             SightRange = 150;
@@ -147,7 +145,7 @@ namespace Myng.AI.Movement
             direction.Normalize();
             direction *= 8;            
             Polygon collisionPolygon = (Polygon)parent.CollisionPolygon.Clone(); ;
-            while (tileMap.CheckCollisionWithTerrain(collisionPolygon) == Collision.None)
+            while (GameState.TileMap.CheckCollisionWithTerrain(collisionPolygon) == Collision.None)
             {
                 var a = DistanceFrom(node, collisionPolygon.Vertices[0]);
                 if (DistanceFrom(node, collisionPolygon.Vertices[0]) <= direction.Length())

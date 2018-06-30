@@ -45,7 +45,7 @@ namespace Myng.Graphics.Enemies
             timer = attackSpeed;
             Faction = Faction.ENEMY;
             XPDrop = 10;
-            movementAI = new MovementAI(GameState.TileMap, CollisionPolygon, this);
+            movementAI = new MovementAI(CollisionPolygon, this);
             movementAI.SetGoalDestination(new Vector2(3148,Position.Y));
         }
 
