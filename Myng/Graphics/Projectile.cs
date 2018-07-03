@@ -99,10 +99,7 @@ namespace Myng.Graphics
 
         private void HandleAnimation(GameTime gameTime)
         {
-            if (animationManager != null)
-            {
-                animationManager.Update(gameTime);
-            }
+                animationManager?.Update(gameTime);
         }
 
         private void Move()
