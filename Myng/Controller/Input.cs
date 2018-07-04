@@ -23,6 +23,8 @@ namespace Myng.Controller
         public Keys Spell2 { get; set; }
         public Keys Spell3 { get; set; }
         public Keys Spell4 { get; set; }
+        public Keys Spell5 { get; set; }
+        public Keys Spell6 { get; set; }
 
         public Keys Item1 { get; set; }
         public Keys Item2 { get; set; }
@@ -47,6 +49,8 @@ namespace Myng.Controller
             Spell2 = Keys.D2;
             Spell3 = Keys.D3;
             Spell4 = Keys.D4;
+            Spell5 = Keys.D5;
+            Spell6 = Keys.D6;
 
             Item1 = Keys.NumPad1;
             Item2 = Keys.NumPad2;

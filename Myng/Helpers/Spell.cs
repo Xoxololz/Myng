@@ -1,4 +1,5 @@
-﻿using Myng.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Myng.Graphics;
 using System;
 using System.Collections.Generic;
 
@@ -14,19 +15,53 @@ namespace Myng.Helpers
 
         private int manaCost;
 
+        private Texture2D texture;
+
+        #endregion
+
+        #region Properties
+
+        public int ManaCost
+        {
+            get
+            {
+                return manaCost;
+            }
+        }
+
+        public Texture2D Texture
+        {
+            get
+            {
+                return texture;
+            }
+        }
+
         #endregion
 
         #region Contructors
+
+        public Spell(Action<List<Sprite>> action, Func<bool> canExecute, int cost, Texture2D texture)
+        {
+            this.action = action;
+            this.canExecute = canExecute;
+            this.manaCost = cost;
+            this.texture = texture;
+        }
 
         public Spell(Action<List<Sprite>> action, Func<bool> canExecute, int cost)
         {
             this.action = action;
             this.canExecute = canExecute;
             this.manaCost = cost;
+            this.texture = null;
         }
 
+        public Spell(Action<List<Sprite>> action, int cost, Texture2D texture)
+            : this(action, null, cost, texture) { }
+
         public Spell(Action<List<Sprite>> action, int cost)
-            : this(action, null, cost) { }
+            : this(action, null, cost, null) { }
 
         #endregion
 

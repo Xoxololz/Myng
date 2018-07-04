@@ -193,7 +193,7 @@ namespace Myng.States
             TileMap.Draw(spriteBatch);
 
             Game1.Player.Draw(spriteBatch);
-            Game1.Player.Inventory.Draw(spriteBatch);
+            Game1.Player.Spellbar.Draw(spriteBatch);
 
             foreach (var sprite in otherSprites)
                 sprite.Draw(spriteBatch);
