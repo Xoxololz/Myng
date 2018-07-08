@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Myng.States;
 using System;
 using System.Collections.Generic;
 
@@ -17,9 +18,6 @@ namespace Myng.Helpers
         
         private Vector2[] collisionPoints;
 
-        private int tileHeight;
-
-        private int tileWidth;
         #endregion
 
         #region Properties
@@ -123,7 +121,78 @@ namespace Myng.Helpers
         #region Methods
         private void CalculateCollisionPoints()
         {
+            var points = new List<Vector2>();
             //TODO: check if is big enought to need more points if so init them somehow
+            for (int i = 0; i < Vertices.Length; i++)
+            {
+                points.AddRange(FindCollisionPointsOnLine(Vertices[i], Vertices[i + 1]));
+            }
+            CollisionPoints = points.ToArray();
+        }
+
+        private List<Vector2> FindCollisionPointsOnLine(Vector2 a, Vector2 b)
+        {
+            var pointsToCheck = new List<Vector2>();
+
+            //assuming that tile is a square
+            var tileSide = GameState.TileMap.TileWidth;
+            var dx = b.X - a.X;
+            var dy = b.Y - a.Y;
+            if (Math.Abs(dx) > Math.Abs(dy))
+            {
+                if (dx > 0)
+                {
+                    var x = a.X + tileSide;
+                    while (Math.Abs(x - b.X) > tileSide)
+                    {
+                        pointsToCheck.Add(new Vector2(x, FindYCoord(x, a, b)));
+                        x += tileSide;
+                    }
+                }
+                else
+                {
+                    var x = a.X - tileSide;
+                    while (Math.Abs(x - b.X) > tileSide)
+                    {
+                        pointsToCheck.Add(new Vector2(x, FindYCoord(x, a, b)));
+                        x -= tileSide;
+                    }
+                }
+            }
+            else
+            {
+                if (dy > 0)
+                {
+                    var y = a.Y + tileSide;
+                    while (Math.Abs(y - b.Y) > tileSide)
+                    {
+                        pointsToCheck.Add(new Vector2(y, FindXCoord(y, a, b)));
+                        y += tileSide;
+                    }
+                }
+                else
+                {
+                    var y = a.Y - tileSide;
+                    while (Math.Abs(y - b.Y) > tileSide)
+                    {
+                        pointsToCheck.Add(new Vector2(y, FindXCoord(y, a, b)));
+                        y -= tileSide;
+                    }
+                }
+            }
+            return pointsToCheck;
+        }
+
+        private float FindYCoord(float x, Vector2 a, Vector2 b)
+        {
+            var ab = b - a;
+            return a.Y + ab.Y * ((x - a.X) / ab.X);
+        }
+
+        private float FindXCoord(float y, Vector2 a, Vector2 b)
+        {
+            var ab = b - a;
+            return a.X + ab.X * ((y - a.Y) / ab.Y);
         }
 
         private void InitRadius()
