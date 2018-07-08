@@ -157,7 +157,7 @@ namespace Myng.Helpers
             CollisionPolygons.Add(gid, terrainCollision);
         }
 
-        public Collision CheckCollisionWithTerrain(Polygon spritePolygon)
+        public Collision CheckCollisionWithTerrain(SpritePolygon spritePolygon)
         {
             var collision = Collision.None;
             
@@ -165,7 +165,7 @@ namespace Myng.Helpers
             {
                 foreach (var layer in map.Layers)
                 {
-                    foreach (var point in spritePolygon.Vertices)
+                    foreach (var point in spritePolygon.CollisionPoints)
                     {
                         var currentTile = GetCurrentTilesGid(point, layer);
                         if (CollisionPolygons.TryGetValue(currentTile, out Tuple<Polygon, Collision> terrainPolygon))

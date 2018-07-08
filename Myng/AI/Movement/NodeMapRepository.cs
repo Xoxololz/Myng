@@ -10,9 +10,9 @@ namespace Myng.AI.Movement
     {
         private static Dictionary<Polygon, NodeMap> nodeMaps = new Dictionary<Polygon, NodeMap>(new PolygonComparer());
 
-        public static NodeMap GetNodeMap(Polygon collisionPolygon)
+        public static NodeMap GetNodeMap(SpritePolygon collisionPolygon)
         {           
-            var polygon = (Polygon)collisionPolygon.Clone();
+            var polygon = (SpritePolygon)collisionPolygon.Clone();
             polygon.MoveTo(Vector2.Zero);
 
             if (nodeMaps.TryGetValue(polygon, out NodeMap nodeMap)) return nodeMap;

@@ -14,32 +14,11 @@ namespace Myng.Helpers
         //so probly one point per tile so we need that info here
         //--------------------------------------------------------------------------//
     {
-        #region Fields
-        
-        private Vector2[] collisionPoints;
-
-        #endregion
-
         #region Properties
         /// <summary>
         /// array of polygon vertices
         /// </summary>
-        public Vector2[] Vertices { get; private set; }
-        /// <summary>
-        /// points that needs to be checked for collision with terrain
-        /// </summary>
-        public Vector2[] CollisionPoints
-        {
-            get
-            {
-                return collisionPoints;
-            }
-            set
-            {
-                collisionPoints = value;
-                CalculateCollisionPoints();
-            }
-        }
+        public Vector2[] Vertices { get; private set; }        
 
         /// <summary>
         /// point to rotate around
@@ -60,7 +39,6 @@ namespace Myng.Helpers
             this.Vertices = points;
             this.Origin = origin;
             InitRadius();
-            CalculateCollisionPoints();
         }
 
         /// <summary>
@@ -113,88 +91,12 @@ namespace Myng.Helpers
 
             this.Rotate(angle);
             InitRadius();
-            CalculateCollisionPoints();
         }
 
         #endregion
 
         #region Methods
-        private void CalculateCollisionPoints()
-        {
-            var points = new List<Vector2>();
-            //TODO: check if is big enought to need more points if so init them somehow
-            for (int i = 0; i < Vertices.Length; i++)
-            {
-                points.AddRange(FindCollisionPointsOnLine(Vertices[i], Vertices[i + 1]));
-            }
-            CollisionPoints = points.ToArray();
-        }
-
-        private List<Vector2> FindCollisionPointsOnLine(Vector2 a, Vector2 b)
-        {
-            var pointsToCheck = new List<Vector2>();
-
-            //assuming that tile is a square
-            var tileSide = GameState.TileMap.TileWidth;
-            var dx = b.X - a.X;
-            var dy = b.Y - a.Y;
-            if (Math.Abs(dx) > Math.Abs(dy))
-            {
-                if (dx > 0)
-                {
-                    var x = a.X + tileSide;
-                    while (Math.Abs(x - b.X) > tileSide)
-                    {
-                        pointsToCheck.Add(new Vector2(x, FindYCoord(x, a, b)));
-                        x += tileSide;
-                    }
-                }
-                else
-                {
-                    var x = a.X - tileSide;
-                    while (Math.Abs(x - b.X) > tileSide)
-                    {
-                        pointsToCheck.Add(new Vector2(x, FindYCoord(x, a, b)));
-                        x -= tileSide;
-                    }
-                }
-            }
-            else
-            {
-                if (dy > 0)
-                {
-                    var y = a.Y + tileSide;
-                    while (Math.Abs(y - b.Y) > tileSide)
-                    {
-                        pointsToCheck.Add(new Vector2(y, FindXCoord(y, a, b)));
-                        y += tileSide;
-                    }
-                }
-                else
-                {
-                    var y = a.Y - tileSide;
-                    while (Math.Abs(y - b.Y) > tileSide)
-                    {
-                        pointsToCheck.Add(new Vector2(y, FindXCoord(y, a, b)));
-                        y -= tileSide;
-                    }
-                }
-            }
-            return pointsToCheck;
-        }
-
-        private float FindYCoord(float x, Vector2 a, Vector2 b)
-        {
-            var ab = b - a;
-            return a.Y + ab.Y * ((x - a.X) / ab.X);
-        }
-
-        private float FindXCoord(float y, Vector2 a, Vector2 b)
-        {
-            var ab = b - a;
-            return a.X + ab.X * ((y - a.Y) / ab.Y);
-        }
-
+        
         private void InitRadius()
         {
             Radius = 0;
@@ -211,7 +113,7 @@ namespace Myng.Helpers
         /// translate the polygon
         /// </summary>
         /// <param name="vector">translation vector</param>
-        public void Translate(Vector2 vector)
+        public virtual void Translate(Vector2 vector)
         {
             for (int i=0; i < Vertices.Length; i++)
             {
@@ -233,7 +135,7 @@ namespace Myng.Helpers
         /// scale polygon, points[0] will remain in place
         /// </summary>
         /// <param name="scale">scalar</param>
-        public void Scale(float scale)
+        public virtual void Scale(float scale)
         {
             for (int i = 1; i < Vertices.Length; i++)
             {

@@ -7,7 +7,6 @@ using Myng.Helpers.SoundHandlers;
 using Myng.States;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Myng.Graphics
 {
