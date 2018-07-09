@@ -68,6 +68,7 @@
     <Compile Include="Helpers\SoundHandlers\BackgroundMusic.cs" />
     <Compile Include="Helpers\SoundHandlers\SoundEffect2D.cs" />
     <Compile Include="Helpers\SoundHandlers\SoundsDepository.cs" />
+    <Compile Include="Helpers\Spellbar.cs" />
     <Compile Include="Helpers\Tileset.cs" />
     <Compile Include="Items\Ring.cs" />
     <Compile Include="Items\Armor.cs" />
