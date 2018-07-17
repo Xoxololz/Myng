@@ -24,7 +24,7 @@ namespace Myng.Graphics
 
         protected float layer=0f;
 
-        protected Polygon collisionPolygon;
+        protected SpritePolygon collisionPolygon;
 
         protected float scale = 1;
         #endregion
@@ -47,7 +47,7 @@ namespace Myng.Graphics
         public bool ToRemove = false;
         
         // Polygon to check collisions
-        public  Polygon CollisionPolygon
+        public  SpritePolygon CollisionPolygon
         {
             get
             {
@@ -57,14 +57,14 @@ namespace Myng.Graphics
                 // if not return Polygon representing rectangle the same size as texture
                 if (texture != null)
                 {
-                    return new Polygon(new Rectangle((int)Position.X,
+                    return new SpritePolygon(new Rectangle((int)Position.X,
                       (int)Position.Y,
                       (int)(texture.Width * Scale),
                       (int)(texture.Height * Scale)));
                 }
                 else
                 {
-                    return new Polygon(new Rectangle((int)Position.X,
+                    return new SpritePolygon(new Rectangle((int)Position.X,
                       (int)Position.Y,
                       (int)(animationManager.Animation.FrameWidth * Scale),
                       (int)(animationManager.Animation.FrameHeight * Scale)));
@@ -99,8 +99,7 @@ namespace Myng.Graphics
                 position = value;
                 if (animationManager != null)
                     animationManager.Position = value;
-                if (collisionPolygon != null)
-                    collisionPolygon.MoveTo(value);
+                collisionPolygon?.MoveTo(value);
             }
         }
 
@@ -136,7 +135,7 @@ namespace Myng.Graphics
             this.texture = texture2D;
             this.Position = position;
             Scale = 1f;
-            collisionPolygon = new Polygon(new Rectangle((int)Position.X,
+            collisionPolygon = new SpritePolygon(new Rectangle((int)Position.X,
                       (int)Position.Y,
                       (int)(texture.Width * Scale),
                       (int)(texture.Height * Scale)));
@@ -150,7 +149,7 @@ namespace Myng.Graphics
             //if you are changing this, there might be trouble in Character origin, so dont do that unless it is necessary
             animationManager = new AnimationManager(animations.First().Value);
             this.Position = position;
-            collisionPolygon = new Polygon(new Rectangle((int)Position.X,
+            collisionPolygon = new SpritePolygon(new Rectangle((int)Position.X,
                       (int)Position.Y,
                       (int)(animationManager.Animation.FrameWidth * Scale),
                       (int)(animationManager.Animation.FrameHeight * Scale)));

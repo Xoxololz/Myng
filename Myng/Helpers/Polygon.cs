@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Myng.States;
 using System;
 using System.Collections.Generic;
 
@@ -13,35 +14,11 @@ namespace Myng.Helpers
         //so probly one point per tile so we need that info here
         //--------------------------------------------------------------------------//
     {
-        #region Fields
-        
-        private Vector2[] collisionPoints;
-
-        private int tileHeight;
-
-        private int tileWidth;
-        #endregion
-
         #region Properties
         /// <summary>
         /// array of polygon vertices
         /// </summary>
-        public Vector2[] Vertices { get; private set; }
-        /// <summary>
-        /// points that needs to be checked for collision with terrain
-        /// </summary>
-        public Vector2[] CollisionPoints
-        {
-            get
-            {
-                return collisionPoints;
-            }
-            set
-            {
-                collisionPoints = value;
-                CalculateCollisionPoints();
-            }
-        }
+        public Vector2[] Vertices { get; private set; }        
 
         /// <summary>
         /// point to rotate around
@@ -62,7 +39,6 @@ namespace Myng.Helpers
             this.Vertices = points;
             this.Origin = origin;
             InitRadius();
-            CalculateCollisionPoints();
         }
 
         /// <summary>
@@ -115,17 +91,12 @@ namespace Myng.Helpers
 
             this.Rotate(angle);
             InitRadius();
-            CalculateCollisionPoints();
         }
 
         #endregion
 
         #region Methods
-        private void CalculateCollisionPoints()
-        {
-            //TODO: check if is big enought to need more points if so init them somehow
-        }
-
+        
         private void InitRadius()
         {
             Radius = 0;
@@ -142,7 +113,7 @@ namespace Myng.Helpers
         /// translate the polygon
         /// </summary>
         /// <param name="vector">translation vector</param>
-        public void Translate(Vector2 vector)
+        public virtual void Translate(Vector2 vector)
         {
             for (int i=0; i < Vertices.Length; i++)
             {
@@ -164,7 +135,7 @@ namespace Myng.Helpers
         /// scale polygon, points[0] will remain in place
         /// </summary>
         /// <param name="scale">scalar</param>
-        public void Scale(float scale)
+        public virtual void Scale(float scale)
         {
             for (int i = 1; i < Vertices.Length; i++)
             {

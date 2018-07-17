@@ -7,7 +7,6 @@ using Myng.Helpers.SoundHandlers;
 using Myng.States;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Myng.Graphics
 {
@@ -99,10 +98,7 @@ namespace Myng.Graphics
 
         private void HandleAnimation(GameTime gameTime)
         {
-            if (animationManager != null)
-            {
-                animationManager.Update(gameTime);
-            }
+                animationManager?.Update(gameTime);
         }
 
         private void Move()

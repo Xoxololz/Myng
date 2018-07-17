@@ -43,7 +43,7 @@ namespace Myng.AI.Movement
             }
         }        
 
-        public static NodeMap CreateFromTileMap(TileMap tileMap, Polygon collisionPolygon)
+        public static NodeMap CreateFromTileMap(TileMap tileMap, SpritePolygon collisionPolygon)
         {
             NodeMap nodeMap = new NodeMap(tileMap.MapWidthTiles, tileMap.MapHeightTiles, tileMap.TileHeight, tileMap.TileWidth);
 

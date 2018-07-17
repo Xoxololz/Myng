@@ -34,7 +34,7 @@ namespace Myng.AI.Movement
 
         #region Constructors
 
-        public MovementAI(Polygon collisionPolygon, Enemy parent)
+        public MovementAI(SpritePolygon collisionPolygon, Enemy parent)
         {
             nodeMap = NodeMapRepository.GetNodeMap(collisionPolygon);
             pathFinder = new PathFinder();
@@ -144,7 +144,7 @@ namespace Myng.AI.Movement
             };
             direction.Normalize();
             direction *= 8;            
-            Polygon collisionPolygon = (Polygon)parent.CollisionPolygon.Clone(); ;
+            SpritePolygon collisionPolygon = (SpritePolygon)parent.CollisionPolygon.Clone(); ;
             while (GameState.TileMap.CheckCollisionWithTerrain(collisionPolygon) == Collision.None)
             {
                 var a = DistanceFrom(node, collisionPolygon.Vertices[0]);

@@ -46,6 +46,7 @@ namespace Myng.Graphics.Enemies
             Faction = Faction.ENEMY;
             XPDrop = 10;
             movementAI = new MovementAI(CollisionPolygon, this);
+            //temporary for testing purposes
             movementAI.SetGoalDestination(new Vector2(3148,Position.Y));
         }
 
