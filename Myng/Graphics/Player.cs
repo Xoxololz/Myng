@@ -19,7 +19,7 @@ namespace Myng.Graphics
     {
         #region Properties
 
-        public List<Spell> Spells;
+        public Spellbar Spellbar;
 
         public Inventory Inventory;
 
@@ -80,6 +80,7 @@ namespace Myng.Graphics
             timer = AttackSpeed;
             attackDirection = new Vector2(0, -1);
             Inventory = new Inventory();
+            Spellbar = new Spellbar();
             Faction = Faction.FRIENDLY;
             level = 1;
             XP = 0;
@@ -87,7 +88,7 @@ namespace Myng.Graphics
             
             InitAutoattack();
             InitSpells();
-        }        
+        }
 
         #endregion
 
@@ -107,17 +108,14 @@ namespace Myng.Graphics
                     }
                 };
                 var animation = new AnimationSprite(fireballAnimation, GlobalOrigin);
-                animation.Position -= animation.Origin * animation.Scale; 
+                animation.Position -= animation.Origin * animation.Scale;
                 sprites.Add(animation);
             };
 
-            Spells = new List<Spell>
-            {
-                new Spell(spell,15),
-                new Spell(spell,15),
-                new Spell(spell,15),
-                new Spell(spell,15)
-            };
+            Spellbar.Add(new Spell(spell, 10, State.Content.Load<Texture2D>("Projectiles/fireball_icon")));
+            Spellbar.Add(new Spell(spell, 15, State.Content.Load<Texture2D>("Projectiles/projectile")));
+            Spellbar.Add(new Spell(spell, 20, State.Content.Load<Texture2D>("Projectiles/fireball_icon")));
+            Spellbar.Add(new Spell(spell, 25, State.Content.Load<Texture2D>("Projectiles/projectile")));
         }
 
         private void InitAutoattack()
@@ -212,15 +210,19 @@ namespace Myng.Graphics
         private void CastSpells(List<Sprite> sprites)
         {
             if (currentKey.IsKeyDown(input.Spell1) && !previousKey.IsKeyDown(input.Spell1))
-                Spells[0].Cast(sprites);
+                Spellbar.GetSpell(0)?.Cast(sprites);
             if (currentKey.IsKeyDown(input.Spell2) && !previousKey.IsKeyDown(input.Spell2))
-                Spells[1].Cast(sprites);
+                Spellbar.GetSpell(1)?.Cast(sprites);
             if (currentKey.IsKeyDown(input.Spell3) && !previousKey.IsKeyDown(input.Spell3))
-                Spells[2].Cast(sprites);
+                Spellbar.GetSpell(2)?.Cast(sprites);
             if (currentKey.IsKeyDown(input.Spell4) && !previousKey.IsKeyDown(input.Spell4))
-                Spells[3].Cast(sprites);
+                Spellbar.GetSpell(3)?.Cast(sprites);
+            if (currentKey.IsKeyDown(input.Spell5) && !previousKey.IsKeyDown(input.Spell5))
+                Spellbar.GetSpell(4)?.Cast(sprites);
+            if (currentKey.IsKeyDown(input.Spell6) && !previousKey.IsKeyDown(input.Spell6))
+                Spellbar.GetSpell(5)?.Cast(sprites);
 
-            if(currentKey.IsKeyDown(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
+            if (currentKey.IsKeyDown(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
             {
                 attackDirection.X = 0;
                 attackDirection.Y = -1;

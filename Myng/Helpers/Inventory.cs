@@ -30,7 +30,7 @@ namespace Myng.Helpers
 
         public Inventory()
         {
-            texture = State.Content.Load<Texture2D>("GUI/inventory");
+            texture = State.Content.Load<Texture2D>("GUI/spellbar");
             Items = new List<Item>();
             font = State.Content.Load<SpriteFont>("Fonts/Font");
         }
