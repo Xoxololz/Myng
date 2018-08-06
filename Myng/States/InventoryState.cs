@@ -7,6 +7,7 @@ using Myng.Graphics;
 using Myng.Helpers;
 using Myng.Items;
 using Myng.Helpers.Enums;
+using Myng.Graphics.GUI;
 
 namespace Myng.States
 {

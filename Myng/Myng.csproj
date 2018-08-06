@@ -70,6 +70,7 @@
     <Compile Include="Helpers\SoundHandlers\SoundEffect2D.cs" />
     <Compile Include="Helpers\SoundHandlers\SoundsDepository.cs" />
     <Compile Include="Graphics\GUI\Spellbar.cs" />
+    <Compile Include="Helpers\SpritePolygon.cs" />
     <Compile Include="Helpers\Tileset.cs" />
     <Compile Include="Items\ManaPotion.cs" />
     <Compile Include="Items\Ring.cs" />

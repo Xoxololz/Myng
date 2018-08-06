@@ -1,13 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Graphics.Animations;
 using Myng.Helpers;
 using Myng.Helpers.Enums;
 using Myng.Helpers.SoundHandlers;
 using Myng.States;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Myng.Graphics
 {

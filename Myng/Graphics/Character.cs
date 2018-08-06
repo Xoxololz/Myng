@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Graphics.Animations;
 using Myng.Graphics.Enemies;
 using Myng.Helpers;
 using Myng.Helpers.Enums;

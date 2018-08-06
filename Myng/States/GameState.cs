@@ -11,6 +11,8 @@ using Myng.Helpers.SoundHandlers;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using Myng.AI.Movement;
+using Myng.Graphics.Animations;
+using Myng.Graphics.GUI;
 
 namespace Myng.States
 {
@@ -76,7 +78,7 @@ namespace Myng.States
                 { "walking", new Animation(Content.Load<Texture2D>("Characters/White_Male"), 4, 3) }
             };
 
-            Player player = new Player(playerAnimations, new Vector2(3050, 700))
+            Player player = new Player(playerAnimations, new Vector2(2352.014f, 724))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
             };
@@ -148,20 +150,20 @@ namespace Myng.States
                 //monster
                 //monster2
             };
-            for (int i = 240; i < 1500; i += 150)
-            {
-                var monsterAnimations3 = new Dictionary<string, Animation>()
-                {
-                    { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
-                };
+            //for (int i = 240; i < 1500; i += 150)
+            //{
+            //    var monsterAnimations3 = new Dictionary<string, Animation>()
+            //    {
+            //        { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
+            //    };
 
-                Enemy monster3 = new Enemy(monsterAnimations3, new Vector2(1, i))
-                {
-                    Bullet = new Projectile(fireballAnimation, new Vector2(100f))
-                };
+            //    Enemy monster3 = new Enemy(monsterAnimations3, new Vector2(1, i))
+            //    {
+            //        Bullet = new Projectile(fireballAnimation, new Vector2(100f))
+            //    };
 
-                hittableSprites.Add(monster3);
-            }
+            //    hittableSprites.Add(monster3);
+            //}
             Game1.Player = player;
 
             camera = new Camera(Game1.Player);

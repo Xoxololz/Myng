@@ -4,14 +4,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
 using Myng.Helpers;
-using Myng.Helpers.Enums;
 using Myng.Helpers.SoundHandlers;
-using Myng.Items;
 using Myng.Items.Interfaces;
 using Myng.States;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Myng.Graphics.Animations;
+using Myng.Graphics.GUI;
 
 namespace Myng.Graphics
 {
@@ -63,7 +62,9 @@ namespace Myng.Graphics
 
         private int level;
 
-        private Vector2 attackDirection;        
+        private Vector2 attackDirection;
+        private Dictionary<string, Animation> playerAnimations;
+        private Vector2 vector2;
 
         #endregion
 

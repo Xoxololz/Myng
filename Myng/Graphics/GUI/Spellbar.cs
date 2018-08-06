@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Helpers;
 using Myng.States;
 using System.Collections.Generic;
 
-namespace Myng.Helpers
+namespace Myng.Graphics.GUI
 {
     public class Spellbar
     {
