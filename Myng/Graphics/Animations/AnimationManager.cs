@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace Myng.Graphics
+namespace Myng.Graphics.Animations
 {
     public class AnimationManager: ICloneable
     {

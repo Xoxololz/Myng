@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
 using Myng.States;
 
-namespace Myng.Graphics
+namespace Myng.Graphics.GUI
 {
     public class GUI
     {

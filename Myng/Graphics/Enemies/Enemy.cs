@@ -5,6 +5,7 @@ using Myng.Helpers;
 using Myng.Helpers.SoundHandlers;
 using Myng.AI.Movement;
 using Myng.States;
+using Myng.Graphics.Animations;
 
 namespace Myng.Graphics.Enemies
 {

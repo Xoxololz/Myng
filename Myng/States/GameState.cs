@@ -11,6 +11,8 @@ using Myng.Helpers.SoundHandlers;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using Myng.AI.Movement;
+using Myng.Graphics.Animations;
+using Myng.Graphics.GUI;
 
 namespace Myng.States
 {
@@ -36,9 +38,6 @@ namespace Myng.States
 
         #region Properties
 
-        public static int ScreenHeight;
-        public static int ScreenWidth;
-
         public static TileMap TileMap { get; private set; }
 
         #endregion
@@ -47,9 +46,6 @@ namespace Myng.States
 
         public GameState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
-            ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;            
-
             TmxMap map = new TmxMap("Content/Maps/map3.tmx");
             TileMap = new TileMap(map);
 
@@ -84,8 +80,8 @@ namespace Myng.States
 
             Player player = new Player(playerAnimations, new Vector2(2352.014f, 724))
             {
-                Bullet = new Projectile(fireballAnimation, new Vector2(100f))                
-            };            
+                Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
+            };
 
             Enemy monster = new Enemy(monsterAnimations, new Vector2(3050,700))
             {
@@ -108,8 +104,45 @@ namespace Myng.States
                 new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(700f)
                     , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(800f)
-                    , new Ring(content.Load<Texture2D>("Items/iron_ring")))
+                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 750)
+                    , new Ring(content.Load<Texture2D>("Items/iron_ring"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 800)
+                    , new Ring(content.Load<Texture2D>("Items/iron_ring"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 850)
+                    , new Ring(content.Load<Texture2D>("Items/iron_ring"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 900)
+                    , new Ring(content.Load<Texture2D>("Items/iron_ring"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
+                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+
             };
 
             hittableSprites = new List<Sprite>
@@ -188,12 +221,9 @@ namespace Myng.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.BackToFront, blendState: BlendState.AlphaBlend);
-
-            TileMap.Draw(spriteBatch);
-
             Game1.Player.Draw(spriteBatch);
             Game1.Player.Spellbar.Draw(spriteBatch);
+            Game1.Player.Inventory.DrawPotions(spriteBatch);
 
             foreach (var sprite in otherSprites)
                 sprite.Draw(spriteBatch);
@@ -202,9 +232,14 @@ namespace Myng.States
                 sprite.Draw(spriteBatch);
 
             gui.Draw(spriteBatch);
+        }
 
-            spriteBatch.End();
-
+        /// <summary>
+        /// Method to draw Background. This method is called even when this state is paused, but still active (ie. during menu states).
+        /// </summary>
+        public void DrawBackground(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            TileMap.Draw(spriteBatch);
         }
 
         #endregion

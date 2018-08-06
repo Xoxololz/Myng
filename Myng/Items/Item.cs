@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Myng.Graphics;
+using Myng.Helpers.Enums;
 
 namespace Myng.Items
 {
@@ -7,12 +8,19 @@ namespace Myng.Items
     public abstract class Item
     {
         #region Properties
+        public ItemType ItemType { get; set; }
+
         //maximum amount of the same the same item to have in inventory
         public int MaxCount
         {
             get
             {
-                return 5;
+                return maxCount;
+            }
+
+            set
+            {
+                maxCount = value;
             }
         }
 
@@ -28,22 +36,29 @@ namespace Myng.Items
             }
         }
 
+        public bool BeingDragged { get; set; }
+
         #endregion
 
         #region Fields
 
         protected Texture2D texture;
 
+        protected int maxCount = 1;
+
         #endregion
 
         #region Constructors
 
-        public Item(Texture2D texture)
+        public Item(Texture2D texture, ItemType itemType)
         {
             this.texture = texture;
+            this.ItemType = itemType;
+            this.BeingDragged = false;
             Count = 1;
         }
 
+        public abstract void UnequipItem();
         #endregion
     }
 }

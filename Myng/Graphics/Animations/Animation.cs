@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Myng.Graphics
+namespace Myng.Graphics.Animations
 {
     public class Animation
     {
