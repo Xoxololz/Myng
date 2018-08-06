@@ -45,31 +45,31 @@ namespace Myng.Helpers
         {
             Matrix x;
             Matrix y;
-            if(Target.CollisionPolygon.Origin.X - GameState.ScreenWidth / 2 <= 0)
+            if(Target.CollisionPolygon.Origin.X - Game1.ScreenWidth / 2 <= 0)
             {
-                x = Matrix.CreateTranslation(-GameState.ScreenWidth/2,0,0);
+                x = Matrix.CreateTranslation(-Game1.ScreenWidth/2,0,0);
             }
-            else if (Target.CollisionPolygon.Origin.X + GameState.ScreenWidth / 2 >= GameState.TileMap.MapWidth)
+            else if (Target.CollisionPolygon.Origin.X + Game1.ScreenWidth / 2 >= GameState.TileMap.MapWidth)
             {
-                x = Matrix.CreateTranslation(-(GameState.TileMap.MapWidth - GameState.ScreenWidth/2),0,0);
+                x = Matrix.CreateTranslation(-(GameState.TileMap.MapWidth - Game1.ScreenWidth/2),0,0);
             }
             else
             {
                 x = Matrix.CreateTranslation(-Target.CollisionPolygon.Origin.X, 0, 0);
             }
-            if ( Target.CollisionPolygon.Origin.Y - GameState.ScreenHeight / 2 <= 0)
+            if ( Target.CollisionPolygon.Origin.Y - Game1.ScreenHeight / 2 <= 0)
             {
-                y = Matrix.CreateTranslation(0,-GameState.ScreenHeight/2,0);
+                y = Matrix.CreateTranslation(0,-Game1.ScreenHeight/2,0);
             }
-            else if(Target.CollisionPolygon.Origin.Y + GameState.ScreenHeight / 2 >= GameState.TileMap.MapHeight)
+            else if(Target.CollisionPolygon.Origin.Y + Game1.ScreenHeight / 2 >= GameState.TileMap.MapHeight)
             {
-                y = Matrix.CreateTranslation(0, -(GameState.TileMap.MapHeight - GameState.ScreenHeight/2),0);
+                y = Matrix.CreateTranslation(0, -(GameState.TileMap.MapHeight - Game1.ScreenHeight/2),0);
             }
             else
             {
                 y = Matrix.CreateTranslation(0, -Target.CollisionPolygon.Origin.Y, 0);
             }
-            Transform = x * y * Matrix.CreateTranslation(GameState.ScreenWidth/2 , GameState.ScreenHeight/2 , 0);
+            Transform = x * y * Matrix.CreateTranslation(Game1.ScreenWidth/2 , Game1.ScreenHeight/2 , 0);
         }         
 
         #endregion

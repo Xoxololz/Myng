@@ -1,14 +1,13 @@
-﻿
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Myng.Graphics;
 using Myng.Helpers.Enums;
 using Myng.Items.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace Myng.Items
 {
-    public class HealthPotion : Item, IUsable
+    public class ManaPotion : Item, IUsable
     {
         #region Properties
 
@@ -18,9 +17,9 @@ namespace Myng.Items
 
         #region Constructor
 
-        public HealthPotion(Texture2D texture) : base(texture, ItemType.POTION)
+        public ManaPotion(Texture2D texture) : base(texture, ItemType.POTION)
         {
-            Power = 40;
+            Power = 30;
             MaxCount = 5;
         }
 
@@ -30,7 +29,7 @@ namespace Myng.Items
         {
             if (Count > 0)
             {
-                Parent.Health += Power;
+                Parent.Mana += Power;
                 Count--;
             }
         }

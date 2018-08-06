@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Myng.AI.Movement;
 using Myng.Graphics;
+using Myng.Helpers;
 using Myng.States;
+using System;
 using System.Collections.Generic;
 
 namespace Myng
@@ -13,24 +14,40 @@ namespace Myng
     /// </summary>
     public class Game1 : Game
     {
+        #region Fields
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         private State currentState;
         private State nextState;
 
+        private bool isPaused;
+        private Stack<State> states;
+
+        private KeyboardState keyboardCurrent;
+        private KeyboardState keyboardPrevious;
+        #endregion
+
+        #region Properties
         public static Player Player;
 
+        public static int ScreenHeight;
+        public static int ScreenWidth;
+        #endregion
+  
         public void ChangeState(State state)
         {
             nextState = state;
+            states.Push(state);
+            isPaused = nextState is GameState ? false : true;
         }
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            this.IsMouseVisible = false;            
+            this.IsMouseVisible = false;
+            isPaused = false;
         }
 
         /// <summary>
@@ -50,10 +67,17 @@ namespace Myng
             graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
+            ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+
             base.Initialize();
 
             //sets state to be in after starting the app
+            states = new Stack<State>();
             currentState = new GameState(Content, graphics.GraphicsDevice, this);
+            states.Push(currentState);
+
+            keyboardCurrent = Keyboard.GetState();
         }
 
         /// <summary>
@@ -61,7 +85,7 @@ namespace Myng
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
-        {          
+        {
 
         }
 
@@ -75,23 +99,45 @@ namespace Myng
         }
 
         /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
+        /// Allows the game to switch between states and update the current state.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            keyboardPrevious = keyboardCurrent;
+            keyboardCurrent = Keyboard.GetState();
+
+            //TODO -- probably just temporary solution we shoud do it somehow better
+            if (keyboardCurrent.IsKeyDown(Keys.Escape) && !keyboardPrevious.IsKeyDown(Keys.Escape) && !isPaused)
+                this.Exit();
+
+            //Escape handler for exiting states
+            if (keyboardCurrent.IsKeyDown(Keys.Escape) && !keyboardPrevious.IsKeyDown(Keys.Escape) && isPaused)
+            {
+                states.Pop();
+                ChangeState(states.Peek());
+            }
+
+            //Inventory state handler
+            if (keyboardCurrent.IsKeyDown(Keys.I) && !keyboardPrevious.IsKeyDown(Keys.I))
+            {
+                if (currentState is InventoryState && nextState == null)
+                {
+                    states.Pop();
+                    ChangeState(states.Peek());
+                } else if(currentState is GameState && nextState == null)
+                {
+                    Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
+                    ChangeState(new InventoryState(Content, graphics.GraphicsDevice, this));
+                }
+            }
+
             if (nextState != null)
             {
                 currentState = nextState;
                 nextState = null;
             }
             currentState.Update(gameTime);
-
-            //probly just temporary solution we shoud do it somehow better
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                this.Exit();
-
 
             base.Update(gameTime);
         }
@@ -102,9 +148,18 @@ namespace Myng
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-
+            spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.BackToFront, blendState: BlendState.AlphaBlend);
             currentState.Draw(gameTime, spriteBatch);
 
+            foreach (State s in states)
+            {
+                if (s is GameState gamestate)
+                {
+                    //id ispaused is true, the background is darkened
+                    gamestate.DrawBackground(gameTime, spriteBatch);
+                }
+            }
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }

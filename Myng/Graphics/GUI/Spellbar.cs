@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Myng.Items;
-using Myng.Items.Interfaces;
 using Myng.States;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Myng.Helpers
 {
@@ -79,15 +76,22 @@ namespace Myng.Helpers
         {
             Vector2 Position = new Vector2()
             {
-                X = GameState.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2,
-                Y = GameState.ScreenHeight - Camera.ScreenOffset.Y - texture.Height
+                X = Game1.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2,
+                Y = Game1.ScreenHeight - Camera.ScreenOffset.Y - texture.Height
             };
             spriteBatch.Draw(texture: texture, position: Position, color: Color.White, layerDepth: Layers.Inventory);
 
             Position.Y += 16;
+
+            for (int i = 0; i < maxsize; i++)
+            {
+                Position.X = Game1.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2 + 36 + (75 * i) + 4;
+                spriteBatch.DrawString(font, (i+1).ToString(), new Vector2(Position.X - 5, Position.Y - 7) + font.MeasureString((i + 1).ToString()) / 2 * 0.8f, Color.LightGoldenrodYellow, 0, font.MeasureString((i + 1).ToString()) / 2, 0.8f, SpriteEffects.None, Layers.InventoryItemFont);
+            }
+
             for (int i = 0; i < spells.Count; i++)
             {
-                Position.X = GameState.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2 + 36 + (75 * i) + 4;
+                Position.X = Game1.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2 + 36 + (75 * i) + 4;
                 float scale = 40.0f / spells[i].Texture.Width;
                 Vector2 origin = new Vector2(spells[i].Texture.Width / 2, spells[i].Texture.Height / 2);
 
@@ -95,7 +99,7 @@ namespace Myng.Helpers
                    rotation: 0, origin: origin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
 
                 Vector2 textPosition = new Vector2(Position.X + 46, Position.Y + 26);
-                spriteBatch.DrawString(font, spells[i].ManaCost.ToString(), textPosition - new Vector2(spells[i].ManaCost.ToString().Length * 13, 0), Color.Black);
+                spriteBatch.DrawString(font, spells[i].ManaCost.ToString(), textPosition - new Vector2(spells[i].ManaCost.ToString().Length * 13, 0), Color.DarkBlue, 0, Vector2.Zero, 1f, SpriteEffects.None, Layers.InventoryItemFont);
             }
         }
 

@@ -74,8 +74,8 @@ namespace Myng.Helpers
                 tilesets.Add(new Tileset(tileset));
             }
 
-            screenWidthTiles = (int)Math.Floor((float)GameState.ScreenWidth / map.Tilesets[0].TileWidth) + 10;
-            screenHeightTiles = (int)Math.Floor((float)GameState.ScreenHeight / map.Tilesets[0].TileWidth) + 10;
+            screenWidthTiles = (int)Math.Floor((float)Game1.ScreenWidth / map.Tilesets[0].TileWidth) + 10;
+            screenHeightTiles = (int)Math.Floor((float)Game1.ScreenHeight / map.Tilesets[0].TileWidth) + 10;
 
             InitCollisionPolygons();
 
