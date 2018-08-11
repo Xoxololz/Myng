@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Helpers.SoundHandlers;
+using System.Collections.Generic;
 
 namespace Myng.States
 {
@@ -18,6 +20,8 @@ namespace Myng.States
 
         public static ContentManager Content;
 
+        public List<Sound> Sounds { get; set; }
+
         #endregion
 
 
@@ -28,16 +32,44 @@ namespace Myng.States
             State.Content = content;
             this.graphicsDevice = graphicsDevice;
             this.game = game;
+            Sounds = new List<Sound>();
         }
 
         #endregion
 
         #region Methods
+        public abstract void Init();
 
         public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
 
         public abstract void Update(GameTime gameTime);
 
-        #endregion
-    }
+        public void PauseSounds()
+        {
+            foreach(var sound in Sounds)
+            {
+                sound.Pause();
+            }
+        }
+
+        public void ResumeSounds()
+        {
+            foreach (var sound in Sounds)
+            {
+                sound.Resume();
+
+            }
+        }
+
+        public void StopSounds()
+        {
+            foreach (var sound in Sounds)
+            {
+                sound.Stop();
+
+            }
+        }
+
+            #endregion
+        }
 }

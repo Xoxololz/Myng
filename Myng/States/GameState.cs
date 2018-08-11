@@ -48,6 +48,15 @@ namespace Myng.States
 
         public GameState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
+            
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override void Init()
+        {
             Color[] backgroundColor = new Color[Game1.ScreenWidth * Game1.ScreenHeight];
             for (int i = 0; i < backgroundColor.Length; ++i) backgroundColor[i] = Color.Black;
             blackBackground = new Texture2D(graphicsDevice, Game1.ScreenWidth, Game1.ScreenHeight);
@@ -58,12 +67,12 @@ namespace Myng.States
 
             var monsterAnimations = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
+                { "walking", new Animation(Content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
             };
 
             var monsterAnimations2 = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(content.Load<Texture2D>("Characters/Skeleton2"), 4, 3)
+                { "walking", new Animation(Content.Load<Texture2D>("Characters/Skeleton2"), 4, 3)
                     {
                         FrameSpeed = 0.15f
                     }
@@ -72,7 +81,7 @@ namespace Myng.States
 
             var fireballAnimation = new Dictionary<string, Animation>()
             {
-                { "fireball", new Animation(content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
+                { "fireball", new Animation(Content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
 
                     {
                         FrameSpeed = 0.05f
@@ -90,7 +99,7 @@ namespace Myng.States
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
             };
 
-            Enemy monster = new Enemy(monsterAnimations, new Vector2(3050,700))
+            Enemy monster = new Enemy(monsterAnimations, new Vector2(3050, 700))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
@@ -102,53 +111,53 @@ namespace Myng.States
 
             otherSprites = new List<Sprite>
             {
-                new ItemSprite(content.Load<Texture2D>("Items/HealthPotion"), new Vector2(100f)
-                    , new HealthPotion(content.Load<Texture2D>("Items/HealthPotion"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/HealthPotion"), new Vector2(100f)
+                    , new HealthPotion(Content.Load<Texture2D>("Items/HealthPotion"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/HealthPotion"), new Vector2(250f)
-                    , new HealthPotion(content.Load<Texture2D>("Items/HealthPotion"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/HealthPotion"), new Vector2(250f)
+                    , new HealthPotion(Content.Load<Texture2D>("Items/HealthPotion"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(700f)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(700f)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 750)
-                    , new Ring(content.Load<Texture2D>("Items/iron_ring"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 750)
+                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 800)
-                    , new Ring(content.Load<Texture2D>("Items/iron_ring"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 800)
+                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 850)
-                    , new Ring(content.Load<Texture2D>("Items/iron_ring"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 850)
+                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 900)
-                    , new Ring(content.Load<Texture2D>("Items/iron_ring"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 900)
+                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
             };
 
@@ -183,12 +192,8 @@ namespace Myng.States
                 Content.Load<Song>("Sounds/NE"),
                 Content.Load<Song>("Sounds/RM")
             };
-            //backgroundMusic = new BackgroundMusic(songs);
+            backgroundMusic = new BackgroundMusic(songs);
         }
-
-        #endregion
-
-        #region Methods
 
         public override void Update(GameTime gameTime)
         {

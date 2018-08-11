@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Myng.Helpers.SoundHandlers
 {
-    public class SoundEffect2D
+    public class SoundEffect2D : Sound
     {
         #region Fields
 
@@ -87,7 +87,7 @@ namespace Myng.Helpers.SoundHandlers
             return value < 1f || value > 0f;
         }
 
-        public void Play()
+        public override void Play()
         {
             soundEffect.Apply3D(audioListener, audioEmitter);
             soundEffect.Play();
@@ -98,19 +98,20 @@ namespace Myng.Helpers.SoundHandlers
             soundEffect.Apply3D(audioListener, audioEmitter);
         }
 
-        public void Stop()
+        public override void Stop()
         {
             soundEffect.Stop();
         }
 
-        public void Pause()
+        public override void Pause()
         {
             soundEffect.Pause();
         }
 
-        public void Resume()
+        public override void Resume()
         {
-            soundEffect.Resume();
+            if (soundEffect.State == SoundState.Paused)
+                soundEffect.Resume();
         }
         #endregion
     }

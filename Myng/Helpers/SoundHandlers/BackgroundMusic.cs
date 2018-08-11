@@ -4,7 +4,7 @@ using System;
 
 namespace Myng.Helpers.SoundHandlers
 {
-    public class BackgroundMusic
+    public class BackgroundMusic : Sound
     {
         #region Fields
 
@@ -49,7 +49,7 @@ namespace Myng.Helpers.SoundHandlers
 
         private void NextSong(object sender, EventArgs e)
         {
-            if (MediaPlayer.State == MediaState.Playing) return;
+            if (MediaPlayer.State == MediaState.Playing || MediaPlayer.State == MediaState.Paused) return;
 
             if (++playingSongId < songs.Count)
             {
@@ -62,22 +62,22 @@ namespace Myng.Helpers.SoundHandlers
             }
         }
 
-        public void Pause()
+        public override void Pause()
         {
             MediaPlayer.Pause();
         }
 
-        public void Resume()
+        public override void Resume()
         {
             MediaPlayer.Resume();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             MediaPlayer.Stop();
         }
 
-        public void Play()
+        public override void Play()
         {
             MediaPlayer.Play(songs[0]);
         }

@@ -67,6 +67,7 @@
     <Compile Include="Helpers\Enums\Layers.cs" />
     <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\SoundHandlers\BackgroundMusic.cs" />
+    <Compile Include="Helpers\SoundHandlers\Sound.cs" />
     <Compile Include="Helpers\SoundHandlers\SoundEffect2D.cs" />
     <Compile Include="Helpers\SoundHandlers\SoundsDepository.cs" />
     <Compile Include="Graphics\GUI\Spellbar.cs" />

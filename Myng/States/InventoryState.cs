@@ -8,6 +8,7 @@ using Myng.Helpers;
 using Myng.Items;
 using Myng.Helpers.Enums;
 using Myng.Graphics.GUI;
+using Myng.Helpers.SoundHandlers;
 
 namespace Myng.States
 {
@@ -32,16 +33,21 @@ namespace Myng.States
         #region Constructors   
         public InventoryState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
-            mouseTex = content.Load<Texture2D>("GUI/mouse_normal");
+            
+        }
+        #endregion
+
+        #region Methods
+        public override void Init()
+        {
+            mouseTex = Content.Load<Texture2D>("GUI/mouse_normal");
             currentMouseState = Mouse.GetState();
             mouseOrig = new Vector2(mouseTex.Width / 2, mouseTex.Height / 2);
 
             inventory = Game1.Player.Inventory;
             gui = new GUI();
         }
-        #endregion
 
-        #region Methods
         private void HandleMouseIcon()
         {
             if (currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released)

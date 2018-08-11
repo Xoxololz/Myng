@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Graphics;
 using Myng.Helpers;
+using Myng.Helpers.SoundHandlers;
 using Myng.States;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Myng
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private State currentState;
+        private static State currentState;
         private State nextState;
 
         private bool isPaused;
@@ -33,10 +34,12 @@ namespace Myng
 
         public static int ScreenHeight;
         public static int ScreenWidth;
+
         #endregion
   
         private void ChangeState(State state)
         {
+            currentState.PauseSounds();
             nextState = state;
             states.Push(state);
             isPaused = nextState is GameState ? false : true;
@@ -44,8 +47,10 @@ namespace Myng
 
         private void ExitCurrentState()
         {
+            currentState.StopSounds();
             states.Pop();
             currentState = states.Peek();
+            currentState.ResumeSounds();
             isPaused = currentState is GameState ? false : true;
         }
 
@@ -82,6 +87,7 @@ namespace Myng
             //sets state to be in after starting the app
             states = new Stack<State>();
             currentState = new GameState(Content, graphics.GraphicsDevice, this);
+            currentState.Init();
             states.Push(currentState);
 
             keyboardCurrent = Keyboard.GetState();
@@ -135,7 +141,9 @@ namespace Myng
                 } else if(currentState is GameState && nextState == null)
                 {
                     Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
-                    ChangeState(new InventoryState(Content, graphics.GraphicsDevice, this));
+                    var inventoryState = new InventoryState(Content, graphics.GraphicsDevice, this);
+                    inventoryState.Init();
+                    ChangeState(inventoryState);
                 }
             }
 
@@ -167,6 +175,11 @@ namespace Myng
             }
 
             spriteBatch.End();
+        }
+
+        public static void RegisterSound(Sound sound)
+        {
+            currentState.Sounds.Add(sound);
         }
     }
 }
