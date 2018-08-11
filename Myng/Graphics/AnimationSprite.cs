@@ -1,8 +1,8 @@
 ﻿
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
+using Myng.Graphics.Animations;
 
 namespace Myng.Graphics
 {

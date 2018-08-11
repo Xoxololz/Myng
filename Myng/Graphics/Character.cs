@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Graphics.Animations;
 using Myng.Graphics.Enemies;
 using Myng.Helpers;
 using Myng.Helpers.Enums;
@@ -111,10 +112,12 @@ namespace Myng.Graphics
             Mana = MaxMana;
             layer = Layers.Character;            
             hpBar = State.Content.Load<Texture2D>("GUI/HPBar");
-            walkingSound = new SoundEffect2D(SoundsDepository.walking.CreateInstance(), this);
-            walkingSound.Volume = 0.3f;
-            walkingSound.IsLooping = true;
-            walkingSound.DistanceDivider = 20;
+            walkingSound = new SoundEffect2D(SoundsDepository.walking.CreateInstance(), this)
+            {
+                Volume = 0.3f,
+                IsLooping = true,
+                DistanceDivider = 20
+            };
         }
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)

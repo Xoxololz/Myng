@@ -26,12 +26,8 @@ namespace Myng.Controller
         public Keys Spell5 { get; set; }
         public Keys Spell6 { get; set; }
 
-        public Keys Item1 { get; set; }
-        public Keys Item2 { get; set; }
-        public Keys Item3 { get; set; }
-        public Keys Item4 { get; set; }
-        public Keys Item5 { get; set; }
-        public Keys Item6 { get; set; }
+        public Keys HealthPotion { get; set; }
+        public Keys ManaPotion { get; set; }
 
         public Input()
         {
@@ -52,12 +48,8 @@ namespace Myng.Controller
             Spell5 = Keys.D5;
             Spell6 = Keys.D6;
 
-            Item1 = Keys.NumPad1;
-            Item2 = Keys.NumPad2;
-            Item3 = Keys.NumPad3;
-            Item4 = Keys.NumPad4;
-            Item5 = Keys.NumPad5;
-            Item6 = Keys.NumPad6;
+            HealthPotion = Keys.Q;
+            ManaPotion = Keys.E;
         }
     }
 }

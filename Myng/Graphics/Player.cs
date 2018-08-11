@@ -4,14 +4,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
 using Myng.Helpers;
-using Myng.Helpers.Enums;
 using Myng.Helpers.SoundHandlers;
-using Myng.Items;
 using Myng.Items.Interfaces;
 using Myng.States;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Myng.Graphics.Animations;
+using Myng.Graphics.GUI;
 
 namespace Myng.Graphics
 {
@@ -19,9 +18,9 @@ namespace Myng.Graphics
     {
         #region Properties
 
-        public Spellbar Spellbar;
+        public Spellbar Spellbar { get; private set; }
 
-        public Inventory Inventory;
+        public Inventory Inventory { get; private set; }
 
         public Projectile Bullet { get; set; }
 
@@ -63,7 +62,9 @@ namespace Myng.Graphics
 
         private int level;
 
-        private Vector2 attackDirection;        
+        private Vector2 attackDirection;
+        private Dictionary<string, Animation> playerAnimations;
+        private Vector2 vector2;
 
         #endregion
 
@@ -173,38 +174,28 @@ namespace Myng.Graphics
             Move(hittableSprites);
             HandleAnimation();
             animationManager.Update(gameTime);
-            UseItems(otherSprites);
+            UsePotions(otherSprites);
             CastSpells(otherSprites);
-            Inventory.ClearEmptyItems();
 
-            foreach(Item item in Inventory.Items)
+            /* We will want to update only equiped items */
+            //foreach(Item item in Inventory.Items)
+            //{
+            //    if (item is IUpdatable)
+            //        ((IUpdatable)item).Update(otherSprites);
+            //}
+            //base.Update(gameTime, otherSprites, hittableSprites);
+        }
+
+        private void UsePotions(List<Sprite> sprites)
+        {
+            if (currentKey.IsKeyDown(input.HealthPotion) && !previousKey.IsKeyDown(input.HealthPotion))
             {
-                if (item is IUpdatable)
-                    ((IUpdatable)item).Update(otherSprites);
+                ((IUsable)Inventory.HealthPotion)?.Use(sprites);
             }
-            base.Update(gameTime, otherSprites, hittableSprites);
-        }
-
-        private void UseItem(List<Sprite> sprites, int position)
-        {
-            // early exit if there is no item in this slot
-            if (Inventory.Items.Count < position) return;
-
-            if (Inventory.Items[position - 1] is IUsable)
-                ((IUsable)Inventory.Items[position - 1]).Use(sprites);
-        }
-
-        private void UseItems(List<Sprite> sprites)
-        {
-            
-            if (currentKey.IsKeyDown(input.Item1) && !previousKey.IsKeyDown(input.Item1))
-                UseItem(sprites, 1);
-            if (currentKey.IsKeyDown(input.Item2) && !previousKey.IsKeyDown(input.Item2))
-                UseItem(sprites, 2);
-            if (currentKey.IsKeyDown(input.Item3) && !previousKey.IsKeyDown(input.Item3))
-                UseItem(sprites, 3);
-            if (currentKey.IsKeyDown(input.Item4) && !previousKey.IsKeyDown(input.Item4))
-                UseItem(sprites, 4);
+            if (currentKey.IsKeyDown(input.ManaPotion) && !previousKey.IsKeyDown(input.ManaPotion))
+            {
+                ((IUsable)Inventory.ManaPotion)?.Use(sprites);
+            }
         }
 
         private void CastSpells(List<Sprite> sprites)

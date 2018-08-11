@@ -11,6 +11,8 @@ using Myng.Helpers.SoundHandlers;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using Myng.AI.Movement;
+using Myng.Graphics.Animations;
+using Myng.Graphics.GUI;
 
 namespace Myng.States
 {
@@ -32,12 +34,11 @@ namespace Myng.States
 
         private BackgroundMusic backgroundMusic;
 
+        private Texture2D blackBackground;
+
         #endregion
 
         #region Properties
-
-        public static int ScreenHeight;
-        public static int ScreenWidth;
 
         public static TileMap TileMap { get; private set; }
 
@@ -47,20 +48,31 @@ namespace Myng.States
 
         public GameState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
-            ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            ScreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;            
+            
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override void Init()
+        {
+            Color[] backgroundColor = new Color[Game1.ScreenWidth * Game1.ScreenHeight];
+            for (int i = 0; i < backgroundColor.Length; ++i) backgroundColor[i] = Color.Black;
+            blackBackground = new Texture2D(graphicsDevice, Game1.ScreenWidth, Game1.ScreenHeight);
+            blackBackground.SetData(backgroundColor);
 
             TmxMap map = new TmxMap("Content/Maps/map3.tmx");
             TileMap = new TileMap(map);
 
             var monsterAnimations = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
+                { "walking", new Animation(Content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
             };
 
             var monsterAnimations2 = new Dictionary<string, Animation>()
             {
-                { "walking", new Animation(content.Load<Texture2D>("Characters/Skeleton2"), 4, 3)
+                { "walking", new Animation(Content.Load<Texture2D>("Characters/Skeleton2"), 4, 3)
                     {
                         FrameSpeed = 0.15f
                     }
@@ -69,7 +81,7 @@ namespace Myng.States
 
             var fireballAnimation = new Dictionary<string, Animation>()
             {
-                { "fireball", new Animation(content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
+                { "fireball", new Animation(Content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
 
                     {
                         FrameSpeed = 0.05f
@@ -84,10 +96,10 @@ namespace Myng.States
 
             Player player = new Player(playerAnimations, new Vector2(2352.014f, 724))
             {
-                Bullet = new Projectile(fireballAnimation, new Vector2(100f))                
-            };            
+                Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
+            };
 
-            Enemy monster = new Enemy(monsterAnimations, new Vector2(3050,700))
+            Enemy monster = new Enemy(monsterAnimations, new Vector2(3050, 700))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
@@ -99,17 +111,54 @@ namespace Myng.States
 
             otherSprites = new List<Sprite>
             {
-                new ItemSprite(content.Load<Texture2D>("Items/HealthPotion"), new Vector2(100f)
-                    , new HealthPotion(content.Load<Texture2D>("Items/HealthPotion"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/HealthPotion"), new Vector2(100f)
+                    , new HealthPotion(Content.Load<Texture2D>("Items/HealthPotion"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/HealthPotion"), new Vector2(250f)
-                    , new HealthPotion(content.Load<Texture2D>("Items/HealthPotion"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/HealthPotion"), new Vector2(250f)
+                    , new HealthPotion(Content.Load<Texture2D>("Items/HealthPotion"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/leather_armour1"), new Vector2(700f)
-                    , new Armor(content.Load<Texture2D>("Items/leather_armour1"))),
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(700f)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
 
-                new ItemSprite(content.Load<Texture2D>("Items/iron_ring"), new Vector2(800f)
-                    , new Ring(content.Load<Texture2D>("Items/iron_ring")))
+                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 750)
+                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 800)
+                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 850)
+                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 900)
+                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
+
+                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
+                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
+
             };
 
             hittableSprites = new List<Sprite>
@@ -143,12 +192,8 @@ namespace Myng.States
                 Content.Load<Song>("Sounds/NE"),
                 Content.Load<Song>("Sounds/RM")
             };
-            //backgroundMusic = new BackgroundMusic(songs);
+            backgroundMusic = new BackgroundMusic(songs);
         }
-
-        #endregion
-
-        #region Methods
 
         public override void Update(GameTime gameTime)
         {
@@ -188,12 +233,9 @@ namespace Myng.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.BackToFront, blendState: BlendState.AlphaBlend);
-
-            TileMap.Draw(spriteBatch);
-
             Game1.Player.Draw(spriteBatch);
             Game1.Player.Spellbar.Draw(spriteBatch);
+            Game1.Player.Inventory.DrawPotions(spriteBatch);
 
             foreach (var sprite in otherSprites)
                 sprite.Draw(spriteBatch);
@@ -202,9 +244,18 @@ namespace Myng.States
                 sprite.Draw(spriteBatch);
 
             gui.Draw(spriteBatch);
+        }
 
-            spriteBatch.End();
-
+        /// <summary>
+        /// Method to draw Background. This method is called even when this state is paused, but still active (ie. during menu states).
+        /// </summary>
+        public void DrawBackground(GameTime gameTime, SpriteBatch spriteBatch, bool darkenBackground)
+        {
+            if (darkenBackground)
+            {
+                spriteBatch.Draw(texture: blackBackground, position: -Camera.ScreenOffset, color: Color.White*0.5f, effects: SpriteEffects.None, layerDepth: Layers.BackgroundTint);
+            }
+            TileMap.Draw(spriteBatch);
         }
 
         #endregion
