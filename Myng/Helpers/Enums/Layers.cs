@@ -20,6 +20,8 @@ namespace Myng.Helpers
 
         public static float Item = 0.4f;
 
+        public static float BackgroundTint = 0.7f;
+        
         public static float Accesories = 0.8f;
 
         public static float Road = 0.81f;

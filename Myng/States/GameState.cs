@@ -34,6 +34,8 @@ namespace Myng.States
 
         private BackgroundMusic backgroundMusic;
 
+        private Texture2D blackBackground;
+
         #endregion
 
         #region Properties
@@ -46,6 +48,11 @@ namespace Myng.States
 
         public GameState(ContentManager content, GraphicsDevice graphicsDevice, Game1 game) : base(content, graphicsDevice, game)
         {
+            Color[] backgroundColor = new Color[Game1.ScreenWidth * Game1.ScreenHeight];
+            for (int i = 0; i < backgroundColor.Length; ++i) backgroundColor[i] = Color.Black;
+            blackBackground = new Texture2D(graphicsDevice, Game1.ScreenWidth, Game1.ScreenHeight);
+            blackBackground.SetData(backgroundColor);
+
             TmxMap map = new TmxMap("Content/Maps/map3.tmx");
             TileMap = new TileMap(map);
 
@@ -237,8 +244,12 @@ namespace Myng.States
         /// <summary>
         /// Method to draw Background. This method is called even when this state is paused, but still active (ie. during menu states).
         /// </summary>
-        public void DrawBackground(GameTime gameTime, SpriteBatch spriteBatch)
+        public void DrawBackground(GameTime gameTime, SpriteBatch spriteBatch, bool darkenBackground)
         {
+            if (darkenBackground)
+            {
+                spriteBatch.Draw(texture: blackBackground, position: -Camera.ScreenOffset, color: Color.White*0.5f, effects: SpriteEffects.None, layerDepth: Layers.BackgroundTint);
+            }
             TileMap.Draw(spriteBatch);
         }
 

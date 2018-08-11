@@ -35,11 +35,18 @@ namespace Myng
         public static int ScreenWidth;
         #endregion
   
-        public void ChangeState(State state)
+        private void ChangeState(State state)
         {
             nextState = state;
             states.Push(state);
             isPaused = nextState is GameState ? false : true;
+        }
+
+        private void ExitCurrentState()
+        {
+            states.Pop();
+            currentState = states.Peek();
+            isPaused = currentState is GameState ? false : true;
         }
 
         public Game1()
@@ -104,6 +111,8 @@ namespace Myng
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             keyboardPrevious = keyboardCurrent;
             keyboardCurrent = Keyboard.GetState();
 
@@ -114,8 +123,7 @@ namespace Myng
             //Escape handler for exiting states
             if (keyboardCurrent.IsKeyDown(Keys.Escape) && !keyboardPrevious.IsKeyDown(Keys.Escape) && isPaused)
             {
-                states.Pop();
-                ChangeState(states.Peek());
+                ExitCurrentState();
             }
 
             //Inventory state handler
@@ -123,8 +131,7 @@ namespace Myng
             {
                 if (currentState is InventoryState && nextState == null)
                 {
-                    states.Pop();
-                    ChangeState(states.Peek());
+                    ExitCurrentState();
                 } else if(currentState is GameState && nextState == null)
                 {
                     Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
@@ -138,8 +145,6 @@ namespace Myng
                 nextState = null;
             }
             currentState.Update(gameTime);
-
-            base.Update(gameTime);
         }
 
         /// <summary>
@@ -149,18 +154,19 @@ namespace Myng
         protected override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.BackToFront, blendState: BlendState.AlphaBlend);
-            currentState.Draw(gameTime, spriteBatch);
+            base.Draw(gameTime);
 
+            currentState.Draw(gameTime, spriteBatch);
             foreach (State s in states)
             {
                 if (s is GameState gamestate)
                 {
                     //id ispaused is true, the background is darkened
-                    gamestate.DrawBackground(gameTime, spriteBatch);
+                    gamestate.DrawBackground(gameTime, spriteBatch, isPaused);               
                 }
             }
+
             spriteBatch.End();
-            base.Draw(gameTime);
         }
     }
 }
