@@ -18,16 +18,19 @@ namespace Myng.AI.Movement
 
         private List<Node> path;
 
+        private int currentNodeIndex;
+
         private Node nextClearNode;
 
         private Enemy parent;
 
-        private int tolerance = 5;        
+        private int tolerance = 5;
+
+        private int sightRange;
         #endregion
 
         #region Properties
 
-        public int SightRange { get; set; }
 
         public bool Stopped { get; set; }
         #endregion
@@ -39,7 +42,7 @@ namespace Myng.AI.Movement
             nodeMap = NodeMapRepository.GetNodeMap(collisionPolygon);
             pathFinder = new PathFinder();
             this.parent = parent;
-            SightRange = 150;
+            sightRange = 150;
         }
 
         #endregion
@@ -65,14 +68,15 @@ namespace Myng.AI.Movement
 
         private Node FindFarthestNodeInRange()
         {
+            //keep discarted nodes and put them back if shit happends
             Node node = null;
-            if(DistanceParentFrom(path[0]) < SightRange)
+            if(DistanceParentFrom(path[0]) < sightRange)
             {
                 if (path[0] == nextClearNode) return nextClearNode;
                 if (CanGoStraightTo(path[0]))
                 {
                     node = path[0];
-                    path.RemoveRange(1, path.Count - 1);
+                    //path.RemoveRange(1, path.Count - 1);
                     if (DistanceParentFrom(path[0]) < tolerance)
                     {
                         path = null;
@@ -81,16 +85,17 @@ namespace Myng.AI.Movement
                     return node;
                 }
             }
-            for (int i = path.Count - 1; i >= 0; i--)
+            for (int i = currentNodeIndex - 1; i >= 0; i--)
             {
                 var a = DistanceParentFrom(path[i]);
-                if (a > SightRange || i == 0)
+                if (a > sightRange || i == 0)
                 {
                     if (path[i + 1] == nextClearNode) return nextClearNode;
                     if (CanGoStraightTo(path[i + 1]))
-                    {                        
+                    { 
                         node = path[i + 1];
-                        path.RemoveRange(i + 2, path.Count - (i + 2));
+                        //path.RemoveRange(i + 2, path.Count - (i + 2));
+                        currentNodeIndex = i + 1;
                         return node;
                     }
                     else
@@ -100,13 +105,14 @@ namespace Myng.AI.Movement
                             if (path[j] == nextClearNode) return nextClearNode;
                             if (CanGoStraightTo(path[j]))
                             {
-                                path.RemoveRange(j + 1, path.Count - (j + 1));
+                                //path.RemoveRange(j + 1, path.Count - (j + 1));
+                                currentNodeIndex = j;
                                 return path[j];
                             }
                         }
                     }
                 }
-            }
+            }            
 
             throw new Exception("Too low SightRange");
         }        
@@ -123,19 +129,8 @@ namespace Myng.AI.Movement
 
         private bool CanGoStraightTo(Node node)
         {
-            //var endPolygon = new Polygon(parent.CollisionPolygon.Points, parent.Origin);
-            //endPolygon.MoveTo(new Vector2(node.X, node.Y));
-            //Vector2[] points = new Vector2[6]
-            //{
-            //    parent.CollisionPolygon.Points[0],
-            //    parent.CollisionPolygon.Points[1],
-            //    endPolygon.Points[1],
-            //    endPolygon.Points[2],
-            //    endPolygon.Points[3],
-            //    parent.CollisionPolygon.Points[3]
-            //};
-            //var translatePolygon = new Polygon(points, points[0]);
-            //return tileMap.CheckCollisionWithTerrain(translatePolygon) != Collision.None;
+            //return true;
+
             bool canGo = false;
             Vector2 direction = new Vector2()
             {
@@ -143,7 +138,7 @@ namespace Myng.AI.Movement
                 Y = node.Y - (float)Math.Floor(parent.Position.Y)
             };
             direction.Normalize();
-            direction *= 8;            
+            direction *= 8;
             SpritePolygon collisionPolygon = (SpritePolygon)parent.CollisionPolygon.Clone(); ;
             while (GameState.TileMap.CheckCollisionWithTerrain(collisionPolygon) == Collision.None)
             {
@@ -180,6 +175,7 @@ namespace Myng.AI.Movement
             if (goalNode == null) return;
             Node startNode = nodeMap.FindClosestFreeNode(parent.Position);
             path = pathFinder.FindPath(startNode, goalNode, nodeMap);
+            currentNodeIndex = path.Count;
         }                     
 
         #endregion

@@ -94,7 +94,7 @@ namespace Myng.Graphics
             : base(texture2D, position)
         {
             InitProperties();            
-            hpScale = (texture.Width * Scale) / hpBar.Width;            
+            hpScale = (texture.Width * Scale) / hpBar.Width;    
         }
 
         public Character(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
@@ -165,6 +165,66 @@ namespace Myng.Graphics
                 || GameState.TileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Water;
 
         }
+
+        protected void DealWithCollisions(List<Sprite> hittableSprites)
+        {
+            Vector2 velocityCopy = new Vector2(velocity.X, velocity.Y);
+
+            if (Math.Abs(velocityCopy.X) > Math.Abs(velocityCopy.Y))
+            {
+                velocity = new Vector2(velocityCopy.X, 0);
+                if (!CollidesWithNewPosition(hittableSprites))
+                    return;
+                else
+                {
+                    velocity = new Vector2(0, velocityCopy.Y);
+                    if (!CollidesWithNewPosition(hittableSprites))
+                        return;
+                    else
+                    {
+                        velocity = new Vector2(-velocityCopy.X, 0);
+                        if (!CollidesWithNewPosition(hittableSprites))
+                            return;
+                        else
+                        {
+                            velocity = new Vector2(0, -velocityCopy.Y);
+                            if (!CollidesWithNewPosition(hittableSprites))
+                                return;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                velocity = new Vector2(0, velocityCopy.Y);
+                if (!CollidesWithNewPosition(hittableSprites))
+                    return;
+                else
+                {
+                    velocity = new Vector2(velocityCopy.X, 0);
+                    if (!CollidesWithNewPosition(hittableSprites))
+                        return;
+                    else
+                    {
+                        velocity = new Vector2(0, -velocityCopy.Y);
+                        if (!CollidesWithNewPosition(hittableSprites))
+                            return;
+                        else
+                        {
+                            velocity = new Vector2(-velocityCopy.X, 0);
+                            if (CollidesWithNewPosition(hittableSprites))
+                                velocity = Vector2.Zero;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        protected abstract bool CollidesWithNewPosition(List<Sprite> hittableSprites);
+        
+
+        protected abstract bool CheckCollisions(List<Sprite> hittableSprites);
 
         public override void Draw(SpriteBatch spriteBatch)
         {

@@ -163,23 +163,23 @@ namespace Myng.States
 
             hittableSprites = new List<Sprite>
             {
-                //monster
+              //  monster
                 //monster2
             };
-            //for (int i = 240; i < 1500; i += 150)
-            //{
-            //    var monsterAnimations3 = new Dictionary<string, Animation>()
-            //    {
-            //        { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
-            //    };
+            for (int i = 240; i < 1500; i += 150)
+            {
+                var monsterAnimations3 = new Dictionary<string, Animation>()
+                {
+                    { "walking", new Animation(Content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
+                };
 
-            //    Enemy monster3 = new Enemy(monsterAnimations3, new Vector2(1, i))
-            //    {
-            //        Bullet = new Projectile(fireballAnimation, new Vector2(100f))
-            //    };
+                Enemy monster3 = new Enemy(monsterAnimations3, new Vector2(1, i))
+                {
+                    Bullet = new Projectile(fireballAnimation, new Vector2(100f))
+                };
 
-            //    hittableSprites.Add(monster3);
-            //}
+                hittableSprites.Add(monster3);
+            }
             Game1.Player = player;
 
             camera = new Camera(Game1.Player);
@@ -192,7 +192,7 @@ namespace Myng.States
                 Content.Load<Song>("Sounds/NE"),
                 Content.Load<Song>("Sounds/RM")
             };
-            backgroundMusic = new BackgroundMusic(songs);
+           // backgroundMusic = new BackgroundMusic(songs);
         }
 
         public override void Update(GameTime gameTime)

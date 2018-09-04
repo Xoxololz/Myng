@@ -273,12 +273,14 @@ namespace Myng.Graphics
                 velocity.Normalize();
                 velocity *= speed;
             }
-            Position += velocity;
-            if (CheckCollisions(hittableSprites) == true)
-                Position -= velocity;
+            
+            if (CollidesWithNewPosition(hittableSprites))
+            {
+                DealWithCollisions(hittableSprites);
+            }
         }        
 
-        private bool CheckCollisions(List<Sprite> sprites)
+        protected override bool CheckCollisions(List<Sprite> sprites)
         {
             foreach (var sprite in sprites)
             {
@@ -290,14 +292,31 @@ namespace Myng.Graphics
             return false;
         }
 
-        private bool CheckCollision(Sprite sprite)
+        protected override bool CollidesWithNewPosition(List<Sprite> hittableSprites)
         {
-            int minDistance = 35;
-            if (Vector2.Distance(CollisionPolygon.Origin, sprite.CollisionPolygon.Origin) < minDistance)
+            Position += velocity;
+            if (CheckCollisions(hittableSprites))
             {
+                Position -= velocity;
+                return true;
+            }
+            if (CheckCollisionWithTerrain())
+            {
+                Position -= velocity;
                 return true;
             }
             return false;
+        }
+
+        private bool CheckCollision(Sprite sprite)
+        {
+            //int minDistance = 35;
+            //if (Vector2.Distance(CollisionPolygon.Origin, sprite.CollisionPolygon.Origin) < minDistance)
+            //{
+            //    return true;
+            //}
+            //return false;
+            return CollisionPolygon.Intersects(sprite.CollisionPolygon);
         }
 
         private void HandleAnimation()
@@ -311,7 +330,8 @@ namespace Myng.Graphics
                 animationManager.Animation.SetRow(0); //walking down
             else if (velocity.Y < 0)
                 animationManager.Animation.SetRow(3); //walking up
-            else animationManager.Animation.IsLooping = false;
+            else
+                animationManager.Animation.IsLooping = false;
             
         }
 

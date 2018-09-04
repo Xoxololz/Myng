@@ -114,10 +114,25 @@ namespace Myng.Graphics.Enemies
                 DealWithCollisions(hittableSprites);
         }
 
-        private bool CollidesWithNewPosition(List<Sprite> hittableSprites)
+        protected override bool CheckCollisions(List<Sprite> sprites)
+        {
+            foreach (var sprite in sprites)
+            {
+                //TODO: somehow handle AIs crashing into each other
+                if (CheckCollision(sprite))
+                {
+                    //movementAI.RecalculatePath();
+                    return true;
+                }
+            }
+
+            return CheckCollision(Game1.Player);
+        }
+
+        protected override bool CollidesWithNewPosition(List<Sprite> hittableSprites)
         {
             Position += velocity;
-            if (CheckCollisions(hittableSprites) == true)
+            if (CheckCollisions(hittableSprites))
             {
                 Position -= velocity;
                 return true;
@@ -125,95 +140,16 @@ namespace Myng.Graphics.Enemies
             return false;
         }
 
-        private void DealWithCollisions(List<Sprite> hittableSprites)
-        {
-            Vector2 velocityCopy = new Vector2(velocity.X, velocity.Y);
-
-            if (Math.Abs(velocityCopy.X) > Math.Abs(velocityCopy.Y))
-            {
-                ChangeVelocity(new Vector2(velocityCopy.X, 0));
-                if (!CollidesWithNewPosition(hittableSprites))
-                    return;
-                else
-                {
-                    ChangeVelocity(new Vector2(0, velocityCopy.Y));
-                    if (!CollidesWithNewPosition(hittableSprites))
-                        return;
-                    else
-                    {
-                        ChangeVelocity(new Vector2(-velocityCopy.X, 0));
-                        if (!CollidesWithNewPosition(hittableSprites))
-                            return;
-                        else
-                        {
-                            ChangeVelocity(new Vector2(0, -velocityCopy.Y));
-                            if (!CollidesWithNewPosition(hittableSprites))
-                                return;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                ChangeVelocity(new Vector2(0, velocityCopy.Y));
-                if (!CollidesWithNewPosition(hittableSprites))
-                    return;
-                else
-                {
-                    ChangeVelocity(new Vector2(velocityCopy.X, 0));
-                    if (!CollidesWithNewPosition(hittableSprites))
-                        return;
-                    else
-                    {
-                        ChangeVelocity(new Vector2(0, -velocityCopy.Y));
-                        if (!CollidesWithNewPosition(hittableSprites))
-                            return;
-                        else
-                        {
-                            ChangeVelocity(new Vector2(-velocityCopy.X, 0));
-                            CollidesWithNewPosition(hittableSprites);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ChangeVelocity(Vector2 vector2)
-        {
-            velocity = vector2;
-            if (vector2 != Vector2.Zero)
-                velocity.Normalize();
-            velocity *= speed;
-        }
-
-        private bool CheckCollisions(List<Sprite> sprites)
-        {
-            foreach (var sprite in sprites)
-            {
-                //TODO: somehow handle AIs crashing into each other
-                //if (CheckCollision(sprite))
-                //{
-                //    //movementAI.RecalculatePath();
-                //    return true;
-                //}
-            }
-            if (CheckCollision(Game1.Player))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         private bool CheckCollision(Sprite sprite)
         {
-            int minDistance = 45;
-            if (Vector2.Distance(CollisionPolygon.Origin, sprite.CollisionPolygon.Origin) < minDistance)
-            {
-                if (sprite != this)
-                    return true;
-            }
-            return false;
+            //int minDistance = 45;
+            //if (Vector2.Distance(CollisionPolygon.Origin, sprite.CollisionPolygon.Origin) < minDistance)
+            //{
+            //    if (sprite != this)
+            //        return true;
+            //}
+            //return false;
+            return CollisionPolygon.Intersects(sprite.CollisionPolygon) && sprite!=this;
         }
 
         private void HandleAnimation()
