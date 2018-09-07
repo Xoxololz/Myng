@@ -3,12 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Myng.Graphics;
 using Myng.Helpers;
 using Myng.Items;
-using Myng.Helpers.Enums;
 using Myng.Graphics.GUI;
-using Myng.Helpers.SoundHandlers;
 
 namespace Myng.States
 {
@@ -17,8 +14,12 @@ namespace Myng.States
         #region Fields
 
         private MouseState currentMouseState;
-
         private MouseState previousMouseState;
+
+        private double clickTimer;
+
+        //maximum time in milliseconds between two clicks for it to be doubleclick
+        private const double doubleClickTimerDelay = 400;
 
         private Texture2D mouseTex;
         private Vector2 mousePos;
@@ -61,17 +62,18 @@ namespace Myng.States
             previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
             mousePos = currentMouseState.Position.ToVector2();
+            clickTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
 
             inventory.Update(gameTime);
 
             HandleMouseIcon();
-            HandleMouse();
+            HandleMouse(gameTime);
         }
 
         /// <summary>
         /// This method handles clicking on inventory, dragging items, etc.
         /// </summary>
-        private void HandleMouse()
+        private void HandleMouse(GameTime gameTime)
         {
             if (currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released)
             {
@@ -80,17 +82,31 @@ namespace Myng.States
                 {
                     this.shouldBeRemoved = true;
                 }
-                
-                //pick up item
-                pickedUpItem = inventory.GetItemByMousePosition(mousePos.ToPoint());
-                if(pickedUpItem != null)
+
+                if (clickTimer < doubleClickTimerDelay) //double click
                 {
-                    pickedUpItem.BeingDragged = true;
+                    pickedUpItem = inventory.GetItemByMousePosition(mousePos.ToPoint());
+                    if (pickedUpItem != null)
+                    {
+                        if (inventory.IsEquiped(pickedUpItem))
+                            inventory.UnequipItem(pickedUpItem);
+                        else inventory.EquipItem(pickedUpItem);
+
+                        pickedUpItem.BeingDragged = false;
+                        pickedUpItem = null;
+                    }
                 }
-            }
-            else if (pickedUpItem != null && currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed)
-            {
-                //todo highlight correct slot
+                else //normal click
+                { 
+                    //pick up item
+                    pickedUpItem = inventory.GetItemByMousePosition(mousePos.ToPoint());
+                    if (pickedUpItem != null)
+                    {
+                        pickedUpItem.BeingDragged = true;
+                    }
+                }
+
+                clickTimer = 0;
             }
             else if(pickedUpItem != null && currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed)
             {
