@@ -122,6 +122,11 @@ namespace Myng.States
             inventory.DrawPotions(spriteBatch);
             gui.Draw(spriteBatch);
 
+            if(pickedUpItem != null)
+            {
+                inventory.HighlightSlot(spriteBatch, pickedUpItem.ItemType);
+            }
+
             //mouse
             float mouseScale = 2;
             spriteBatch.Draw(texture: mouseTex, position: -Camera.ScreenOffset + mousePos + mouseOrig * mouseScale, sourceRectangle: null, color: Color.White,

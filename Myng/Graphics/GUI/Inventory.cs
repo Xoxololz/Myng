@@ -44,6 +44,7 @@ namespace Myng.Helpers
         private Texture2D miscSlot;
         private Texture2D weaponSlot;
         private Texture2D shieldSlot;
+        private Texture2D itemHighlighter;
 
         //scaling
         private float potionsScale = 1.5f;
@@ -119,6 +120,7 @@ namespace Myng.Helpers
             miscSlot = State.Content.Load<Texture2D>("GUI/misc_slot");
             weaponSlot = State.Content.Load<Texture2D>("GUI/weapon_slot");
             shieldSlot = State.Content.Load<Texture2D>("GUI/shield_slot");
+            itemHighlighter = State.Content.Load<Texture2D>("GUI/item_highlighter");
 
             //origins
             HPorigin = new Vector2(HPtexture.Width / 2, HPtexture.Height / 2);
@@ -496,6 +498,38 @@ namespace Myng.Helpers
             spriteBatch.DrawString(font, "E", new Vector2(MPPosition.X + 4 * potionsScale, MPPosition.Y + 3 * potionsScale) + font.MeasureString("E") / 2 * 0.8f, Color.LightGoldenrodYellow, 0, font.MeasureString("E") / 2, 0.8f, SpriteEffects.None, Layers.InventoryItem);
 
             spriteBatch.DrawString(font, ManaPotion == null ? 0.ToString() : ManaPotion.Count.ToString(), new Vector2(MPPosition.X + 28 * potionsScale, MPPosition.Y + 24 * potionsScale), Color.Black);
+        }
+
+        //Method to draw highlights to slots
+        public void HighlightSlot(SpriteBatch spriteBatch, ItemType itemType)
+        {
+            Vector2 highlightPos;
+
+            switch (itemType)
+            {
+                case ItemType.HELMET:
+                    highlightPos = HelmetSlotPos;
+                    break;
+                case ItemType.CHEST:
+                    highlightPos = ChestSlotPos;
+                    break;
+                case ItemType.LEGS:
+                    highlightPos = LegsSlotPos;
+                    break;
+                case ItemType.MISC:
+                    highlightPos = MiscSlotPos;
+                    break;
+                case ItemType.WEAPON:
+                    highlightPos = WeaponSlotPos;
+                    break;
+                case ItemType.SHIELD:
+                    highlightPos = ShieldSlotPos;
+                    break;
+                default: throw new ArgumentException();
+            }
+
+            spriteBatch.Draw(texture: itemHighlighter, position: highlightPos + itemSlotOrigin * invScale, sourceRectangle: null, color: Color.White * 0.4f,
+               rotation: 0, origin: itemSlotOrigin, scale: invScale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItemHighligh);
         }
 
         #endregion
