@@ -78,9 +78,9 @@ namespace Myng.States
             if (currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released)
             {
                 //should exit?
-                if (inventory.GetExitArea().Contains(mousePos.ToPoint()))
+                if (inventory.GetExitArea().Contains((mousePos - Camera.ScreenOffset).ToPoint()))
                 {
-                    this.shouldBeRemoved = true;
+                    this.toRemove = true;
                 }
 
                 if (clickTimer < doubleClickTimerDelay) //double click
@@ -110,21 +110,18 @@ namespace Myng.States
             }
             else if(pickedUpItem != null && currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed)
             {
-                //equip or unequip or drop item
-                
-                //equipping or putting back to inventory
-                Rectangle rec = inventory.GetEquipArea(pickedUpItem.ItemType);
-                if (rec.Contains((mousePos - Camera.ScreenOffset).ToPoint()))
+                //equiping, unequiping or destroying item
+                if (inventory.GetEquipArea(pickedUpItem.ItemType).Contains((mousePos - Camera.ScreenOffset).ToPoint())) //equip
                 {
                     inventory.EquipItem(pickedUpItem);
                 }
-                else if (inventory.IsEquiped(pickedUpItem))
+                else if (inventory.IsEquiped(pickedUpItem) && inventory.GetInventoryArea().Contains((mousePos - Camera.ScreenOffset).ToPoint())) //unequip
                 {
-                    rec = inventory.GetInventoryArea();
-                    if(rec.Contains((mousePos - Camera.ScreenOffset).ToPoint()))
-                    {
                         inventory.UnequipItem(pickedUpItem);
-                    }
+                }
+                else if (inventory.GetJunkArea().Contains((mousePos - Camera.ScreenOffset).ToPoint())) //destroy
+                {
+                        inventory.DeleteItem(pickedUpItem);
                 }
                 pickedUpItem.BeingDragged = false;
                 pickedUpItem = null;
@@ -141,6 +138,7 @@ namespace Myng.States
             if(pickedUpItem != null)
             {
                 inventory.HighlightSlot(spriteBatch, pickedUpItem.ItemType);
+                inventory.DrawJunkArea(spriteBatch);
             }
 
             //mouse

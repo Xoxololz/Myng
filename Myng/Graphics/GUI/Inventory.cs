@@ -27,17 +27,17 @@ namespace Myng.Helpers
         private Texture2D MPtexture;
         private Vector2 MPorigin;
 
-        //inventory background and slots
+        //inventory parts
         private Texture2D inventoryBackground;
         private Vector2 inventoryBackgroundOrigin;
-        private Vector2 inventoryBackgroundPos;
+
+        private Texture2D inventoryJunk;
+        private Vector2 inventoryJunkOrigin;
 
         private Texture2D inventorySlots;
         private Vector2 inventorySlotsOrigin;
 
         //item slots
-        private Vector2 itemSlotOrigin;
-
         private Texture2D helmetSlot;
         private Texture2D chestSlot;
         private Texture2D legsSlot;
@@ -46,35 +46,34 @@ namespace Myng.Helpers
         private Texture2D shieldSlot;
         private Texture2D itemHighlighter;
 
+        private Vector2 itemSlotOrigin; //every slot has the same size
+
+        //positions
+        private Vector2 inventoryBackgroundPos;
+        private Vector2 InventorySlotsPos;
+        private Vector2 InventoryJunkPos;
+        private Vector2 HelmetSlotPos;
+        private Vector2 ChestSlotPos;
+        private Vector2 LegsSlotPos;
+        private Vector2 MiscSlotPos;
+        private Vector2 WeaponSlotPos;
+        private Vector2 ShieldSlotPos;
+
         //scaling
         private float potionsScale = 1.5f;
         private float invScale = 1.75f;
 
         //items
-        private List<Item> Items;
+        private List<Item> items;
 
-        private Item Helmet;
-        private Item Chest;
-        private Item Legs;
-        private Item Misc;
-        private Item Weapon;
-        private Item Shield;
-        #endregion
+        private Item helmet;
+        private Item chest;
+        private Item legs;
+        private Item misc;
+        private Item weapon;
+        private Item shield;
 
-        #region Properties
-        public HealthPotion HealthPotion;
-
-        public ManaPotion ManaPotion;
-
-        public Vector2 InventorySlotsPos { get; private set; }
-        public Vector2 HelmetSlotPos { get; private set; }
-        public Vector2 ChestSlotPos { get; private set; }
-        public Vector2 LegsSlotPos { get; private set; }
-        public Vector2 MiscSlotPos { get; private set; }
-        public Vector2 WeaponSlotPos { get; private set; }
-        public Vector2 ShieldSlotPos { get; private set; }
-
-        public Vector2 ItemSlotSize
+        private Vector2 ItemSlotSize
         {
             get
             {
@@ -82,13 +81,19 @@ namespace Myng.Helpers
             }
         }
 
-        public Vector2 InventorySlotsSize
+        private Vector2 InventorySlotsSize
         {
             get
             {
                 return new Vector2(inventorySlots.Width, inventorySlots.Height) * invScale;
             }
         }
+        #endregion
+
+        #region Properties
+        public HealthPotion HealthPotion;
+
+        public ManaPotion ManaPotion;
 
         public float InventoryScale
         {
@@ -100,7 +105,12 @@ namespace Myng.Helpers
 
         public Rectangle GetExitArea()
         {
-            return new Rectangle((inventoryBackgroundPos + new Vector2(277, 10) * invScale + Camera.ScreenOffset).ToPoint(), (new Vector2(37, 43)*invScale).ToPoint());
+            return new Rectangle((inventoryBackgroundPos + new Vector2(277, 10) * invScale).ToPoint(), (new Vector2(37, 43)*invScale).ToPoint());
+        }
+
+        public Rectangle GetJunkArea()
+        {
+            return new Rectangle((InventoryJunkPos).ToPoint(), (inventoryJunk.Bounds.Size.ToVector2() * invScale).ToPoint());
         }
 
         #endregion
@@ -121,6 +131,7 @@ namespace Myng.Helpers
             weaponSlot = State.Content.Load<Texture2D>("GUI/weapon_slot");
             shieldSlot = State.Content.Load<Texture2D>("GUI/shield_slot");
             itemHighlighter = State.Content.Load<Texture2D>("GUI/item_highlighter");
+            inventoryJunk = State.Content.Load<Texture2D>("GUI/inventory_junk");
 
             //origins
             HPorigin = new Vector2(HPtexture.Width / 2, HPtexture.Height / 2);
@@ -128,12 +139,13 @@ namespace Myng.Helpers
             inventoryBackgroundOrigin = new Vector2(inventoryBackground.Width / 2, inventoryBackground.Height / 2);
             inventorySlotsOrigin = new Vector2(inventorySlots.Width / 2, inventorySlots.Height / 2);
             itemSlotOrigin = new Vector2(helmetSlot.Width / 2, helmetSlot.Height / 2);
+            inventoryJunkOrigin = new Vector2(inventoryJunk.Width / 2, inventoryJunk.Height / 2);
 
             //fonts
             font = State.Content.Load<SpriteFont>("Fonts/Font");
 
             //other
-            Items = new List<Item>(inventorySize);
+            items = new List<Item>(inventorySize);
         }
 
         #endregion
@@ -158,7 +170,7 @@ namespace Myng.Helpers
                 }
                 return false;
             }
-            if (Items.Count < inventorySize)
+            if (items.Count < inventorySize)
                 return true;
 
             return false;
@@ -171,10 +183,10 @@ namespace Myng.Helpers
         /// <returns>Item or null, if no Item was found</returns>
         private Item GetItem(int pos)
         {
-            if (pos < 0 || pos >= Items.Count)
+            if (pos < 0 || pos >= items.Count)
                 return null;
 
-            return Items[pos];
+            return items[pos];
         }
 
         private ref Item GetEquippedItemByType(ItemType type)
@@ -182,17 +194,17 @@ namespace Myng.Helpers
             switch (type)
             {
                 case ItemType.HELMET:
-                    return ref Helmet;
+                    return ref helmet;
                 case ItemType.CHEST:
-                    return ref Chest;
+                    return ref chest;
                 case ItemType.LEGS:
-                    return ref Legs;
+                    return ref legs;
                 case ItemType.MISC:
-                    return ref Misc;
+                    return ref misc;
                 case ItemType.WEAPON:
-                    return ref Weapon;
+                    return ref weapon;
                 case ItemType.SHIELD:
-                    return ref Shield;
+                    return ref shield;
                 default: throw new ArgumentException();
             }
         }
@@ -219,9 +231,21 @@ namespace Myng.Helpers
             }
             else
             {
-                Items.Add(item);
+                items.Add(item);
             }
             return true;
+        }
+
+        public bool DeleteItem(Item item)
+        {
+            if (IsEquiped(item))
+            {
+                GetEquippedItemByType(item.ItemType).UnequipItem();
+                GetEquippedItemByType(item.ItemType) = null;
+                return true;
+            }
+
+            return items.Remove(item);
         }
 
         public Item GetItemByMousePosition(Point mousePos)
@@ -291,7 +315,7 @@ namespace Myng.Helpers
                 return true;
 
             //now we can remove the item from inventory and equip it / swap it with previously equipped item
-            Items.Remove(itemToEquip);
+            items.Remove(itemToEquip);
 
             //temporary variable is used to avoid problems with full inventory while swapping items
             Item toUnequip = GetEquippedItemByType(itemToEquip.ItemType);
@@ -302,7 +326,7 @@ namespace Myng.Helpers
             if (toUnequip != null)
             {
                 toUnequip.UnequipItem();
-                Items.Add(toUnequip);
+                items.Add(toUnequip);
             }
             return true;
         }
@@ -310,7 +334,7 @@ namespace Myng.Helpers
         public bool UnequipItem(Item itemToUnequip)
         {
             //check if item exists, is equiped a inventory is not full
-            if (itemToUnequip == null || !IsEquiped(itemToUnequip) || Items.Count >= inventorySize)
+            if (itemToUnequip == null || !IsEquiped(itemToUnequip) || items.Count >= inventorySize)
                 return false;
 
             //add item to inventory
@@ -342,24 +366,24 @@ namespace Myng.Helpers
             switch (item.ItemType)
             {
                 case ItemType.HELMET:
-                    return Helmet == null ? false : Helmet.Equals(item);
+                    return helmet == null ? false : helmet.Equals(item);
                 case ItemType.CHEST:
-                    return Chest == null ? false : Chest.Equals(item);
+                    return chest == null ? false : chest.Equals(item);
                 case ItemType.LEGS:
-                    return Legs == null ? false : Legs.Equals(item);
+                    return legs == null ? false : legs.Equals(item);
                 case ItemType.MISC:
-                    return Misc == null? false : Misc.Equals(item);
+                    return misc == null? false : misc.Equals(item);
                 case ItemType.WEAPON:
-                    return Weapon == null ? false : Weapon.Equals(item);
+                    return weapon == null ? false : weapon.Equals(item);
                 case ItemType.SHIELD:
-                    return Shield == null ? false : Shield.Equals(item);
+                    return shield == null ? false : shield.Equals(item);
                 default: return false;
             }
         }
 
         private bool IsInInventory(Item itemToFind)
         {
-            foreach (Item item in Items)
+            foreach (Item item in items)
             {
                 if (item.Equals(itemToFind)) return true;
             }
@@ -370,6 +394,7 @@ namespace Myng.Helpers
         {
             inventoryBackgroundPos = -Camera.ScreenOffset + new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2) - inventoryBackgroundOrigin * invScale;
             InventorySlotsPos = inventoryBackgroundPos + new Vector2(5, 71) * invScale + new Vector2(6, 15) * invScale;
+            InventoryJunkPos = inventoryBackgroundPos + new Vector2(0, 67) * invScale - new Vector2(inventoryJunk.Width,0) * invScale;
             HelmetSlotPos = inventoryBackgroundPos + new Vector2(180, 71) * invScale + new Vector2(49, 30) * invScale;
             ChestSlotPos = HelmetSlotPos + new Vector2(0, 40 + 17) * invScale;
             LegsSlotPos = ChestSlotPos + new Vector2(0, 40 + 17) * invScale;
@@ -432,12 +457,12 @@ namespace Myng.Helpers
             }
 
             //equipped items
-            DrawEquippedItem(Helmet, spriteBatch);
-            DrawEquippedItem(Chest, spriteBatch);
-            DrawEquippedItem(Legs, spriteBatch);
-            DrawEquippedItem(Misc, spriteBatch);
-            DrawEquippedItem(Weapon, spriteBatch);
-            DrawEquippedItem(Shield, spriteBatch);
+            DrawEquippedItem(helmet, spriteBatch);
+            DrawEquippedItem(chest, spriteBatch);
+            DrawEquippedItem(legs, spriteBatch);
+            DrawEquippedItem(misc, spriteBatch);
+            DrawEquippedItem(weapon, spriteBatch);
+            DrawEquippedItem(shield, spriteBatch);
         }
 
         private void DrawEquippedItem(Item item, SpriteBatch spriteBatch)
@@ -500,7 +525,14 @@ namespace Myng.Helpers
             spriteBatch.DrawString(font, ManaPotion == null ? 0.ToString() : ManaPotion.Count.ToString(), new Vector2(MPPosition.X + 28 * potionsScale, MPPosition.Y + 24 * potionsScale), Color.Black);
         }
 
-        //Method to draw highlights to slots
+        //Method to draw area to remove items from inventory
+        public void DrawJunkArea(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(texture: inventoryJunk, position: InventoryJunkPos + inventoryJunkOrigin * invScale, sourceRectangle: null, color: Color.White * 0.5f,
+                  rotation: 0, origin: inventoryJunkOrigin, scale: invScale, effects: SpriteEffects.None, layerDepth: Layers.InventoryBackground);
+        }
+
+        //Method to draw highlights to slots when item is being dragged
         public void HighlightSlot(SpriteBatch spriteBatch, ItemType itemType)
         {
             Vector2 highlightPos;

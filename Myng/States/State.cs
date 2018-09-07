@@ -14,7 +14,7 @@ namespace Myng.States
 
         protected Game1 game;
 
-        protected bool shouldBeRemoved = false;
+        protected bool toRemove = false;
 
         #endregion
 
@@ -24,11 +24,11 @@ namespace Myng.States
 
         public List<Sound> Sounds { get; set; }
 
-        public bool ShouldBeRemoved
+        public bool ToRemove
         {
             get
             {
-                return shouldBeRemoved;
+                return toRemove;
             }
         }
 
