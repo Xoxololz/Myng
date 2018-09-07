@@ -127,7 +127,7 @@ namespace Myng
                 this.Exit();
 
             //Escape handler for exiting states
-            if (keyboardCurrent.IsKeyDown(Keys.Escape) && !keyboardPrevious.IsKeyDown(Keys.Escape) && isPaused)
+            if (currentState.ShouldBeRemoved || (keyboardCurrent.IsKeyDown(Keys.Escape) && !keyboardPrevious.IsKeyDown(Keys.Escape) && isPaused))
             {
                 ExitCurrentState();
             }

@@ -65,13 +65,22 @@ namespace Myng.States
             inventory.Update(gameTime);
 
             HandleMouseIcon();
-            MoveItem();
+            HandleMouse();
         }
 
-        private void MoveItem()
+        /// <summary>
+        /// This method handles clicking on inventory, dragging items, etc.
+        /// </summary>
+        private void HandleMouse()
         {
             if (currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released)
             {
+                //should exit?
+                if (inventory.GetExitArea().Contains(mousePos.ToPoint()))
+                {
+                    this.shouldBeRemoved = true;
+                }
+                
                 //pick up item
                 pickedUpItem = inventory.GetItemByMousePosition(mousePos.ToPoint());
                 if(pickedUpItem != null)

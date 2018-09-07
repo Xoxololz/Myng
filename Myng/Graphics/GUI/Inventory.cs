@@ -97,6 +97,11 @@ namespace Myng.Helpers
             }
         }
 
+        public Rectangle GetExitArea()
+        {
+            return new Rectangle((inventoryBackgroundPos + new Vector2(277, 10) * invScale + Camera.ScreenOffset).ToPoint(), (new Vector2(37, 43)*invScale).ToPoint());
+        }
+
         #endregion
 
         #region Constructors
