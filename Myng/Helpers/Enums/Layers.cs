@@ -10,9 +10,11 @@ namespace Myng.Helpers
 
         public static float InventoryItem = 0.11f;
 
-        public static float Inventory = 0.12f;
+        public static float InventoryItemHighligh = 0.12f;
 
-        public static float InventoryBackground = 0.13f;
+        public static float Inventory = 0.13f;
+
+        public static float InventoryBackground = 0.14f;
 
         public static float Character = 0.2f;
 
