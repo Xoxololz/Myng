@@ -276,22 +276,14 @@ namespace Myng.Graphics
             
             if (CollidesWithNewPosition(hittableSprites))
             {
-                DealWithCollisions(hittableSprites);
+                DealWithPrimitiveCollisions(hittableSprites);
             }
-        }        
-
-        protected override bool CheckCollisions(List<Sprite> sprites)
-        {
-            foreach (var sprite in sprites)
+            else
             {
-                if (CheckCollision(sprite))
-                    return true;
+                Position += velocity;
             }
-            if (CheckCollisionWithTerrain())
-                return true;
-            return false;
         }
-
+        
         protected override bool CollidesWithNewPosition(List<Sprite> hittableSprites)
         {
             Position += velocity;
@@ -305,8 +297,22 @@ namespace Myng.Graphics
                 Position -= velocity;
                 return true;
             }
+            Position -= velocity;
             return false;
         }
+
+        protected override bool CheckCollisions(List<Sprite> sprites)
+        {
+            foreach (var sprite in sprites)
+            {
+                if (CheckCollision(sprite))
+                    return true;
+            }
+            if (CheckCollisionWithTerrain())
+                return true;
+            return false;
+        }
+
 
         private bool CheckCollision(Sprite sprite)
         {

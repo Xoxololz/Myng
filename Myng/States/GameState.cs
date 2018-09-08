@@ -99,7 +99,7 @@ namespace Myng.States
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
             };
 
-            Enemy monster = new Enemy(monsterAnimations, new Vector2(3050, 700))
+            Enemy monster = new Enemy(monsterAnimations, new Vector2(2900, 700))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
@@ -163,7 +163,7 @@ namespace Myng.States
 
             hittableSprites = new List<Sprite>
             {
-              //  monster
+                //monster
                 //monster2
             };
             for (int i = 240; i < 1500; i += 150)

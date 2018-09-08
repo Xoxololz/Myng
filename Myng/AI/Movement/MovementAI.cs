@@ -24,7 +24,7 @@ namespace Myng.AI.Movement
 
         private Enemy parent;
 
-        private int tolerance = 5;
+        private int tolerance = 30;
 
         private int sightRange;
         #endregion
@@ -42,7 +42,7 @@ namespace Myng.AI.Movement
             nodeMap = NodeMapRepository.GetNodeMap(collisionPolygon);
             pathFinder = new PathFinder();
             this.parent = parent;
-            sightRange = 150;
+            sightRange = 50;
         }
 
         #endregion
@@ -72,7 +72,7 @@ namespace Myng.AI.Movement
             Node node = null;
             if(DistanceParentFrom(path[0]) < sightRange)
             {
-                if (path[0] == nextClearNode) return nextClearNode;
+                if (path[0] == nextClearNode && DistanceParentFrom(path[0]) > tolerance) return nextClearNode;
                 if (CanGoStraightTo(path[0]))
                 {
                     node = path[0];
@@ -90,6 +90,7 @@ namespace Myng.AI.Movement
                 var a = DistanceParentFrom(path[i]);
                 if (a > sightRange || i == 0)
                 {
+                    if (i + 2 > path.Count) return path[path.Count - 1];
                     if (path[i + 1] == nextClearNode) return nextClearNode;
                     if (CanGoStraightTo(path[i + 1]))
                     { 
@@ -142,7 +143,6 @@ namespace Myng.AI.Movement
             SpritePolygon collisionPolygon = (SpritePolygon)parent.CollisionPolygon.Clone(); ;
             while (GameState.TileMap.CheckCollisionWithTerrain(collisionPolygon) == Collision.None)
             {
-                var a = DistanceFrom(node, collisionPolygon.Vertices[0]);
                 if (DistanceFrom(node, collisionPolygon.Vertices[0]) <= direction.Length())
                 {
                     canGo = true;
@@ -163,9 +163,16 @@ namespace Myng.AI.Movement
             return distance.Length();
         }
 
-        public void RecalculatePath()
+        private void RecalculatePath()
         {
             SetGoalDestination(new Vector2(path[0].X, path[0].Y));
+        }
+
+        public void FindNewPath(List<Polygon> collidingPolygons)
+        {
+            nodeMap.AddTemporaryTerrain(collidingPolygons);
+            RecalculatePath();
+            nodeMap.RemoveTemporaryTerrain();
         }
 
         public void SetGoalDestination(Vector2 destination)

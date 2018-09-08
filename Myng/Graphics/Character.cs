@@ -16,7 +16,7 @@ namespace Myng.Graphics
     {
         #region Fields
 
-        protected float speed = 4f;
+        protected float speed = 2f;
 
         protected int health;
 
@@ -166,58 +166,30 @@ namespace Myng.Graphics
 
         }
 
-        protected void DealWithCollisions(List<Sprite> hittableSprites)
+        protected bool DealWithPrimitiveCollisions(List<Sprite> hittableSprites)
         {
+            //--------------------------------------------------------------//
+            //TODO:deal with crashing into moving trget, probly find how exactly far u can go a go there, not just check
+            //if can go as far as velocity lenght. And base total collision on angle.
+            //--------------------------------------------------------------//
             Vector2 velocityCopy = new Vector2(velocity.X, velocity.Y);
-
-            if (Math.Abs(velocityCopy.X) > Math.Abs(velocityCopy.Y))
+            velocity = new Vector2(velocityCopy.X, 0);
+            if (!CollidesWithNewPosition(hittableSprites) && velocity.X > 0.1f)
             {
-                velocity = new Vector2(velocityCopy.X, 0);
-                if (!CollidesWithNewPosition(hittableSprites))
-                    return;
-                else
-                {
-                    velocity = new Vector2(0, velocityCopy.Y);
-                    if (!CollidesWithNewPosition(hittableSprites))
-                        return;
-                    else
-                    {
-                        velocity = new Vector2(-velocityCopy.X, 0);
-                        if (!CollidesWithNewPosition(hittableSprites))
-                            return;
-                        else
-                        {
-                            velocity = new Vector2(0, -velocityCopy.Y);
-                            if (!CollidesWithNewPosition(hittableSprites))
-                                return;
-                        }
-                    }
-                }
+                Position += velocity;
+                return true;
             }
             else
             {
                 velocity = new Vector2(0, velocityCopy.Y);
-                if (!CollidesWithNewPosition(hittableSprites))
-                    return;
-                else
+                if (!CollidesWithNewPosition(hittableSprites) && velocity.Y > 0.1f)
                 {
-                    velocity = new Vector2(velocityCopy.X, 0);
-                    if (!CollidesWithNewPosition(hittableSprites))
-                        return;
-                    else
-                    {
-                        velocity = new Vector2(0, -velocityCopy.Y);
-                        if (!CollidesWithNewPosition(hittableSprites))
-                            return;
-                        else
-                        {
-                            velocity = new Vector2(-velocityCopy.X, 0);
-                            if (CollidesWithNewPosition(hittableSprites))
-                                velocity = Vector2.Zero;
-                        }
-                    }
+                    Position += velocity;
+                    return true;
                 }
             }
+            velocity = velocityCopy;
+            return false;
         }
 
 
