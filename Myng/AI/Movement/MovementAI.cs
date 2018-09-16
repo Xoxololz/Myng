@@ -67,8 +67,7 @@ namespace Myng.AI.Movement
         }
 
         private Node FindFarthestNodeInRange()
-        {
-            //keep discarted nodes and put them back if shit happends
+        {        
             Node node = null;
             if(DistanceParentFrom(path[0]) < sightRange)
             {
@@ -181,6 +180,7 @@ namespace Myng.AI.Movement
             Node goalNode = nodeMap.FindClosestFreeNode(destination);
             if (goalNode == null) return;
             Node startNode = nodeMap.FindClosestFreeNode(parent.Position);
+            if (startNode == null) return;
             path = pathFinder.FindPath(startNode, goalNode, nodeMap);
             currentNodeIndex = path.Count;
         }                     

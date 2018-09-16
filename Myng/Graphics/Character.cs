@@ -174,7 +174,7 @@ namespace Myng.Graphics
             //--------------------------------------------------------------//
             Vector2 velocityCopy = new Vector2(velocity.X, velocity.Y);
             velocity = new Vector2(velocityCopy.X, 0);
-            if (!CollidesWithNewPosition(hittableSprites) && velocity.X > 0.1f)
+            if (!CollidesWithNewPosition(hittableSprites) && velocity.Length() > 0.1f)
             {
                 Position += velocity;
                 return true;
@@ -182,7 +182,7 @@ namespace Myng.Graphics
             else
             {
                 velocity = new Vector2(0, velocityCopy.Y);
-                if (!CollidesWithNewPosition(hittableSprites) && velocity.Y > 0.1f)
+                if (!CollidesWithNewPosition(hittableSprites) && velocity.Length() > 0.1f)
                 {
                     Position += velocity;
                     return true;

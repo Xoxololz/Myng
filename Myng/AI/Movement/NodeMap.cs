@@ -108,20 +108,20 @@ namespace Myng.AI.Movement
 
         internal Node FindClosestFreeNode(Vector2 destination)
         {
-            //--------------------------------------------------------------//
-            // TODO: Can never return null!!!!!!!!!!!!!!!!!
-            //--------------------------------------------------------------//
             int i = GetClosestNodesI(destination);
             int j = GetClosestNodesJ(destination);
 
-            Node closestNode = null;
+            if (Nodes[i, j].IsFree && IsInMap(i, j)) return Nodes[i, j];
+            if (Nodes[i + 1, j].IsFree && IsInMap(i + 1, j)) return Nodes[i + 1, j];
+            if (Nodes[i, j + 1].IsFree && IsInMap(i, j + 1)) return Nodes[i, j + 1];
+            if (Nodes[i + 1, j + 1].IsFree && IsInMap(i + 1, j + 1)) return Nodes[i + 1, j + 1];
+            if (Nodes[i - 1, j].IsFree && IsInMap(i - 1, j)) return Nodes[i - 1, j];
+            if (Nodes[i, j - 1].IsFree && IsInMap(i, j - 1)) return Nodes[i, j - 1];
+            if (Nodes[i - 1, j - 1].IsFree && IsInMap(i - 1, j - 1)) return Nodes[i - 1, j - 1];
+            if (Nodes[i + 1, j - 1].IsFree && IsInMap(i + 1, j - 1)) return Nodes[i + 1, j - 1];
+            if (Nodes[i - 1, j + 1].IsFree && IsInMap(i - 1, j + 1)) return Nodes[i - 1, j + 1];
 
-            if (Nodes[i, j].IsFree) closestNode = Nodes[i, j];
-            if (Nodes[i + 1, j].IsFree) closestNode = Nodes[i + 1, j];
-            if (Nodes[i, j + 1].IsFree) closestNode = Nodes[i, j + 1];
-            if (Nodes[i + 1, j + 1].IsFree) closestNode = Nodes[i + 1, j + 1];
-
-            return closestNode;
+            return null;
         }
 
         private int GetClosestNodesI(Vector2 destination)
@@ -187,10 +187,6 @@ namespace Myng.AI.Movement
 
         public void AddTemporaryTerrain(List<Polygon> polygons)
         {
-            //--------------------------------------------------------//
-            // TODO: Find lowest i,j and highest i,j of neighbour nodes of vertices
-            //       and then run generation algorithm on that rectangle to determine non free nodes
-            //--------------------------------------------------------//
             var min = new Point(int.MaxValue);
             var max = new Point(0);
             foreach (var polygon in polygons)
