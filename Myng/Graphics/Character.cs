@@ -16,7 +16,7 @@ namespace Myng.Graphics
     {
         #region Fields
 
-        protected float speed = 4f;
+        protected float speed = 2f;
 
         protected int health;
 
@@ -94,7 +94,7 @@ namespace Myng.Graphics
             : base(texture2D, position)
         {
             InitProperties();            
-            hpScale = (texture.Width * Scale) / hpBar.Width;            
+            hpScale = (texture.Width * Scale) / hpBar.Width;    
         }
 
         public Character(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
@@ -165,6 +165,38 @@ namespace Myng.Graphics
                 || GameState.TileMap.CheckCollisionWithTerrain(CollisionPolygon) == Collision.Water;
 
         }
+
+        protected bool DealWithPrimitiveCollisions(List<Sprite> hittableSprites)
+        {
+            //--------------------------------------------------------------//
+            //TODO:deal with crashing into moving trget, probly find how exactly far u can go a go there, not just check
+            //if can go as far as velocity lenght. And base total collision on angle.
+            //--------------------------------------------------------------//
+            Vector2 velocityCopy = new Vector2(velocity.X, velocity.Y);
+            velocity = new Vector2(velocityCopy.X, 0);
+            if (!CollidesWithNewPosition(hittableSprites) && velocity.Length() > 0.1f)
+            {
+                Position += velocity;
+                return true;
+            }
+            else
+            {
+                velocity = new Vector2(0, velocityCopy.Y);
+                if (!CollidesWithNewPosition(hittableSprites) && velocity.Length() > 0.1f)
+                {
+                    Position += velocity;
+                    return true;
+                }
+            }
+            velocity = velocityCopy;
+            return false;
+        }
+
+
+        protected abstract bool CollidesWithNewPosition(List<Sprite> hittableSprites);
+        
+
+        protected abstract bool CheckCollisions(List<Sprite> hittableSprites);
 
         public override void Draw(SpriteBatch spriteBatch)
         {

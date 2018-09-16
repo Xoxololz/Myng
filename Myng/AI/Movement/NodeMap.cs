@@ -4,13 +4,20 @@ using Myng.Helpers.Enums;
 using System.Collections.Generic;
 using Myng.Graphics;
 using System;
+using Myng.States;
 
 namespace Myng.AI.Movement
 {
     public class NodeMap
     {
         #region Fields
-        
+
+        private List<Node> changedNodes = new List<Node>();
+
+        private List<Node> temporalTerrain = new List<Node>();
+
+        private SpritePolygon generationPolygon;
+
         #endregion
 
         #region Properties
@@ -27,10 +34,10 @@ namespace Myng.AI.Movement
 
         private NodeMap(int xSize, int ySize, int gridHeight, int gridWidth)
         {
-            this.GridHeight = gridHeight;
-            this.GridWidth = gridWidth;
-            this.XSize = xSize;
-            this.YSize = ySize;
+            GridHeight = gridHeight;
+            GridWidth = gridWidth;
+            XSize = xSize;
+            YSize = ySize;
 
             Nodes = new Node[xSize,ySize];
             for (int i = 0; i < xSize; i++)
@@ -46,6 +53,7 @@ namespace Myng.AI.Movement
         public static NodeMap CreateFromTileMap(TileMap tileMap, SpritePolygon collisionPolygon)
         {
             NodeMap nodeMap = new NodeMap(tileMap.MapWidthTiles, tileMap.MapHeightTiles, tileMap.TileHeight, tileMap.TileWidth);
+            nodeMap.generationPolygon = (SpritePolygon)collisionPolygon.Clone();
 
             for (int i = 0; i < nodeMap.XSize; i++)
             {
@@ -103,14 +111,17 @@ namespace Myng.AI.Movement
             int i = GetClosestNodesI(destination);
             int j = GetClosestNodesJ(destination);
 
-            Node closestNode = null;
+            if (Nodes[i, j].IsFree && IsInMap(i, j)) return Nodes[i, j];
+            if (Nodes[i + 1, j].IsFree && IsInMap(i + 1, j)) return Nodes[i + 1, j];
+            if (Nodes[i, j + 1].IsFree && IsInMap(i, j + 1)) return Nodes[i, j + 1];
+            if (Nodes[i + 1, j + 1].IsFree && IsInMap(i + 1, j + 1)) return Nodes[i + 1, j + 1];
+            if (Nodes[i - 1, j].IsFree && IsInMap(i - 1, j)) return Nodes[i - 1, j];
+            if (Nodes[i, j - 1].IsFree && IsInMap(i, j - 1)) return Nodes[i, j - 1];
+            if (Nodes[i - 1, j - 1].IsFree && IsInMap(i - 1, j - 1)) return Nodes[i - 1, j - 1];
+            if (Nodes[i + 1, j - 1].IsFree && IsInMap(i + 1, j - 1)) return Nodes[i + 1, j - 1];
+            if (Nodes[i - 1, j + 1].IsFree && IsInMap(i - 1, j + 1)) return Nodes[i - 1, j + 1];
 
-            if (Nodes[i, j].IsFree) closestNode = Nodes[i, j];
-            if (Nodes[i + 1, j].IsFree) closestNode = Nodes[i + 1, j];
-            if (Nodes[i, j + 1].IsFree) closestNode = Nodes[i, j + 1];
-            if (Nodes[i + 1, j + 1].IsFree) closestNode = Nodes[i + 1, j + 1];
-
-            return closestNode;
+            return null;
         }
 
         private int GetClosestNodesI(Vector2 destination)
@@ -149,7 +160,9 @@ namespace Myng.AI.Movement
             if (IsInMap(i, j - 1))
             {
                 if (Nodes[i, j - 1].IsFree) neighbours.Add(Nodes[i, j - 1]);
-            }                
+            }
+
+            changedNodes.AddRange(neighbours);
 
             return neighbours;
         }
@@ -163,16 +176,72 @@ namespace Myng.AI.Movement
 
         public void Clear()
         {
-            for (int i = 0; i < XSize; i++)
+            foreach(var node in changedNodes)
             {
-                for (int j = 0; j < YSize; j++)
+                node.CameFrom = null;
+                node.FScore = float.MaxValue;
+                node.GScore = float.MaxValue;
+            }
+            changedNodes.Clear();
+        }        
+
+        public void AddTemporaryTerrain(List<Polygon> polygons)
+        {
+            var min = new Point(int.MaxValue);
+            var max = new Point(0);
+            foreach (var polygon in polygons)
+            {
+                foreach ( var point in polygon.Vertices)
                 {
-                    Nodes[i, j].CameFrom = null;
-                    Nodes[i, j].FScore = float.MaxValue;
-                    Nodes[i, j].GScore = float.MaxValue;
+                    int i = (int)Math.Floor(point.X / GridHeight);
+                    int j = (int)Math.Floor(point.Y / GridHeight);
+                    if (i < min.X) min.X = i;
+                    if (j < min.Y) min.Y = j;
+                    if (i > max.X) max.X = i;
+                    if (j > max.Y) max.Y = j;
+                }
+                min -= new Point(1);
+                max += new Point(1);
+                RegenerateRectangle(max, min, polygons);
+            }
+        }
+
+        private void RegenerateRectangle(Point max, Point min, List<Polygon> polygons)
+        {
+            for (int i = min.X; i < max.X; i++)
+            {
+                for (int j = min.Y; j < max.Y; j++)
+                {
+                    Vector2 position = new Vector2
+                    {
+                        X = Nodes[i, j].X,
+                        Y = Nodes[i, j].Y
+                    };
+                    generationPolygon.MoveTo(position);
+                    var collision = false;
+                    foreach (var polygon in polygons)
+                    {
+                        if (generationPolygon.Intersects(polygon)) collision = true;
+                    }
+
+                    if (collision)
+                    {
+                        Nodes[i, j].IsFree = false;
+                        if (!Nodes[i, j].IsTerrain)
+                            temporalTerrain.Add(Nodes[i, j]);
+                    }
                 }
             }
-        }        
+        }
+
+        public void RemoveTemporaryTerrain()
+        {
+            foreach (var node in temporalTerrain)
+            {
+                node.IsFree = true;
+            }
+            temporalTerrain.Clear();
+        }
         #endregion
     }
 }

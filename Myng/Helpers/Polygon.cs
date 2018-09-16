@@ -9,10 +9,6 @@ namespace Myng.Helpers
     /// Polygon, have to be oriented clockwise!!
     /// </summary>
     public class Polygon: ICloneable
-        //--------------------------------------------------------------------------//
-        //TODO: change polygon to have more points if needed for check with terrain,
-        //so probly one point per tile so we need that info here
-        //--------------------------------------------------------------------------//
     {
         #region Properties
         /// <summary>
@@ -143,6 +139,10 @@ namespace Myng.Helpers
                 scalingVector *= scale;
                 Vertices[i] = Vertices[0] + scalingVector;
             }
+            Radius *= scale;
+            var scaleVector = Origin - Vertices[0];
+            scaleVector *= scale;
+            Origin = Vertices[0] + scaleVector;
         }
 
         /// <summary>

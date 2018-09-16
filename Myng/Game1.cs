@@ -76,7 +76,7 @@ namespace Myng
             //setting window height and width
             graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
-            graphics.IsFullScreen = true;
+            graphics.IsFullScreen = false;
             graphics.ApplyChanges();
 
             ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -127,7 +127,7 @@ namespace Myng
                 this.Exit();
 
             //Escape handler for exiting states
-            if (keyboardCurrent.IsKeyDown(Keys.Escape) && !keyboardPrevious.IsKeyDown(Keys.Escape) && isPaused)
+            if (currentState.ToRemove || (keyboardCurrent.IsKeyDown(Keys.Escape) && !keyboardPrevious.IsKeyDown(Keys.Escape) && isPaused))
             {
                 ExitCurrentState();
             }

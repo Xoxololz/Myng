@@ -43,7 +43,6 @@ namespace Myng.Helpers
         private void CalculateCollisionPoints()
         {
             var points = new List<Vector2>();
-            //TODO: check if is big enought to need more points if so init them somehow
             for (int i = 0; i < Vertices.Length; i++)
             {
                 if (i == Vertices.Length - 1)
