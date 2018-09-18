@@ -94,20 +94,20 @@ namespace Myng.States
                 { "walking", new Animation(Content.Load<Texture2D>("Characters/White_Male"), 4, 3) }
             };
 
-            Player player = new Player(playerAnimations, new Vector2(2352.014f, 724))
+            Player player = new Player(playerAnimations, new Vector2(2900,900))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
             };
 
-            Enemy monster = new Enemy(monsterAnimations, new Vector2(3050, 700))
+            Enemy monster = new Enemy(monsterAnimations, new Vector2(2900, 800))
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
-            //Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(100))
-            //{
-            //    Bullet = new Projectile(fireballAnimation, new Vector2(200f))
-            //};
+            Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(500))
+            {
+                Bullet = new Projectile(fireballAnimation, new Vector2(200f))
+            };
 
             otherSprites = new List<Sprite>
             {
@@ -163,14 +163,14 @@ namespace Myng.States
 
             hittableSprites = new List<Sprite>
             {
-                monster
-                //monster2
+                monster,
+                monster2
             };
             //for (int i = 240; i < 1500; i += 150)
             //{
             //    var monsterAnimations3 = new Dictionary<string, Animation>()
             //    {
-            //        { "walking", new Animation(content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
+            //        { "walking", new Animation(Content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
             //    };
 
             //    Enemy monster3 = new Enemy(monsterAnimations3, new Vector2(1, i))
@@ -192,7 +192,7 @@ namespace Myng.States
                 Content.Load<Song>("Sounds/NE"),
                 Content.Load<Song>("Sounds/RM")
             };
-            backgroundMusic = new BackgroundMusic(songs);
+           // backgroundMusic = new BackgroundMusic(songs);
         }
 
         public override void Update(GameTime gameTime)
