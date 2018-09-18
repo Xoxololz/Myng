@@ -16,8 +16,6 @@ namespace Myng.Graphics
     {
         #region Fields
 
-        protected float speed = 4f;
-
         protected int health;
 
         protected int mana;
@@ -29,18 +27,65 @@ namespace Myng.Graphics
         protected Texture2D hpBar;
 
         protected SoundEffect2D walkingSound;
+
+        protected Dictionary<Attributes, int> baseAttributes;
+
+        protected float baseSpeed = 3f;
+
+        protected float baseAttackSpeed = 1f;
+
+        protected int basePhysicalDefense = 5;
+
+        protected float baseBlockChance = 0f;
+
+        protected int baseMagicDefense = 5;
+
+        protected float autoAttackTimer;
+
+        protected virtual float AttackSpeed
+        {
+            get
+            {
+                return baseAttackSpeed /(1 + (GetAttribute(Attributes.DEXTERITY) / 2)/100f);
+            }
+        }
+
+        protected virtual float Speed
+        {
+            get
+            {
+                return baseSpeed;
+            }
+        }
+
         #endregion
 
         #region Properties
 
         public Faction Faction { get; set; }
 
-        public int MaxHealth = 100;
-        public int MaxMana = 100;
+        public int MaxHealth
+        {
+            get
+            {
+                return GetAttribute(Attributes.VITALITY) * 10;
+            }
+        }
+
+        public int MaxMana
+        {
+            get
+            {
+                return GetAttribute(Attributes.AURA) * 10;
+            }
+        }
+
 
         public int Health {
             get
             {
+                if (health > MaxHealth)
+                    health = MaxHealth;
                 return health;
             }
             set
@@ -59,6 +104,8 @@ namespace Myng.Graphics
         {
             get
             {
+                if (mana > MaxMana)
+                    mana = MaxMana;
                 return mana;
             }
             set
@@ -86,6 +133,37 @@ namespace Myng.Graphics
             }
         }
 
+        public virtual int PhysicalDefense
+        {
+            get
+            {
+                return basePhysicalDefense + GetAttribute(Attributes.STRENGTH) / 2;
+            }
+        }
+
+        public virtual int MagicDefense
+        {
+            get
+            {
+                return baseMagicDefense + GetAttribute(Attributes.INTELLIGENCE) / 2;
+            }
+        }
+
+        public virtual float CritChance
+        {
+            get
+            {
+                return (float)GetAttribute(Attributes.LUCK) / 2;
+            }
+        }
+
+        public virtual float BlockChance
+        {
+            get
+            {
+                return baseBlockChance;
+            }
+        }
         #endregion
 
         #region Constructor
@@ -108,8 +186,6 @@ namespace Myng.Graphics
         #region Methods
         private void InitProperties()
         {
-            Health = MaxHealth;
-            Mana = MaxMana;
             layer = Layers.Character;            
             hpBar = State.Content.Load<Texture2D>("GUI/HPBar");
             walkingSound = new SoundEffect2D(SoundsDepository.walking.CreateInstance(), this)
@@ -118,6 +194,26 @@ namespace Myng.Graphics
                 IsLooping = true,
                 DistanceDivider = 20
             };
+
+            //inicialize base attributes
+            baseAttributes = new Dictionary<Attributes, int>();
+            foreach(Attributes stat in Enum.GetValues(typeof(Attributes)))
+            {
+                baseAttributes.Add(stat, 10);
+            }
+
+            Health = MaxHealth;
+            Mana = MaxMana;
+            autoAttackTimer = baseAttackSpeed;
+        }
+
+        public virtual int GetAttribute(Attributes attribute)
+        {
+            if (!baseAttributes.TryGetValue(attribute, out int result))
+            {
+                return 0;
+            }
+            return result;
         }
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
@@ -129,8 +225,8 @@ namespace Myng.Graphics
                 if(this is Enemy enemy)
                 {
                     Game1.Player.XP += enemy.XPDrop;
-                }
-                ToRemove = true;
+                    ToRemove = true;
+                }                
             }
         }
 

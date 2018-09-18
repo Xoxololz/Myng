@@ -163,7 +163,7 @@ namespace Myng.States
 
             hittableSprites = new List<Sprite>
             {
-                //monster
+                monster
                 //monster2
             };
             //for (int i = 240; i < 1500; i += 150)

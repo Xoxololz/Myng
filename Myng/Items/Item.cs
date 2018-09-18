@@ -1,6 +1,9 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using Microsoft.Xna.Framework.Graphics;
 using Myng.Graphics;
 using Myng.Helpers.Enums;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Myng.Items
 {
@@ -9,6 +12,10 @@ namespace Myng.Items
     {
         #region Properties
         public ItemType ItemType { get; set; }
+
+        protected Dictionary<Attributes, int> attributes;
+
+        protected Dictionary<Stats, int> stats;
 
         //maximum amount of the same the same item to have in inventory
         public int MaxCount
@@ -38,6 +45,25 @@ namespace Myng.Items
 
         public bool BeingDragged { get; set; }
 
+        public string Description
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(ItemType.GetName()).AppendLine();
+                foreach (Attributes attribute in attributes.Keys)
+                {
+                    sb.Append(attribute.GetName()).Append(" +").Append(attributes[attribute]).AppendLine();
+                }
+                foreach (Stats stat in stats.Keys)
+                {
+                    sb.Append(stat.GetName()).Append(" +").Append(stats[stat]).Append(stat.UsesPercentage() ? " %" : "").AppendLine();
+                }
+                sb.Remove(sb.Length - 1, 1);
+                return sb.ToString();
+            }
+        }
+
         #endregion
 
         #region Fields
@@ -56,9 +82,27 @@ namespace Myng.Items
             this.ItemType = itemType;
             this.BeingDragged = false;
             Count = 1;
+            attributes = new Dictionary<Attributes, int>();
+            stats = new Dictionary<Stats, int>();
         }
 
-        public abstract void UnequipItem();
+        public int GetStat(Stats stat)
+        {
+            if (!stats.TryGetValue(stat, out int result))
+            {
+                return 0;
+            }
+            return result;
+        }
+
+        public int GetAttribute(Attributes attribute)
+        {
+            if (!attributes.TryGetValue(attribute, out int result))
+            {
+                return 0;
+            }
+            return result;
+        }
         #endregion
     }
 }

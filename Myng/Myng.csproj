@@ -60,11 +60,14 @@
     <Compile Include="Graphics\Projectile.cs" />
     <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Helpers\Camera.cs" />
+    <Compile Include="Helpers\Enums\Attributes.cs" />
     <Compile Include="Helpers\Enums\Collision.cs" />
+    <Compile Include="Helpers\Enums\DamageType.cs" />
     <Compile Include="Helpers\Enums\Faction.cs" />
     <Compile Include="Graphics\GUI\Inventory.cs" />
     <Compile Include="Helpers\Enums\ItemType.cs" />
     <Compile Include="Helpers\Enums\Layers.cs" />
+    <Compile Include="Helpers\Enums\Stats.cs" />
     <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\SoundHandlers\BackgroundMusic.cs" />
     <Compile Include="Helpers\SoundHandlers\Sound.cs" />
@@ -77,7 +80,6 @@
     <Compile Include="Items\Ring.cs" />
     <Compile Include="Items\Armor.cs" />
     <Compile Include="Items\HealthPotion.cs" />
-    <Compile Include="Items\Interfaces\IStatImprover.cs" />
     <Compile Include="Items\Interfaces\IUpdatable.cs" />
     <Compile Include="Items\Interfaces\IUsable.cs" />
     <Compile Include="Items\Item.cs" />

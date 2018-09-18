@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework;
 using Myng.Helpers;
 using Myng.Helpers.SoundHandlers;
 using Myng.AI.Movement;
-using Myng.States;
 using Myng.Graphics.Animations;
+using Myng.Helpers.Enums;
 
 namespace Myng.Graphics.Enemies
 {
@@ -25,10 +25,6 @@ namespace Myng.Graphics.Enemies
 
         protected Spell autoAttack;
 
-        protected float timer;
-
-        protected float attackSpeed = 1f;
-
         protected float attackRange = 500;
 
         protected Vector2 playerPosition;
@@ -42,8 +38,7 @@ namespace Myng.Graphics.Enemies
         {
             InitAutoattack();
             Scale = 1.5f;
-            speed = 1f;
-            timer = attackSpeed;
+            baseSpeed = 1f;
             Faction = Faction.ENEMY;
             XPDrop = 10;
             movementAI = new MovementAI(CollisionPolygon, this);
@@ -68,17 +63,17 @@ namespace Myng.Graphics.Enemies
                     bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
                 else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);
 
-                b.Initialize(bPosition, 5, attackDirection, Faction, bAngle,
-                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance());
+                b.Initialize(bPosition, 30, DamageType.PHYSICAL, attackDirection, Faction, bAngle,
+                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
 
                 sprites.Add(b);
             };
             Func<bool> canExecute = () =>
             {
                 var AutoattackRange = (Position - playerPosition).Length() < attackRange;
-                var coolDown = timer > attackSpeed;
+                var coolDown = autoAttackTimer > AttackSpeed;
                 if (coolDown)
-                    timer = 0;
+                    autoAttackTimer = 0;
                 return AutoattackRange && coolDown;                
             };
 
@@ -103,13 +98,13 @@ namespace Myng.Graphics.Enemies
 
         private void UpdateTimer(GameTime gameTime)
         {
-            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            autoAttackTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
         private void DetermineVelocity(List<Sprite> hittableSprites)
         {
             velocity = movementAI.GetVelocity();
-            velocity *= speed;
+            velocity *= Speed;
             if (CollidesWithNewPosition(hittableSprites))
                 DealWithCollisions(hittableSprites);
         }
@@ -183,7 +178,7 @@ namespace Myng.Graphics.Enemies
             velocity = vector2;
             if (vector2 != Vector2.Zero)
                 velocity.Normalize();
-            velocity *= speed;
+            velocity *= Speed;
         }
 
         private bool CheckCollisions(List<Sprite> sprites)

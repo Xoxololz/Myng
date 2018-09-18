@@ -5,7 +5,6 @@ using Myng.Graphics;
 using Myng.Helpers;
 using Myng.Helpers.SoundHandlers;
 using Myng.States;
-using System;
 using System.Collections.Generic;
 
 namespace Myng

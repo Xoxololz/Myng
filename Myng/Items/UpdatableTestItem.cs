@@ -14,12 +14,7 @@ namespace Myng.Items
         {
         }
 
-        public void Update(List<Sprite> sprites)
-        {
-            //Parent.Health += 10;
-        }
-
-        public override void UnequipItem()
+        public void Update(List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             throw new NotImplementedException();
         }
