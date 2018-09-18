@@ -1,13 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Myng.Helpers.Enums;
 using Myng.Items;
 using Myng.Items.Interfaces;
 using Myng.States;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using Myng.Graphics;
+using System.Text;
 
 namespace Myng.Helpers
 {
@@ -52,6 +52,7 @@ namespace Myng.Helpers
         private Vector2 inventoryBackgroundPos;
         private Vector2 InventorySlotsPos;
         private Vector2 InventoryJunkPos;
+        private Vector2 ItemDescriptionPos;
         private Vector2 HelmetSlotPos;
         private Vector2 ChestSlotPos;
         private Vector2 LegsSlotPos;
@@ -111,6 +112,53 @@ namespace Myng.Helpers
         public Rectangle GetJunkArea()
         {
             return new Rectangle((InventoryJunkPos).ToPoint(), (inventoryJunk.Bounds.Size.ToVector2() * invScale).ToPoint());
+        }
+
+        public Rectangle GetEquipArea(ItemType type)
+        {
+            switch (type)
+            {
+                case ItemType.HELMET:
+                    return new Rectangle(HelmetSlotPos.ToPoint(), ItemSlotSize.ToPoint());
+                case ItemType.CHEST:
+                    return new Rectangle(ChestSlotPos.ToPoint(), ItemSlotSize.ToPoint());
+                case ItemType.LEGS:
+                    return new Rectangle(LegsSlotPos.ToPoint(), ItemSlotSize.ToPoint());
+                case ItemType.TRINKET:
+                    return new Rectangle(MiscSlotPos.ToPoint(), ItemSlotSize.ToPoint());
+                case ItemType.WEAPON:
+                    return new Rectangle(WeaponSlotPos.ToPoint(), ItemSlotSize.ToPoint());
+                case ItemType.SHIELD:
+                    return new Rectangle(ShieldSlotPos.ToPoint(), ItemSlotSize.ToPoint());
+                default: throw new ArgumentException();
+            }
+        }
+
+        public Rectangle GetInventoryArea()
+        {
+            return new Rectangle(InventorySlotsPos.ToPoint(), InventorySlotsSize.ToPoint());
+        }
+
+        public int GetAttributeBonus(Attributes attribute)
+        {
+            int result = 0;
+            List<Item> equipped = GetAllEquippedItems();
+            foreach (Item item in equipped)
+            {
+                result += item.GetAttribute(attribute);
+            }
+            return result;
+        }
+
+        public int GetStatBonus(Stats stat)
+        {
+            int result = 0;
+            List<Item> equipped = GetAllEquippedItems();
+            foreach (Item item in equipped)
+            {
+                result += item.GetStat(stat);
+            }
+            return result;
         }
 
         #endregion
@@ -199,7 +247,7 @@ namespace Myng.Helpers
                     return ref chest;
                 case ItemType.LEGS:
                     return ref legs;
-                case ItemType.MISC:
+                case ItemType.TRINKET:
                     return ref misc;
                 case ItemType.WEAPON:
                     return ref weapon;
@@ -207,6 +255,20 @@ namespace Myng.Helpers
                     return ref shield;
                 default: throw new ArgumentException();
             }
+        }
+
+        private List<Item> GetAllEquippedItems()
+        {
+            List<Item> result = new List<Item>();
+            foreach(ItemType itemType in Enum.GetValues(typeof(ItemType)))
+            {
+                if (itemType == ItemType.POTION) continue;
+
+                var tmp = GetEquippedItemByType(itemType);
+                if (tmp != null)
+                    result.Add(tmp);
+            }
+            return result;
         }
 
         public bool Add(Item item)
@@ -240,7 +302,6 @@ namespace Myng.Helpers
         {
             if (IsEquiped(item))
             {
-                GetEquippedItemByType(item.ItemType).UnequipItem();
                 GetEquippedItemByType(item.ItemType) = null;
                 return true;
             }
@@ -254,22 +315,22 @@ namespace Myng.Helpers
             Rectangle rec = GetInventoryArea();
 
             //check clicking on unequipped items
-            if (rec.Contains(mousePos)) 
+            if (rec.Contains(mousePos))
             {
                 for (int i = 0; i < 5; ++i) //rows
                 {
                     for (int j = 0; j < 4; ++j) //columns
                     {
-                        Rectangle itemRec = new Rectangle(InventorySlotsPos.ToPoint() + (new Vector2(4 + 6 * j + 30 * j, 4 + 6 * i + 30 * i) * invScale).ToPoint(),
+                        Rectangle itemRec = new Rectangle(InventorySlotsPos.ToPoint() + (new Vector2(6 * j + 30 * j, 4 + 6 * i + 30 * i) * invScale).ToPoint(),
                                                           new Point((int)(32 * invScale)));
-                        if(itemRec.Contains(mousePos))
+                        if (itemRec.Contains(mousePos))
                             return GetItem(4 * i + j);
                     }
                 }
             }
 
             //check clicking on equipped item
-            foreach(ItemType type in Enum.GetValues(typeof(ItemType)))
+            foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
             {
                 if (type == ItemType.POTION) //special case to ingore
                     continue;
@@ -279,31 +340,6 @@ namespace Myng.Helpers
             }
 
             return null;
-        }
-
-        public Rectangle GetEquipArea(ItemType type)
-        {
-            switch (type)
-            {
-                case ItemType.HELMET:
-                    return new Rectangle(HelmetSlotPos.ToPoint(), ItemSlotSize.ToPoint());
-                case ItemType.CHEST:
-                    return new Rectangle(ChestSlotPos.ToPoint(), ItemSlotSize.ToPoint());
-                case ItemType.LEGS:
-                    return new Rectangle(LegsSlotPos.ToPoint(), ItemSlotSize.ToPoint());
-                case ItemType.MISC:
-                    return new Rectangle(MiscSlotPos.ToPoint(), ItemSlotSize.ToPoint());
-                case ItemType.WEAPON:
-                    return new Rectangle(WeaponSlotPos.ToPoint(), ItemSlotSize.ToPoint());
-                case ItemType.SHIELD:
-                    return new Rectangle(ShieldSlotPos.ToPoint(), ItemSlotSize.ToPoint());
-                default: throw new ArgumentException(); 
-            }
-        }
-
-        public Rectangle GetInventoryArea()
-        {
-            return new Rectangle(InventorySlotsPos.ToPoint(), InventorySlotsSize.ToPoint());
         }
 
         public bool EquipItem(Item itemToEquip)
@@ -322,10 +358,9 @@ namespace Myng.Helpers
             GetEquippedItemByType(itemToEquip.ItemType) = itemToEquip;
             HandleEquippingItem(itemToEquip);
 
-            //remove bonuses from unequiped item
+            //move equipped item to inventory
             if (toUnequip != null)
             {
-                toUnequip.UnequipItem();
                 items.Add(toUnequip);
             }
             return true;
@@ -337,11 +372,8 @@ namespace Myng.Helpers
             if (itemToUnequip == null || !IsEquiped(itemToUnequip) || items.Count >= inventorySize)
                 return false;
 
-            //add item to inventory
+            //add item to inventory and unequip it
             Add(itemToUnequip);
-
-            //unequip it
-            itemToUnequip.UnequipItem();
             GetEquippedItemByType(itemToUnequip.ItemType) = null;
 
             return true;
@@ -349,11 +381,6 @@ namespace Myng.Helpers
 
         private void HandleEquippingItem(Item itemToEquip)
         {
-            if (itemToEquip is IStatImprover i)
-            {
-                i.ImproveStats();
-            }
-
             if (itemToEquip is IUsable)
             {
                 //TODO ADD THE EFFECT OF THIS ITEM TO SPELLBAR
@@ -371,7 +398,7 @@ namespace Myng.Helpers
                     return chest == null ? false : chest.Equals(item);
                 case ItemType.LEGS:
                     return legs == null ? false : legs.Equals(item);
-                case ItemType.MISC:
+                case ItemType.TRINKET:
                     return misc == null? false : misc.Equals(item);
                 case ItemType.WEAPON:
                     return weapon == null ? false : weapon.Equals(item);
@@ -393,14 +420,23 @@ namespace Myng.Helpers
         public void Update(GameTime gameTime)
         {
             inventoryBackgroundPos = -Camera.ScreenOffset + new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2) - inventoryBackgroundOrigin * invScale;
-            InventorySlotsPos = inventoryBackgroundPos + new Vector2(5, 71) * invScale + new Vector2(6, 15) * invScale;
+            InventorySlotsPos = inventoryBackgroundPos + new Vector2(11, 86) * invScale;
             InventoryJunkPos = inventoryBackgroundPos + new Vector2(0, 67) * invScale - new Vector2(inventoryJunk.Width,0) * invScale;
+            ItemDescriptionPos = inventoryBackgroundPos + new Vector2(13, 304) * invScale;
             HelmetSlotPos = inventoryBackgroundPos + new Vector2(180, 71) * invScale + new Vector2(49, 30) * invScale;
             ChestSlotPos = HelmetSlotPos + new Vector2(0, 40 + 17) * invScale;
             LegsSlotPos = ChestSlotPos + new Vector2(0, 40 + 17) * invScale;
             MiscSlotPos = HelmetSlotPos + new Vector2(40 + 5, (20 + 17) / 2) * invScale;
             WeaponSlotPos = ChestSlotPos + new Vector2(-(40 + 4), (20 + 17) / 2) * invScale;
             ShieldSlotPos = ChestSlotPos + new Vector2(40 + 5, (20 + 17) / 2) * invScale;
+        }
+
+        public void UpdateEquippedItems(List<Sprite> otherSprites, List<Sprite> hittableSprites)
+        {
+            foreach(Item item in GetAllEquippedItems())
+            {
+                (item as IUpdatable)?.Update(otherSprites, hittableSprites);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -483,7 +519,7 @@ namespace Myng.Helpers
                 case ItemType.LEGS:
                     itemPosition += LegsSlotPos;
                     break;
-                case ItemType.MISC:
+                case ItemType.TRINKET:
                     itemPosition += MiscSlotPos;
                     break;
                 case ItemType.WEAPON:
@@ -532,6 +568,28 @@ namespace Myng.Helpers
                   rotation: 0, origin: inventoryJunkOrigin, scale: invScale, effects: SpriteEffects.None, layerDepth: Layers.InventoryBackground);
         }
 
+        public void DrawItemDescription(SpriteBatch spriteBatch, Item item)
+        {
+            string[] lines = item.Description.Split('\n');
+            if (lines.Length <= 5)
+            {
+                spriteBatch.DrawString(font, item.Description, ItemDescriptionPos + font.MeasureString(item.Description) / 2, Color.WhiteSmoke, 0, font.MeasureString(item.Description) / 2, 1F, SpriteEffects.None, Layers.InventoryItem);
+            } else
+            {
+                StringBuilder sb = new StringBuilder();
+                string column1 = sb.Append(lines[0]).AppendLine().Append(lines[1]).AppendLine().Append(lines[2]).AppendLine().Append(lines[3]).AppendLine().Append(lines[4]).ToString();
+                sb.Clear();
+                sb.AppendLine();
+                for(int i = 5; i < lines.Length; ++i)
+                {
+                    sb.Append(lines[i]).AppendLine();
+                }
+                string column2 = sb.ToString();
+                spriteBatch.DrawString(font, column1, ItemDescriptionPos + font.MeasureString(column1) / 2, Color.WhiteSmoke, 0, font.MeasureString(column1) / 2, 1F, SpriteEffects.None, Layers.InventoryItem);
+                spriteBatch.DrawString(font, column2, ItemDescriptionPos + new Vector2(150,0)*invScale + font.MeasureString(column2) / 2, Color.WhiteSmoke, 0, font.MeasureString(column2) / 2, 1F, SpriteEffects.None, Layers.InventoryItem);
+            }
+        }
+
         //Method to draw highlights to slots when item is being dragged
         public void HighlightSlot(SpriteBatch spriteBatch, ItemType itemType)
         {
@@ -548,7 +606,7 @@ namespace Myng.Helpers
                 case ItemType.LEGS:
                     highlightPos = LegsSlotPos;
                     break;
-                case ItemType.MISC:
+                case ItemType.TRINKET:
                     highlightPos = MiscSlotPos;
                     break;
                 case ItemType.WEAPON:

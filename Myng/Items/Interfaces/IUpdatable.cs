@@ -6,6 +6,6 @@ namespace Myng.Items.Interfaces
 {
     public interface IUpdatable
     {
-        void Update(List<Sprite> sprites);
+        void Update(List<Sprite> otherSprites, List<Sprite> hittableSprites);
     }
 }

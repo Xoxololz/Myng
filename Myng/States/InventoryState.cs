@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -26,6 +25,7 @@ namespace Myng.States
         private Vector2 mouseOrig;
 
         private Item pickedUpItem;
+        private Item displayedItem;
         private GUI gui;
 
         private Inventory inventory;
@@ -68,6 +68,7 @@ namespace Myng.States
 
             HandleMouseIcon();
             HandleMouse(gameTime);
+            HandleItemDescription();
         }
 
         /// <summary>
@@ -128,18 +129,27 @@ namespace Myng.States
             }
         }
 
+        /// <summary>
+        /// This method handles showing the description of the item, that is being dragged or hovered over
+        /// </summary>
+        private void HandleItemDescription()
+        {
+            if(pickedUpItem != null)
+            {
+                displayedItem = pickedUpItem;
+            } 
+            else
+            {
+                displayedItem = inventory.GetItemByMousePosition(mousePos.ToPoint());
+            }
+        }
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             inventory.Draw(spriteBatch);
             Game1.Player.Spellbar.Draw(spriteBatch);
             inventory.DrawPotions(spriteBatch);
             gui.Draw(spriteBatch);
-
-            if(pickedUpItem != null)
-            {
-                inventory.HighlightSlot(spriteBatch, pickedUpItem.ItemType);
-                inventory.DrawJunkArea(spriteBatch);
-            }
 
             //mouse
             float mouseScale = 2;
@@ -149,10 +159,19 @@ namespace Myng.States
             //dragged item
             if(pickedUpItem != null)
             {
+                inventory.DrawJunkArea(spriteBatch);
+
                 Vector2 itemOrigin = new Vector2(pickedUpItem.Texture.Width / 2, pickedUpItem.Texture.Height / 2);
                 float itemScale = (32.0f * inventory.InventoryScale) / (pickedUpItem.Texture.Width > pickedUpItem.Texture.Height ? pickedUpItem.Texture.Width : pickedUpItem.Texture.Height);
                 spriteBatch.Draw(texture: pickedUpItem.Texture, position: -Camera.ScreenOffset + mousePos, sourceRectangle: null, color: Color.White,
                     rotation: 0, origin: itemOrigin, scale: itemScale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
+            }
+
+            //show item description
+            if(displayedItem != null)
+            {
+                inventory.DrawItemDescription(spriteBatch, displayedItem);
+                inventory.HighlightSlot(spriteBatch, displayedItem.ItemType);
             }
         }
         #endregion

@@ -8,6 +8,7 @@ using Myng.Helpers.SoundHandlers;
 using Myng.States;
 using System;
 using System.Collections.Generic;
+using static Myng.Graphics.Character;
 
 namespace Myng.Graphics
 {
@@ -16,6 +17,8 @@ namespace Myng.Graphics
         #region Properties
 
         public Faction Faction { get; set; }
+
+        public DamageType DamageType { get; set; }
 
         public Vector2 Direction;
         public float Speed = 6f;
@@ -31,6 +34,7 @@ namespace Myng.Graphics
         protected SoundEffect2D flyingSound;
         protected SoundEffect2D hitSound;
 
+        protected Character Parent;
         #endregion
 
         #region Constructors
@@ -51,15 +55,18 @@ namespace Myng.Graphics
 
         #region Methods
 
-        public virtual void Initialize(Vector2 position, int damage, Vector2 direction, Faction faction, double angle
-            , SoundEffectInstance flyingSoundInstance, SoundEffectInstance hitSoundInstance)
+        public virtual void Initialize(Vector2 position, int damage, DamageType damageType, Vector2 direction, Faction faction, double angle
+            , SoundEffectInstance flyingSoundInstance, SoundEffectInstance hitSoundInstance, Character parent = null)
         {
             Position = position;
             Damage = damage;
+            DamageType = damageType;
             Direction = direction;
             Direction.Normalize();
             Faction = faction;
             Angle = angle;
+            Parent = parent;
+
             flyingSound = new SoundEffect2D(flyingSoundInstance, this)
             {
                 IsLooping = true,
@@ -129,7 +136,15 @@ namespace Myng.Graphics
                         flyingSound.Stop();
                         hitSound.Update3DEffect();
                         hitSound.Play();
-                        characerSprite.Health -= Damage;
+                        int actualDamage = CalculateDamage(Damage, DamageType, characerSprite, out bool isCrit, out bool isBlocked);
+                        characerSprite.Health -= actualDamage;
+
+                        if (isBlocked)
+                            characerSprite.CollisionDisplaytList.Add(new CollisionToDisplay("blocked", Color.Snow));
+                        else if (isCrit)
+                            characerSprite.CollisionDisplaytList.Add(new CollisionToDisplay("*" + actualDamage.ToString() + "*", Color.Red));
+                        else
+                            characerSprite.CollisionDisplaytList.Add(new CollisionToDisplay(actualDamage.ToString(), Color.OrangeRed));
                         ToRemove = true;
                     }
                 }
@@ -141,6 +156,38 @@ namespace Myng.Graphics
                     ToRemove = true;
                 }
             }
+        }
+
+        private int CalculateDamage(float baseDamage, DamageType damageType, Character targetCharacter, out bool isCrit, out bool isBlocked)
+        {
+            Random random = new Random();
+            //check for block
+            double randomBlockNumber = random.NextDouble() * 100;
+            isBlocked = randomBlockNumber <= targetCharacter?.BlockChance;
+
+            //check for crit
+            double randomCritNumber = random.NextDouble() * 100;
+            isCrit = randomCritNumber <= Parent?.CritChance;
+
+            if (isBlocked)
+                return 0;
+
+            float damageMultiplier;
+            switch (damageType)
+            {
+                case DamageType.PHYSICAL:
+                    damageMultiplier = (baseDamage / (baseDamage + targetCharacter.PhysicalDefense));
+                    break;
+                case DamageType.MAGIC:
+                    damageMultiplier = (baseDamage / (baseDamage + targetCharacter.MagicDefense));
+                    break;
+                case DamageType.MIXED:
+                    damageMultiplier = (baseDamage / (baseDamage + Math.Min(targetCharacter.PhysicalDefense, targetCharacter.MagicDefense) / 2));
+                    break;
+                default: throw new ArgumentException();
+            }
+
+            return (int)(baseDamage * damageMultiplier * (isCrit ? 2 : 1));
         }
 
         private void CheckCollisionWithTerrain()
