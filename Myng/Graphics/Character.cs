@@ -28,6 +28,8 @@ namespace Myng.Graphics
 
         protected SoundEffect2D walkingSound;
 
+        protected Vector2 CollisionTextStartPosition;
+
         protected Dictionary<Attributes, int> baseAttributes;
 
         protected float baseSpeed = 3f;
@@ -63,6 +65,9 @@ namespace Myng.Graphics
         #region Properties
 
         public Faction Faction { get; set; }
+
+        //List of Effects to display at player
+        public List<CollisionToDisplay> CollisionDisplaytList;
 
         public int MaxHealth
         {
@@ -202,6 +207,8 @@ namespace Myng.Graphics
                 baseAttributes.Add(stat, 10);
             }
 
+            CollisionDisplaytList = new List<CollisionToDisplay>();
+
             Health = MaxHealth;
             Mana = MaxMana;
             autoAttackTimer = baseAttackSpeed;
@@ -219,6 +226,15 @@ namespace Myng.Graphics
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             HandleWalkingSound();
+
+            for(int i = CollisionDisplaytList.Count - 1; i >= 0; --i)
+            {
+                CollisionDisplaytList[i].Timer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (CollisionDisplaytList[i].Timer <= 0f)
+                    CollisionDisplaytList.RemoveAt(i);
+            }
+
+            CollisionTextStartPosition = Position;
 
             if (Health <= 0)
             {
@@ -298,12 +314,28 @@ namespace Myng.Graphics
         {
             DrawFrame(spriteBatch);
             DrawHPBar(spriteBatch);
+            DrawCollisionMessages(spriteBatch);
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale, layer);
             else if (texture != null)
                 spriteBatch.Draw(texture: texture,position: GlobalOrigin,sourceRectangle: null,color: Color.White,
                     rotation: 0,origin: Origin,scale: Scale,effects: SpriteEffects.None,layerDepth: layer);
             else throw new Exception("No texture or animation manager set for Character");
+        }
+
+        private void DrawCollisionMessages(SpriteBatch spriteBatch)
+        {
+            SpriteFont font = State.Content.Load<SpriteFont>("Fonts/Font");
+            CollisionTextStartPosition += new Vector2((animationManager.Animation.FrameWidth / 2) * scale, -25);
+            bool first = true;
+            foreach (CollisionToDisplay c in CollisionDisplaytList)
+            {
+                if (first)
+                    first = false;
+                else
+                    CollisionTextStartPosition -= new Vector2(0,(font.MeasureString(c.Text).Y + 10)/ 2);
+                spriteBatch.DrawString(font, c.Text,CollisionTextStartPosition, c.Color, 0, font.MeasureString(c.Text) / 2, 1F, SpriteEffects.None, Layers.GameInformation);
+            }
         }
 
         private void DrawHPBar(SpriteBatch spriteBatch)
@@ -315,5 +347,21 @@ namespace Myng.Graphics
         }
 
         #endregion
+
+        public class CollisionToDisplay
+        {
+            public double Timer { get; set; }
+            public double DefaultTimer { get; private set; }
+            public string Text { get; private set; } 
+            public Color Color { get; private set; }
+
+            public CollisionToDisplay(string text, Color color)
+            {
+                Timer = 600f;
+                DefaultTimer = Timer;
+                Text = text;
+                Color = color;
+            }
+        }
     }
 }

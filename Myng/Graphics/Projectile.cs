@@ -8,6 +8,7 @@ using Myng.Helpers.SoundHandlers;
 using Myng.States;
 using System;
 using System.Collections.Generic;
+using static Myng.Graphics.Character;
 
 namespace Myng.Graphics
 {
@@ -137,7 +138,13 @@ namespace Myng.Graphics
                         hitSound.Play();
                         int actualDamage = CalculateDamage(Damage, DamageType, characerSprite, out bool isCrit, out bool isBlocked);
                         characerSprite.Health -= actualDamage;
-                        //todo show damage
+
+                        if (isBlocked)
+                            characerSprite.CollisionDisplaytList.Add(new CollisionToDisplay("blocked", Color.Snow));
+                        else if (isCrit)
+                            characerSprite.CollisionDisplaytList.Add(new CollisionToDisplay("*" + actualDamage.ToString() + "*", Color.Red));
+                        else
+                            characerSprite.CollisionDisplaytList.Add(new CollisionToDisplay(actualDamage.ToString(), Color.OrangeRed));
                         ToRemove = true;
                     }
                 }

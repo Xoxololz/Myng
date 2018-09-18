@@ -176,7 +176,7 @@ namespace Myng.Graphics
                     bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
                 else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);                
 
-                b.Initialize(bPosition, 10, DamageType.PHYSICAL, attackDirection, Faction, bAngle,
+                b.Initialize(bPosition, 20, DamageType.PHYSICAL, attackDirection, Faction, bAngle,
                     SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
 
                 sprites.Add(b);

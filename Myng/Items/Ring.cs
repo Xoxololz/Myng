@@ -10,6 +10,7 @@ namespace Myng.Items
         {
             stats.Add(Stats.MOVEMENT_SPEED, 25);
             stats.Add(Stats.ATTACK_SPEED, 30);
+            stats.Add(Stats.CRIT, 30);
         }
     }
 }
