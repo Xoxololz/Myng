@@ -52,7 +52,6 @@ namespace Myng.Helpers
         private Vector2 inventoryBackgroundPos;
         private Vector2 InventorySlotsPos;
         private Vector2 InventoryJunkPos;
-        private Vector2 ItemDescriptionPos;
         private Vector2 HelmetSlotPos;
         private Vector2 ChestSlotPos;
         private Vector2 LegsSlotPos;
@@ -63,6 +62,7 @@ namespace Myng.Helpers
         //scaling
         private float potionsScale = 1.5f;
         private float invScale = 1.75f;
+        private float textScale = 1.25f;
 
         //items
         private List<Item> items;
@@ -73,6 +73,13 @@ namespace Myng.Helpers
         private Item misc;
         private Item weapon;
         private Item shield;
+
+        //description
+        private Color itemTypeColor = Color.LightGoldenrodYellow;
+        private Color itemStatsColor = Color.GreenYellow;
+        private Vector2 itemTypePos;
+        private Vector2 itemStatsPos;
+
 
         private Vector2 ItemSlotSize
         {
@@ -106,7 +113,7 @@ namespace Myng.Helpers
 
         public Rectangle GetExitArea()
         {
-            return new Rectangle((inventoryBackgroundPos + new Vector2(277, 10) * invScale).ToPoint(), (new Vector2(37, 43)*invScale).ToPoint());
+            return new Rectangle((inventoryBackgroundPos + new Vector2(275, 10) * invScale).ToPoint(), (new Vector2(38, 43)*invScale).ToPoint());
         }
 
         public Rectangle GetJunkArea()
@@ -422,13 +429,15 @@ namespace Myng.Helpers
             inventoryBackgroundPos = -Camera.ScreenOffset + new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2) - inventoryBackgroundOrigin * invScale;
             InventorySlotsPos = inventoryBackgroundPos + new Vector2(11, 86) * invScale;
             InventoryJunkPos = inventoryBackgroundPos + new Vector2(0, 67) * invScale - new Vector2(inventoryJunk.Width,0) * invScale;
-            ItemDescriptionPos = inventoryBackgroundPos + new Vector2(13, 304) * invScale;
             HelmetSlotPos = inventoryBackgroundPos + new Vector2(180, 71) * invScale + new Vector2(49, 30) * invScale;
             ChestSlotPos = HelmetSlotPos + new Vector2(0, 40 + 17) * invScale;
             LegsSlotPos = ChestSlotPos + new Vector2(0, 40 + 17) * invScale;
             MiscSlotPos = HelmetSlotPos + new Vector2(40 + 5, (20 + 17) / 2) * invScale;
             WeaponSlotPos = ChestSlotPos + new Vector2(-(40 + 4), (20 + 17) / 2) * invScale;
             ShieldSlotPos = ChestSlotPos + new Vector2(40 + 5, (20 + 17) / 2) * invScale;
+
+            itemTypePos = inventoryBackgroundPos + new Vector2(13, 302) * invScale;
+            itemStatsPos = itemTypePos + new Vector2(0, font.MeasureString("text").Y + 4) * textScale;
         }
 
         public void UpdateEquippedItems(List<Sprite> otherSprites, List<Sprite> hittableSprites)
@@ -542,13 +551,13 @@ namespace Myng.Helpers
         {
             //HP
             Vector2 HPPosition = -Camera.ScreenOffset + new Vector2(15, 110);
-
+            string count = HealthPotion == null ? 0.ToString() : HealthPotion.Count.ToString();
             spriteBatch.Draw(texture: HPtexture, position: HPPosition + HPorigin * potionsScale, sourceRectangle: null, color: Color.White,
                rotation: 0, origin: HPorigin, scale: potionsScale, effects: SpriteEffects.None, layerDepth: Layers.Inventory);
 
-            spriteBatch.DrawString(font, "Q", new Vector2(HPPosition.X +  4*potionsScale, HPPosition.Y + 3*potionsScale) + font.MeasureString("Q")/2*0.8f, Color.LightGoldenrodYellow, 0, font.MeasureString("Q") / 2, 0.8f, SpriteEffects.None, Layers.InventoryItem);
+            spriteBatch.DrawString(font, "q", new Vector2(HPPosition.X +  4*potionsScale, HPPosition.Y + 4*potionsScale) + font.MeasureString("q")/2, Color.LightGoldenrodYellow, 0, font.MeasureString("q") / 2, 1f, SpriteEffects.None, Layers.InventoryItem);
 
-            spriteBatch.DrawString(font, HealthPotion == null ? 0.ToString() : HealthPotion.Count.ToString(), new Vector2(HPPosition.X + 28*potionsScale, HPPosition.Y + 24*potionsScale), Color.Black);
+            spriteBatch.DrawString(font, count, new Vector2(HPPosition.X + 31 * potionsScale, HPPosition.Y + 27 *potionsScale) + new Vector2(0, font.MeasureString(count).Y/2), Color.Black, 0, font.MeasureString(count) / 2, 1f, SpriteEffects.None, Layers.InventoryItemFont);
 
             //MP
             Vector2 MPPosition = -Camera.ScreenOffset + new Vector2(15 + HPtexture.Width * potionsScale + 10, 110);
@@ -556,9 +565,9 @@ namespace Myng.Helpers
             spriteBatch.Draw(texture: MPtexture, position: MPPosition + MPorigin * potionsScale, sourceRectangle: null, color: Color.White,
                rotation: 0, origin: MPorigin, scale: potionsScale, effects: SpriteEffects.None, layerDepth: Layers.Inventory);
 
-            spriteBatch.DrawString(font, "E", new Vector2(MPPosition.X + 4 * potionsScale, MPPosition.Y + 3 * potionsScale) + font.MeasureString("E") / 2 * 0.8f, Color.LightGoldenrodYellow, 0, font.MeasureString("E") / 2, 0.8f, SpriteEffects.None, Layers.InventoryItem);
-
-            spriteBatch.DrawString(font, ManaPotion == null ? 0.ToString() : ManaPotion.Count.ToString(), new Vector2(MPPosition.X + 28 * potionsScale, MPPosition.Y + 24 * potionsScale), Color.Black);
+            spriteBatch.DrawString(font, "e", new Vector2(MPPosition.X + 4 * potionsScale, MPPosition.Y + 4 * potionsScale) + font.MeasureString("e") / 2, Color.LightGoldenrodYellow, 0, font.MeasureString("e") / 2, 1f, SpriteEffects.None, Layers.InventoryItem);
+            count = ManaPotion == null ? 0.ToString() : ManaPotion.Count.ToString();
+            spriteBatch.DrawString(font, count, new Vector2(MPPosition.X + 31 * potionsScale, MPPosition.Y + 27 * potionsScale) + new Vector2(0, font.MeasureString(count).Y/2), Color.Black, 0, font.MeasureString(count) / 2, 1f, SpriteEffects.None, Layers.InventoryItemFont);
         }
 
         //Method to draw area to remove items from inventory
@@ -571,22 +580,26 @@ namespace Myng.Helpers
         public void DrawItemDescription(SpriteBatch spriteBatch, Item item)
         {
             string[] lines = item.Description.Split('\n');
-            if (lines.Length <= 5)
+            spriteBatch.DrawString(font, lines[0], itemTypePos + (font.MeasureString(lines[0]) / 2) * textScale, itemTypeColor, 0, font.MeasureString(lines[0]) / 2, textScale, SpriteEffects.None, Layers.InventoryItem);
+
+            StringBuilder sb = new StringBuilder();
+            string column1 = "";
+            for (int i = 1; i < 5 && i < lines.Length; ++i)
             {
-                spriteBatch.DrawString(font, item.Description, ItemDescriptionPos + font.MeasureString(item.Description) / 2, Color.WhiteSmoke, 0, font.MeasureString(item.Description) / 2, 1F, SpriteEffects.None, Layers.InventoryItem);
-            } else
+                sb.Append(lines[i]).AppendLine();
+            }
+            column1 = sb.ToString();
+            spriteBatch.DrawString(font, column1, itemStatsPos + (font.MeasureString(column1) / 2) * textScale, itemStatsColor, 0, font.MeasureString(column1) / 2, textScale, SpriteEffects.None, Layers.InventoryItem);
+
+            if(lines.Length >= 5)
             {
-                StringBuilder sb = new StringBuilder();
-                string column1 = sb.Append(lines[0]).AppendLine().Append(lines[1]).AppendLine().Append(lines[2]).AppendLine().Append(lines[3]).AppendLine().Append(lines[4]).ToString();
                 sb.Clear();
-                sb.AppendLine();
                 for(int i = 5; i < lines.Length; ++i)
                 {
                     sb.Append(lines[i]).AppendLine();
                 }
                 string column2 = sb.ToString();
-                spriteBatch.DrawString(font, column1, ItemDescriptionPos + font.MeasureString(column1) / 2, Color.WhiteSmoke, 0, font.MeasureString(column1) / 2, 1F, SpriteEffects.None, Layers.InventoryItem);
-                spriteBatch.DrawString(font, column2, ItemDescriptionPos + new Vector2(150,0)*invScale + font.MeasureString(column2) / 2, Color.WhiteSmoke, 0, font.MeasureString(column2) / 2, 1F, SpriteEffects.None, Layers.InventoryItem);
+                spriteBatch.DrawString(font, column2, itemStatsPos + new Vector2(150,0)*invScale + (font.MeasureString(column2) / 2)*textScale, itemStatsColor, 0, font.MeasureString(column2) / 2, textScale, SpriteEffects.None, Layers.InventoryItem);
             }
         }
 

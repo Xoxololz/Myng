@@ -16,9 +16,9 @@ namespace Myng.Graphics
     {
         #region Fields
 
-        protected int health;
+        protected int? health = null;
 
-        protected int mana;
+        protected int? mana = null;
 
         protected Vector2 velocity;
 
@@ -32,6 +32,10 @@ namespace Myng.Graphics
 
         protected Dictionary<Attributes, int> baseAttributes;
 
+        protected int baseHealthModifier = 10;
+
+        protected int baseManaModifier = 10;
+
         protected float baseSpeed = 3f;
 
         protected float baseAttackSpeed = 1f;
@@ -44,22 +48,6 @@ namespace Myng.Graphics
 
         protected float autoAttackTimer;
 
-        protected virtual float AttackSpeed
-        {
-            get
-            {
-                return baseAttackSpeed /(1 + (GetAttribute(Attributes.DEXTERITY) / 2)/100f);
-            }
-        }
-
-        protected virtual float Speed
-        {
-            get
-            {
-                return baseSpeed;
-            }
-        }
-
         #endregion
 
         #region Properties
@@ -69,19 +57,19 @@ namespace Myng.Graphics
         //List of Effects to display at player
         public List<CollisionToDisplay> CollisionDisplaytList;
 
-        public int MaxHealth
+        public virtual int MaxHealth
         {
             get
             {
-                return GetAttribute(Attributes.VITALITY) * 10;
+                return GetAttribute(Attributes.VITALITY) * baseHealthModifier;
             }
         }
 
-        public int MaxMana
+        public virtual int MaxMana
         {
             get
             {
-                return GetAttribute(Attributes.AURA) * 10;
+                return GetAttribute(Attributes.AURA) * baseManaModifier;
             }
         }
 
@@ -89,9 +77,9 @@ namespace Myng.Graphics
         public int Health {
             get
             {
-                if (health > MaxHealth)
+                if (health == null || health > MaxHealth)
                     health = MaxHealth;
-                return health;
+                return (int)health;
             }
             set
             {
@@ -109,9 +97,9 @@ namespace Myng.Graphics
         {
             get
             {
-                if (mana > MaxMana)
+                if (mana == null || mana > MaxMana)
                     mana = MaxMana;
-                return mana;
+                return (int)mana;
             }
             set
             {
@@ -122,6 +110,14 @@ namespace Myng.Graphics
                 }
 
                 mana = value;
+            }
+        }
+
+        public virtual int ManaModifier
+        {
+            get
+            {
+                return baseManaModifier;
             }
         }
 
@@ -169,6 +165,22 @@ namespace Myng.Graphics
                 return baseBlockChance;
             }
         }
+
+        public virtual float AttackSpeed
+        {
+            get
+            {
+                return baseAttackSpeed / (1 + (GetAttribute(Attributes.DEXTERITY) / 2) / 100f);
+            }
+        }
+
+        public virtual float Speed
+        {
+            get
+            {
+                return baseSpeed;
+            }
+        }
         #endregion
 
         #region Constructor
@@ -209,8 +221,6 @@ namespace Myng.Graphics
 
             CollisionDisplaytList = new List<CollisionToDisplay>();
 
-            Health = MaxHealth;
-            Mana = MaxMana;
             autoAttackTimer = baseAttackSpeed;
         }
 
@@ -304,10 +314,13 @@ namespace Myng.Graphics
             return false;
         }
 
+        public virtual void ImproveAttribute(Attributes attribute, int amount)
+        {
+            baseAttributes[attribute] += amount;
+        }
 
         protected abstract bool CollidesWithNewPosition(List<Sprite> hittableSprites);
         
-
         protected abstract bool CheckCollisions(List<Sprite> hittableSprites);
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -351,14 +364,12 @@ namespace Myng.Graphics
         public class CollisionToDisplay
         {
             public double Timer { get; set; }
-            public double DefaultTimer { get; private set; }
             public string Text { get; private set; } 
             public Color Color { get; private set; }
 
             public CollisionToDisplay(string text, Color color)
             {
                 Timer = 600f;
-                DefaultTimer = Timer;
                 Text = text;
                 Color = color;
             }

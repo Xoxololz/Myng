@@ -54,6 +54,7 @@
     <Compile Include="Graphics\Character.cs" />
     <Compile Include="Graphics\Animations\Animation.cs" />
     <Compile Include="Graphics\Enemies\Enemy.cs" />
+    <Compile Include="Graphics\GUI\CharacterMenu.cs" />
     <Compile Include="Graphics\GUI\GUI.cs" />
     <Compile Include="Graphics\ItemSprite.cs" />
     <Compile Include="Graphics\Player.cs" />
@@ -87,8 +88,11 @@
     <Compile Include="Helpers\Spell.cs" />
     <Compile Include="Helpers\TileMap.cs" />
     <Compile Include="Items\UpdatableTestItem.cs" />
+    <Compile Include="PlayerIdentity\Identity.cs" />
+    <Compile Include="PlayerIdentity\Mage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="States\CharacterState.cs" />
     <Compile Include="States\GameState.cs" />
     <Compile Include="States\InventoryState.cs" />
     <Compile Include="States\State.cs" />

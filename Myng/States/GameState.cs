@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Audio;
 using Myng.AI.Movement;
 using Myng.Graphics.Animations;
 using Myng.Graphics.GUI;
+using Myng.PlayerIdentity;
 
 namespace Myng.States
 {
@@ -94,7 +95,7 @@ namespace Myng.States
                 { "walking", new Animation(Content.Load<Texture2D>("Characters/White_Male"), 4, 3) }
             };
 
-            Player player = new Player(playerAnimations, new Vector2(2900,900))
+            Player player = new Player(playerAnimations, new Vector2(2900, 900), new Mage())
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
             };

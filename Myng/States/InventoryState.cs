@@ -8,7 +8,7 @@ using Myng.Graphics.GUI;
 
 namespace Myng.States
 {
-    class InventoryState : State
+    public class InventoryState : State
     {
         #region Fields
 

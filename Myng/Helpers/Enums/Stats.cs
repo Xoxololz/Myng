@@ -1,4 +1,6 @@
-﻿namespace Myng.Helpers.Enums
+﻿using System.Text;
+
+namespace Myng.Helpers.Enums
 {
     public enum Stats
     {
@@ -23,7 +25,7 @@
                 case Stats.BLOCK:
                     return "Block";
                 case Stats.CRIT:
-                    return "Critical hit chance";
+                    return "Critical chance";
                 case Stats.MAGIC_DEFENSE:
                     return "Magic defense";
                 case Stats.MAX_DAMAGE:
