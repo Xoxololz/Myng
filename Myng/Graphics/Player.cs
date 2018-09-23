@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
@@ -12,7 +11,7 @@ using System.Collections.Generic;
 using Myng.Graphics.Animations;
 using Myng.Graphics.GUI;
 using Myng.Helpers.Enums;
-using Myng.Items;
+using Myng.PlayerIdentity;
 
 namespace Myng.Graphics
 {
@@ -20,11 +19,15 @@ namespace Myng.Graphics
     {
         #region Properties
 
+        public Identity Identity { get; private set; }
+
         public Spellbar Spellbar { get; private set; }
 
         public Inventory Inventory { get; private set; }
 
         public Projectile Bullet { get; set; }
+
+        public int CharacterPoints { get; private set; }
 
         public int XP { get; set; }
 
@@ -41,6 +44,14 @@ namespace Myng.Graphics
             get
             {
                 return level;
+            }
+        }
+
+        public override int MaxHealth
+        {
+            get
+            {
+                return GetAttribute(Attributes.VITALITY) * Identity.HPModifier;
             }
         }
 
@@ -76,6 +87,30 @@ namespace Myng.Graphics
             }
         }
 
+        public override float Speed
+        {
+            get
+            {
+                return baseSpeed * (1 + (Inventory.GetStatBonus(Stats.MOVEMENT_SPEED) / 100f));
+            }
+        }
+
+        public float MovementSpeedBonus
+        {
+            get
+            {
+                return 1 + (Inventory.GetStatBonus(Stats.MOVEMENT_SPEED) / 100f);
+            }
+        }
+
+        public override float AttackSpeed
+        {
+            get
+            {
+                return baseAttackSpeed / (1 + ((GetAttribute(Attributes.DEXTERITY) / 2) + Inventory.GetStatBonus(Stats.ATTACK_SPEED)) / 100f);
+            }
+        }
+
         #endregion
 
         #region Fields
@@ -96,27 +131,10 @@ namespace Myng.Graphics
         private Dictionary<string, Animation> playerAnimations;
         private Vector2 vector2;
 
-        protected override float Speed
-        {
-            get
-            {
-                return baseSpeed * (1 + (Inventory.GetStatBonus(Stats.MOVEMENT_SPEED) / 100f));
-            }
-        }
-
-        protected override float AttackSpeed
-        {
-            get
-            {
-                return baseAttackSpeed / (1 + ((GetAttribute(Attributes.DEXTERITY) / 2) + Inventory.GetStatBonus(Stats.ATTACK_SPEED)) / 100f);
-            }
-        }
-
         #endregion
 
         #region Constructor
-
-        public Player(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
+        public Player(Dictionary<string, Animation> animations, Vector2 position, Identity identity) : base(animations, position)
         {
             currentKey = Keyboard.GetState();
             previousKey = Keyboard.GetState();
@@ -130,7 +148,9 @@ namespace Myng.Graphics
             Faction = Faction.FRIENDLY;
             level = 1;
             XP = 0;
+            CharacterPoints = 5;
             nextLevelXP = 100;
+            this.Identity = identity;
             
             InitAutoattack();
             InitSpells();
@@ -206,6 +226,7 @@ namespace Myng.Graphics
             ++level;
             XP = 0;
             nextLevelXP = (int) (100 * Math.Pow(1.25, level));
+            CharacterPoints += 3;
         }
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
@@ -389,6 +410,15 @@ namespace Myng.Graphics
             else
                 animationManager.Animation.IsLooping = false;
             
+        }
+
+        public override void ImproveAttribute(Attributes attribute, int amount)
+        {
+            if (CharacterPoints >= amount)
+            {
+                base.ImproveAttribute(attribute, amount);
+                CharacterPoints -= amount;
+            }
         }
 
         #endregion

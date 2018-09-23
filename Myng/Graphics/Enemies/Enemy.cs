@@ -40,7 +40,7 @@ namespace Myng.Graphics.Enemies
             Scale = 1.5f;
             baseSpeed = 1f;
             Faction = Faction.ENEMY;
-            XPDrop = 10;
+            XPDrop = 20;
             movementAI = new MovementAI(CollisionPolygon, this);
             //temporary for testing purposes
             movementAI.SetGoalDestination(new Vector2(3148,Position.Y));

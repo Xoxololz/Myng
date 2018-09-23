@@ -87,7 +87,7 @@ namespace Myng.Graphics.GUI
             for (int i = 0; i < maxsize; i++)
             {
                 Position.X = Game1.ScreenWidth / 2 - Camera.ScreenOffset.X - texture.Width / 2 + 36 + (75 * i) + 4;
-                spriteBatch.DrawString(font, (i+1).ToString(), new Vector2(Position.X - 5, Position.Y - 7) + font.MeasureString((i + 1).ToString()) / 2 * 0.8f, Color.LightGoldenrodYellow, 0, font.MeasureString((i + 1).ToString()) / 2, 0.8f, SpriteEffects.None, Layers.InventoryItemFont);
+                spriteBatch.DrawString(font, (i+1).ToString(), new Vector2(Position.X - 4, Position.Y - 5) + font.MeasureString((i + 1).ToString()) / 2, Color.LightGoldenrodYellow, 0, font.MeasureString((i + 1).ToString()) / 2, 1f, SpriteEffects.None, Layers.InventoryItemFont);
             }
 
             for (int i = 0; i < spells.Count; i++)
@@ -99,8 +99,8 @@ namespace Myng.Graphics.GUI
                 spriteBatch.Draw(texture: spells[i].Texture, position: Position + origin * scale, sourceRectangle: null, color: Color.White,
                    rotation: 0, origin: origin, scale: scale, effects: SpriteEffects.None, layerDepth: Layers.InventoryItem);
 
-                Vector2 textPosition = new Vector2(Position.X + 46, Position.Y + 26);
-                spriteBatch.DrawString(font, spells[i].ManaCost.ToString(), textPosition - new Vector2(spells[i].ManaCost.ToString().Length * 13, 0), Color.DarkBlue, 0, Vector2.Zero, 1f, SpriteEffects.None, Layers.InventoryItemFont);
+                Vector2 textPosition = new Vector2(Position.X + 43 - 1.1f*font.MeasureString(spells[i].ManaCost.ToString()).X, Position.Y + 30);
+                spriteBatch.DrawString(font, spells[i].ManaCost.ToString(), textPosition + 1.1f* font.MeasureString(spells[i].ManaCost.ToString())/2, Color.Blue, 0, font.MeasureString(spells[i].ManaCost.ToString()) / 2, 1.1f, SpriteEffects.None, Layers.InventoryItemFont);
             }
         }
 
