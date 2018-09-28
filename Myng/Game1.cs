@@ -5,7 +5,6 @@ using Myng.Graphics;
 using Myng.Helpers;
 using Myng.Helpers.SoundHandlers;
 using Myng.States;
-using System;
 using System.Collections.Generic;
 
 namespace Myng
@@ -76,7 +75,7 @@ namespace Myng
             //setting window height and width
             graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
             ScreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -122,7 +121,7 @@ namespace Myng
             keyboardPrevious = keyboardCurrent;
             keyboardCurrent = Keyboard.GetState();
 
-            //TODO -- probably just temporary solution we shoud do it somehow better
+            //TODO -- temporary solution untill we have main menu
             if (keyboardCurrent.IsKeyDown(Keys.Escape) && !keyboardPrevious.IsKeyDown(Keys.Escape) && !isPaused)
                 this.Exit();
 
@@ -138,12 +137,39 @@ namespace Myng
                 if (currentState is InventoryState && nextState == null)
                 {
                     ExitCurrentState();
-                } else if(currentState is GameState && nextState == null)
+                    return;
+                }
+                if (nextState == null)
                 {
+                    if (!(currentState is GameState))
+                    {
+                        ExitCurrentState();
+                    }
                     Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
                     var inventoryState = new InventoryState(Content, graphics.GraphicsDevice, this);
                     inventoryState.Init();
                     ChangeState(inventoryState);
+                }
+            }
+
+            //Character state handler
+            if (keyboardCurrent.IsKeyDown(Keys.C) && !keyboardPrevious.IsKeyDown(Keys.C))
+            {
+                if (currentState is CharacterState && nextState == null)
+                {
+                    ExitCurrentState();
+                    return;
+                }
+                if (nextState == null)
+                {
+                    if(!(currentState is GameState))
+                    {
+                        ExitCurrentState();
+                    }
+                    Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
+                    var characterState = new CharacterState(Content, graphics.GraphicsDevice, this);
+                    characterState.Init();
+                    ChangeState(characterState);
                 }
             }
 

@@ -34,11 +34,5 @@ namespace Myng.Items
                 Count--;
             }
         }
-
-        //no implementation needed in this case
-        public override void UnequipItem()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

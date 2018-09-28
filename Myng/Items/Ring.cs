@@ -1,25 +1,16 @@
 ﻿
 using Microsoft.Xna.Framework.Graphics;
-using Myng.Items.Interfaces;
 using Myng.Helpers.Enums;
 
 namespace Myng.Items
 {
-    public class Ring :Item, IStatImprover
+    public class Ring :Item
     {
-        public Ring(Texture2D texture) : base(texture, ItemType.MISC)
+        public Ring(Texture2D texture) : base(texture, ItemType.TRINKET)
         {
-        }
-
-        public void ImproveStats()
-        {
-            Parent.AttackSpeed *= 0.7f;
-        }
-
-
-        public override void UnequipItem()
-        {
-            Parent.AttackSpeed /= 0.7f;
+            stats.Add(Stats.MOVEMENT_SPEED, 25);
+            stats.Add(Stats.ATTACK_SPEED, 30);
+            stats.Add(Stats.CRIT, 30);
         }
     }
 }

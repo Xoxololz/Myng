@@ -16,11 +16,13 @@ namespace Myng.Helpers
 
         public static float InventoryBackground = 0.14f;
 
-        public static float Character = 0.2f;
+        public static float GameInformation = 0.2f;
 
-        public static float Projectile = 0.3f;
+        public static float Character = 0.3f;
 
-        public static float Item = 0.4f;
+        public static float Projectile = 0.4f;
+
+        public static float Item = 0.5f;
 
         public static float BackgroundTint = 0.7f;
         

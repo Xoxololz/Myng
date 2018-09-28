@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
@@ -11,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using Myng.Graphics.Animations;
 using Myng.Graphics.GUI;
+using Myng.Helpers.Enums;
+using Myng.PlayerIdentity;
 
 namespace Myng.Graphics
 {
@@ -18,14 +19,15 @@ namespace Myng.Graphics
     {
         #region Properties
 
+        public Identity Identity { get; private set; }
+
         public Spellbar Spellbar { get; private set; }
 
         public Inventory Inventory { get; private set; }
 
         public Projectile Bullet { get; set; }
 
-        //The amount of time in seconds between attacks
-        public float AttackSpeed { get; set; }
+        public int CharacterPoints { get; private set; }
 
         public int XP { get; set; }
 
@@ -44,6 +46,71 @@ namespace Myng.Graphics
                 return level;
             }
         }
+
+        public override int MaxHealth
+        {
+            get
+            {
+                return GetAttribute(Attributes.VITALITY) * Identity.HPModifier;
+            }
+        }
+
+        public override float CritChance
+        {
+            get
+            {
+                return ((GetAttribute(Attributes.LUCK) * 2f) / (level + 1)) + Inventory.GetStatBonus(Stats.CRIT);
+            }
+        }
+
+        public override int PhysicalDefense
+        {
+            get
+            {
+                return basePhysicalDefense + GetAttribute(Attributes.STRENGTH) / 2 + Inventory.GetStatBonus(Stats.PHYSICAL_DEFENSE);
+            }
+        }
+
+        public override int MagicDefense
+        {
+            get
+            {
+                return baseMagicDefense + GetAttribute(Attributes.INTELLIGENCE) / 2 + Inventory.GetStatBonus(Stats.MAGIC_DEFENSE);
+            }
+        }
+
+        public override float BlockChance
+        {
+            get
+            {
+                return baseBlockChance + Inventory.GetStatBonus(Stats.BLOCK);
+            }
+        }
+
+        public override float Speed
+        {
+            get
+            {
+                return baseSpeed * (1 + (Inventory.GetStatBonus(Stats.MOVEMENT_SPEED) / 100f));
+            }
+        }
+
+        public float MovementSpeedBonus
+        {
+            get
+            {
+                return 1 + (Inventory.GetStatBonus(Stats.MOVEMENT_SPEED) / 100f);
+            }
+        }
+
+        public override float AttackSpeed
+        {
+            get
+            {
+                return baseAttackSpeed / (1 + ((GetAttribute(Attributes.DEXTERITY) / 2) + Inventory.GetStatBonus(Stats.ATTACK_SPEED)) / 100f);
+            }
+        }
+
         #endregion
 
         #region Fields
@@ -56,8 +123,6 @@ namespace Myng.Graphics
 
         private Spell autoAttack;
 
-        private float timer;
-
         private int nextLevelXP;
 
         private int level;
@@ -69,23 +134,23 @@ namespace Myng.Graphics
         #endregion
 
         #region Constructor
-
-        public Player(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
+        public Player(Dictionary<string, Animation> animations, Vector2 position, Identity identity) : base(animations, position)
         {
             currentKey = Keyboard.GetState();
             previousKey = Keyboard.GetState();
             velocity = new Vector2(0f);
             input = new Input();
             Scale = 1.5f;
-            AttackSpeed = 0.6f;
-            timer = AttackSpeed;
+            baseAttackSpeed = 1f;
             attackDirection = new Vector2(0, -1);
             Inventory = new Inventory();
             Spellbar = new Spellbar();
             Faction = Faction.FRIENDLY;
             level = 1;
             XP = 0;
+            CharacterPoints = 5;
             nextLevelXP = 100;
+            this.Identity = identity;
             
             InitAutoattack();
             InitSpells();
@@ -131,20 +196,29 @@ namespace Myng.Graphics
                     bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
                 else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);                
 
-                b.Initialize(bPosition, 10, attackDirection, Faction, bAngle,
-                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance());
+                b.Initialize(bPosition, 20, DamageType.PHYSICAL, attackDirection, Faction, bAngle,
+                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
 
                 sprites.Add(b);
             };
             Func<bool> canExecute = () =>
             {                
-                var coolDown = timer > AttackSpeed;
+                var coolDown = autoAttackTimer > AttackSpeed;
                 if (coolDown)
-                    timer = 0;
+                    autoAttackTimer = 0;
                 return coolDown;
             };
 
             autoAttack = new Spell(autoAttackAction,canExecute,0);
+        }
+
+        public override int GetAttribute(Attributes attribute)
+        {
+            if (!baseAttributes.TryGetValue(attribute, out int result))
+            {
+                return Inventory == null ? 0 : Inventory.GetAttributeBonus(attribute);
+            }
+            return result + (Inventory == null ? 0 : Inventory.GetAttributeBonus(attribute));
         }
 
         public void LevelUp()
@@ -152,13 +226,14 @@ namespace Myng.Graphics
             ++level;
             XP = 0;
             nextLevelXP = (int) (100 * Math.Pow(1.25, level));
+            CharacterPoints += 3;
         }
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
-            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            autoAttackTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // just temporary solution until we somehow handle player dying
             if (Health <= 0)
@@ -177,13 +252,9 @@ namespace Myng.Graphics
             UsePotions(otherSprites);
             CastSpells(otherSprites);
 
-            /* We will want to update only equiped items */
-            //foreach(Item item in Inventory.Items)
-            //{
-            //    if (item is IUpdatable)
-            //        ((IUpdatable)item).Update(otherSprites);
-            //}
-            //base.Update(gameTime, otherSprites, hittableSprites);
+            Inventory.UpdateEquippedItems(otherSprites, hittableSprites);
+            
+            base.Update(gameTime, otherSprites, hittableSprites);
         }
 
         private void UsePotions(List<Sprite> sprites)
@@ -271,7 +342,7 @@ namespace Myng.Graphics
             if (velocity != Vector2.Zero)
             {
                 velocity.Normalize();
-                velocity *= speed;
+                velocity *= Speed;
             }
             
             if (CollidesWithNewPosition(hittableSprites))
@@ -339,6 +410,15 @@ namespace Myng.Graphics
             else
                 animationManager.Animation.IsLooping = false;
             
+        }
+
+        public override void ImproveAttribute(Attributes attribute, int amount)
+        {
+            if (CharacterPoints >= amount)
+            {
+                base.ImproveAttribute(attribute, amount);
+                CharacterPoints -= amount;
+            }
         }
 
         #endregion
