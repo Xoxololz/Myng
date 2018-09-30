@@ -182,7 +182,8 @@ namespace Myng.Graphics
                     damageMultiplier = (baseDamage / (baseDamage + targetCharacter.MagicDefense));
                     break;
                 case DamageType.MIXED:
-                    damageMultiplier = (baseDamage / (baseDamage + Math.Min(targetCharacter.PhysicalDefense, targetCharacter.MagicDefense) / 2));
+                    //mixed defense is calculated as average of the two defenses minus 1/4 of their difference
+                    damageMultiplier = (baseDamage / (baseDamage + ((targetCharacter.PhysicalDefense + targetCharacter.MagicDefense) / 2) - 0.25f*(Math.Abs(targetCharacter.PhysicalDefense - targetCharacter.MagicDefense))));
                     break;
                 default: throw new ArgumentException();
             }

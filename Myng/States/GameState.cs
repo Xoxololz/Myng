@@ -200,7 +200,6 @@ namespace Myng.States
         {
             //update Player
             Game1.Player.Update(gameTime, otherSprites, hittableSprites);
-
             NodeMapRepository.Update(hittableSprites);
 
             //update all sprites
@@ -230,6 +229,7 @@ namespace Myng.States
                     i--;
                 }
             }
+            gui.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
