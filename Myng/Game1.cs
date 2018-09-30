@@ -34,8 +34,10 @@ namespace Myng
         public static int ScreenHeight;
         public static int ScreenWidth;
 
+        public static State CurrentState { get => currentState; }
+
         #endregion
-  
+
         private void ChangeState(State state)
         {
             currentState.PauseSounds();

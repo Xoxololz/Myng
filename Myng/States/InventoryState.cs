@@ -69,6 +69,7 @@ namespace Myng.States
             HandleMouseIcon();
             HandleMouse(gameTime);
             HandleItemDescription();
+            gui.Update(gameTime);
         }
 
         /// <summary>

@@ -53,6 +53,7 @@ namespace Myng.States
             HandleMouseIcon();
             HandleMouse(gameTime);
             characterMenu.Update(gameTime);
+            gui.Update(gameTime);
         }
 
         private void HandleMouseIcon()
