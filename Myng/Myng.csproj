@@ -64,8 +64,10 @@
     <Compile Include="Helpers\Enums\Attributes.cs" />
     <Compile Include="Helpers\Enums\Collision.cs" />
     <Compile Include="Helpers\Enums\DamageType.cs" />
+    <Compile Include="Helpers\Enums\EnemyType.cs" />
     <Compile Include="Helpers\Enums\Faction.cs" />
     <Compile Include="Graphics\GUI\Inventory.cs" />
+    <Compile Include="Helpers\Enums\ItemRarity.cs" />
     <Compile Include="Helpers\Enums\ItemType.cs" />
     <Compile Include="Helpers\Enums\Layers.cs" />
     <Compile Include="Helpers\Enums\Stats.cs" />
@@ -77,8 +79,14 @@
     <Compile Include="Graphics\GUI\Spellbar.cs" />
     <Compile Include="Helpers\SpritePolygon.cs" />
     <Compile Include="Helpers\Tileset.cs" />
+    <Compile Include="Items\ItemFactoryImpl.cs" />
+    <Compile Include="Items\Shield.cs" />
+    <Compile Include="Items\Weapon.cs" />
+    <Compile Include="Items\Legs.cs" />
+    <Compile Include="Items\Helmet.cs" />
+    <Compile Include="Items\Interfaces\IItemFactory.cs" />
     <Compile Include="Items\ManaPotion.cs" />
-    <Compile Include="Items\Ring.cs" />
+    <Compile Include="Items\Trinket.cs" />
     <Compile Include="Items\Armor.cs" />
     <Compile Include="Items\HealthPotion.cs" />
     <Compile Include="Items\Interfaces\IUpdatable.cs" />

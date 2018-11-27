@@ -4,13 +4,13 @@ namespace Myng.Helpers.Enums
 {
     public enum ItemType
     {
-        WEAPON,
-        SHIELD,
-        HELMET,
-        CHEST,
-        LEGS,
-        TRINKET,
-        POTION
+        WEAPON = 0,
+        SHIELD = 1,
+        HELMET = 2,
+        CHEST = 3,
+        LEGS = 4,
+        TRINKET = 5,
+        POTION = 6
     }
 
     public static class ItemTypeMethods
@@ -28,12 +28,12 @@ namespace Myng.Helpers.Enums
                 case ItemType.TRINKET:
                     return "Trinket";
                 case ItemType.LEGS:
-                    return "Leggings";
+                    return "Boots";
                 case ItemType.HELMET:
                     return "Helmet";
                 case ItemType.CHEST:
                     return "Chest Armor"; 
-                default: return "Unknown stat";
+                default: return "Unknown type";
             }
         }
     }

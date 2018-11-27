@@ -10,7 +10,7 @@ namespace Myng.Items
 {
     public class UpdatableTestItem : Item, IUpdatable
     {
-        public UpdatableTestItem(Texture2D texture) : base(texture, ItemType.LEGS)
+        public UpdatableTestItem(Texture2D texture) : base(texture, ItemType.LEGS, ItemRarity.COMMON)
         {
         }
 

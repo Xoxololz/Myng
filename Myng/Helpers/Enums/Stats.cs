@@ -4,14 +4,14 @@ namespace Myng.Helpers.Enums
 {
     public enum Stats
     {
-        PHYSICAL_DEFENSE,
-        MAGIC_DEFENSE,
-        BLOCK,
-        CRIT,
-        ATTACK_SPEED,
-        MOVEMENT_SPEED,
-        MIN_DAMAGE,
-        MAX_DAMAGE
+        CRIT = 0,
+        ATTACK_SPEED = 1,
+        MOVEMENT_SPEED = 2,
+        BLOCK = 3,
+        PHYSICAL_DEFENSE = 4,
+        MAGIC_DEFENSE = 5,
+        MIN_DAMAGE = 6,
+        MAX_DAMAGE = 7
     }
 
     public static class StatsMethods

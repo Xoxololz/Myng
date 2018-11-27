@@ -36,7 +36,7 @@ namespace Myng.Graphics
 
         protected int baseManaModifier = 10;
 
-        protected float baseSpeed = 3f;
+        protected float baseSpeed = 2.5f;
 
         protected float baseAttackSpeed = 1f;
 
@@ -47,6 +47,10 @@ namespace Myng.Graphics
         protected int baseMagicDefense = 5;
 
         protected float autoAttackTimer;
+
+        protected int baseMinDamage = 5;
+
+        protected int baseMaxDamage = 10;
 
         #endregion
 
@@ -139,6 +143,22 @@ namespace Myng.Graphics
             get
             {
                 return basePhysicalDefense + GetAttribute(Attributes.STRENGTH) / 2;
+            }
+        }
+
+        public virtual int MinDamage
+        {
+            get
+            {
+                return baseMinDamage;
+            }
+        }
+
+        public virtual int MaxDamage
+        {
+            get
+            {
+                return baseMaxDamage;
             }
         }
 
