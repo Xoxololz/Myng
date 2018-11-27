@@ -19,6 +19,8 @@ namespace Myng.Graphics.Enemies
 
         public int XPDrop { get; set; }
 
+        public EnemyType EnemyType { get; private set; }
+
         #endregion
 
         #region Fields
@@ -34,14 +36,15 @@ namespace Myng.Graphics.Enemies
         #endregion
 
         #region Constructors
-        public Enemy(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
+        public Enemy(Dictionary<string, Animation> animations, Vector2 position, EnemyType type) : base(animations, position)
         {
             InitAutoattack();
             Scale = 1.5f;
-            baseSpeed = 1f;
+            baseSpeed = 1.5f;
             Faction = Faction.ENEMY;
             XPDrop = 20;
             movementAI = new MovementAI(CollisionPolygon, this);
+            EnemyType = type;
             //temporary for testing purposes
             movementAI.SetGoalDestination(new Vector2(3148,Position.Y));
         }

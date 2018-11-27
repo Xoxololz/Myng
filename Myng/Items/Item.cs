@@ -7,11 +7,12 @@ using System.Text;
 
 namespace Myng.Items
 {
-    //probly shoud be abstract in the future, but for now its good for testing to create Items
     public abstract class Item
     {
         #region Properties
-        public ItemType ItemType { get; set; }
+        public ItemType ItemType { get; protected set; }
+
+        public ItemRarity Rarity { get; protected set; }
 
         protected Dictionary<Attributes, int> attributes;
 
@@ -50,7 +51,7 @@ namespace Myng.Items
             get
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(ItemType.GetName()).AppendLine();
+                sb.Append(Rarity.GetName() + " " + ItemType.GetName()).AppendLine();
                 foreach (Attributes attribute in attributes.Keys)
                 {
                     sb.Append(attribute.GetName()).Append(" +").Append(attributes[attribute]).AppendLine();
@@ -76,14 +77,13 @@ namespace Myng.Items
 
         #region Constructors
 
-        public Item(Texture2D texture, ItemType itemType)
+        public Item(Texture2D texture, ItemType itemType, ItemRarity rarity)
         {
             this.texture = texture;
-            this.ItemType = itemType;
-            this.BeingDragged = false;
+            ItemType = itemType;
+            BeingDragged = false;
+            Rarity = rarity;
             Count = 1;
-            attributes = new Dictionary<Attributes, int>();
-            stats = new Dictionary<Stats, int>();
         }
 
         public int GetStat(Stats stat)
@@ -102,6 +102,16 @@ namespace Myng.Items
                 return 0;
             }
             return result;
+        }
+
+        public void SetStats(Dictionary<Stats, int> stats)
+        {
+            this.stats = stats;
+        }
+
+        public void SetAttributes(Dictionary<Attributes, int> attrs)
+        {
+            this.attributes = attrs;
         }
         #endregion
     }

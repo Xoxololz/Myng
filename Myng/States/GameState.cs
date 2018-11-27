@@ -14,6 +14,9 @@ using Myng.AI.Movement;
 using Myng.Graphics.Animations;
 using Myng.Graphics.GUI;
 using Myng.PlayerIdentity;
+using Myng.Helpers.Enums;
+using Myng.Items.Interfaces;
+using System;
 
 namespace Myng.States
 {
@@ -37,6 +40,7 @@ namespace Myng.States
 
         private Texture2D blackBackground;
 
+        private IItemFactory itemFactory;
         #endregion
 
         #region Properties
@@ -65,6 +69,8 @@ namespace Myng.States
 
             TmxMap map = new TmxMap("Content/Maps/map3.tmx");
             TileMap = new TileMap(map);
+
+            itemFactory = new ItemFactoryImpl();
 
             var monsterAnimations = new Dictionary<string, Animation>()
             {
@@ -100,72 +106,31 @@ namespace Myng.States
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
             };
 
-            Enemy monster = new Enemy(monsterAnimations, new Vector2(2900, 800))
+            Game1.Player = player;
+            itemFactory.SetPlayer(player);
+
+            Enemy monster = new Enemy(monsterAnimations, new Vector2(2900, 800), EnemyType.ELITE)
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
-            Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(500))
+            Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(500), EnemyType.ELITE)
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(200f))
             };
 
             otherSprites = new List<Sprite>
             {
-                new ItemSprite(Content.Load<Texture2D>("Items/HealthPotion"), new Vector2(100f)
-                    , new HealthPotion(Content.Load<Texture2D>("Items/HealthPotion"))),
 
-                new ItemSprite(Content.Load<Texture2D>("Items/HealthPotion"), new Vector2(250f)
-                    , new HealthPotion(Content.Load<Texture2D>("Items/HealthPotion"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(700f)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 750)
-                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 800)
-                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 850)
-                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/iron_ring"), new Vector2(3050, 900)
-                    , new Ring(Content.Load<Texture2D>("Items/iron_ring"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 600)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 550)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
-                new ItemSprite(Content.Load<Texture2D>("Items/leather_armour1"), new Vector2(3050, 500)
-                    , new Armor(Content.Load<Texture2D>("Items/leather_armour1"))),
-
+                itemFactory.CreateItemSprite(new Vector2(250f), itemFactory.CreateHealthPotion())
             };
+
+            player.Inventory.EquipItem(itemFactory.CreateRandomWeapon(ItemRarity.COMMON));
 
             hittableSprites = new List<Sprite>
             {
                 monster,
-                monster2
+                monster2,
             };
             //for (int i = 240; i < 1500; i += 150)
             //{
@@ -181,7 +146,6 @@ namespace Myng.States
 
             //    hittableSprites.Add(monster3);
             //}
-            Game1.Player = player;
 
             camera = new Camera(Game1.Player);
 
@@ -225,11 +189,90 @@ namespace Myng.States
             {
                 if (hittableSprites[i].ToRemove)
                 {
+                    if (hittableSprites[i] is Enemy e)
+                        GenerateDrop(e);
                     hittableSprites.RemoveAt(i);
                     i--;
                 }
             }
             gui.Update(gameTime);
+        }
+
+        private void GenerateDrop(Enemy e)
+        {
+            Random random = new Random();
+            int dropRange = 55;
+            switch (e.EnemyType)
+            {
+                case EnemyType.EASY:
+                    if (random.NextDouble() < 0.8) break;
+                    double r = random.NextDouble();
+                    if (r < 0.5)
+                        otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin, itemFactory.CreateHealthPotion()));
+                    else if (r < 0.8)
+                        otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin, itemFactory.CreateManaPotion()));
+                    else otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin, itemFactory.CreateRandomItem()));
+                    break;
+                case EnemyType.NORMAL:
+                    if (random.NextDouble() < 0.7) break;
+                    r = random.NextDouble();
+                    if (r < 0.5)
+                        otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin, itemFactory.CreateHealthPotion()));
+                    else if (r < 0.8)
+                        otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin, itemFactory.CreateManaPotion()));
+                    else otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin, itemFactory.CreateRandomItem()));
+                    break;
+                case EnemyType.ELITE:
+                    double potsAmount = random.Next(1, 3);//up to 2 potions
+                    for (int i = 0; i < potsAmount; i++)
+                    {
+                        r = random.NextDouble();
+                        if (r < 0.6)
+                            otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin + new Vector2(random.Next(-dropRange, dropRange), random.Next(-dropRange, dropRange))
+                                ,itemFactory.CreateHealthPotion()));
+                        else otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin + new Vector2(random.Next(-dropRange, dropRange), random.Next(-dropRange, dropRange))
+                                ,itemFactory.CreateManaPotion()));
+                    }
+
+                    double itemsAmount = random.Next(1, 4);//up to 3 items
+                    for (int i = 0; i < itemsAmount; i++)
+                    {
+                        //5% better chances for rare+ items
+                        r = random.NextDouble();
+                        ItemRarity rarity = ItemRarity.COMMON;
+                        if (r > 0.9) rarity = ItemRarity.LEGENDARY;
+                        else if (r > 0.7) rarity = ItemRarity.EPIC;
+                        else if (r > 0.35) rarity = ItemRarity.RARE;
+                        otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin + new Vector2(random.Next(-dropRange, dropRange), random.Next(-dropRange, dropRange)), itemFactory.CreateRandomItem(rarity)));
+                    }
+                    break;
+                case EnemyType.BOSS:
+                    potsAmount = random.Next(2, 5);//up to 4 potions
+                    for (int i = 0; i < potsAmount; i++)
+                    {
+                        r = random.NextDouble();
+                        if (r < 0.6)
+                            otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin + new Vector2(random.Next(-dropRange, dropRange), random.Next(-dropRange, dropRange))
+                                ,itemFactory.CreateHealthPotion()));
+                        else otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin + new Vector2(random.Next(-dropRange, dropRange), random.Next(-dropRange, dropRange))
+                                ,itemFactory.CreateManaPotion()));
+                    }
+
+                    //guaranteed legendary item
+                    otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin, itemFactory.CreateRandomItem(ItemRarity.LEGENDARY)));
+                    itemsAmount = random.Next(2, 6);//between 2 and 5 items RARE or better
+                    for (int i = 0; i < itemsAmount; i++)
+                    {
+                        r = random.NextDouble();
+                        ItemRarity rarity = ItemRarity.RARE;
+                        if (r > 0.8) rarity = ItemRarity.LEGENDARY;
+                        else if (r > 0.45) rarity = ItemRarity.EPIC;
+                        otherSprites.Add(itemFactory.CreateItemSprite(e.GlobalOrigin + new Vector2(random.Next(-dropRange, dropRange), random.Next(-dropRange, dropRange))
+                            ,itemFactory.CreateRandomItem(rarity)));
+                    }
+                    break;
+
+            }
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

@@ -12,15 +12,15 @@ namespace Myng.Items
     {
         #region Properties
 
-        public int Power { get; private set; }
+        public float Power { get; private set; }
 
         #endregion
 
         #region Constructor
 
-        public HealthPotion(Texture2D texture) : base(texture, ItemType.POTION)
+        public HealthPotion(Texture2D texture) : base(texture, ItemType.POTION, ItemRarity.COMMON)
         {
-            Power = 40;
+            Power = 0.4f;
             MaxCount = 5;
         }
 
@@ -30,7 +30,7 @@ namespace Myng.Items
         {
             if (Count > 0)
             {
-                Parent.Health += Power;
+                Parent.Health += (int)(Parent.MaxHealth*Power);
                 Count--;
             }
         }

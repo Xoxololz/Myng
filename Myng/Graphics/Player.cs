@@ -91,7 +91,7 @@ namespace Myng.Graphics
         {
             get
             {
-                return baseSpeed * (1 + (Inventory.GetStatBonus(Stats.MOVEMENT_SPEED) / 100f));
+                return baseSpeed * MovementSpeedBonus;
             }
         }
 
@@ -108,6 +108,22 @@ namespace Myng.Graphics
             get
             {
                 return baseAttackSpeed / (1 + ((GetAttribute(Attributes.DEXTERITY) / 2) + Inventory.GetStatBonus(Stats.ATTACK_SPEED)) / 100f);
+            }
+        }
+
+        public override int MinDamage
+        {
+            get
+            {
+                return Inventory.GetStatBonus(Stats.MIN_DAMAGE) > 0 ? Inventory.GetStatBonus(Stats.MIN_DAMAGE) : baseMinDamage;
+            }
+        }
+
+        public override int MaxDamage
+        {
+            get
+            {
+                return Inventory.GetStatBonus(Stats.MAX_DAMAGE) > 0 ? Inventory.GetStatBonus(Stats.MAX_DAMAGE) : baseMaxDamage;
             }
         }
 
@@ -190,13 +206,14 @@ namespace Myng.Graphics
             {
                 var b = Bullet.Clone() as Projectile;
                 var bPosition = GlobalOrigin - Bullet.Origin*Bullet.Scale;
-               
+                Random random = new Random();
+
                 double bAngle;
                 if (attackDirection.X < 0)
                     bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
                 else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);                
 
-                b.Initialize(bPosition, 20, DamageType.PHYSICAL, attackDirection, Faction, bAngle,
+                b.Initialize(bPosition, random.Next(MinDamage, MaxDamage + 1), DamageType.PHYSICAL, attackDirection, Faction, bAngle,
                     SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
 
                 sprites.Add(b);

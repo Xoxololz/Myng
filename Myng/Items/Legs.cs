@@ -4,9 +4,9 @@ using Myng.Helpers.Enums;
 
 namespace Myng.Items
 {
-    public class Armor :Item
+    public class Legs :Item
     {
-        public Armor(Texture2D texture, ItemRarity rarity) : base(texture, ItemType.CHEST, rarity)
+        public Legs(Texture2D texture, ItemRarity rarity) : base(texture, ItemType.LEGS, rarity)
         {
 
         }
