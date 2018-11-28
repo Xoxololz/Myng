@@ -125,7 +125,7 @@ namespace Myng.States
                 itemFactory.CreateItemSprite(new Vector2(250f), itemFactory.CreateHealthPotion())
             };
 
-            player.Inventory.EquipItem(itemFactory.CreateRandomWeapon(ItemRarity.COMMON));
+            player.Inventory.EquipItem(itemFactory.CreateRandomWeapon(ItemRarity.LEGENDARY));
 
             hittableSprites = new List<Sprite>
             {
@@ -275,6 +275,11 @@ namespace Myng.States
             }
         }
 
+        public override void Exit()
+        {
+            //do nothing (atleast for now)
+        }
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             Game1.Player.Draw(spriteBatch);
@@ -301,7 +306,6 @@ namespace Myng.States
             }
             TileMap.Draw(spriteBatch);
         }
-
         #endregion
     }
 }

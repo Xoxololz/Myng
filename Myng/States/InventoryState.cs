@@ -145,6 +145,14 @@ namespace Myng.States
             }
         }
 
+        public override void Exit()
+        {
+            if (pickedUpItem != null)
+            {
+                pickedUpItem.BeingDragged = false;
+            }
+        }
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             inventory.Draw(spriteBatch);

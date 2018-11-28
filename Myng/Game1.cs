@@ -49,6 +49,7 @@ namespace Myng
         private void ExitCurrentState()
         {
             currentState.StopSounds();
+            currentState.Exit();
             states.Pop();
             currentState = states.Peek();
             currentState.ResumeSounds();
@@ -197,7 +198,7 @@ namespace Myng
             {
                 if (s is GameState gamestate)
                 {
-                    //id ispaused is true, the background is darkened
+                    //if ispaused is true, the background is darkened
                     gamestate.DrawBackground(gameTime, spriteBatch, isPaused);               
                 }
             }
