@@ -376,7 +376,7 @@ namespace Myng.Graphics
             Vector2 hpPosition = Position - new Vector2(0, hpBar.Height * hpScale + 6);
             Rectangle hpSource = new Rectangle(0, 0, (int)((hpBar.Width * Health) / MaxHealth), hpBar.Height);
             spriteBatch.Draw(texture: hpBar, position: hpPosition + hpScale * animationManager.Animation.FrameOrigin, sourceRectangle: hpSource, color: Color.White,
-                   rotation: 0, origin: animationManager.Animation.FrameOrigin, scale: hpScale, effects: SpriteEffects.None, layerDepth: Layers.Character);
+                   rotation: 0, origin: animationManager.Animation.FrameOrigin, scale: hpScale, effects: SpriteEffects.None, layerDepth: Layers.GameInformation);
         }
 
         #endregion
