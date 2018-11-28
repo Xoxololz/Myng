@@ -53,6 +53,9 @@ namespace Myng.States
 
         public abstract void Update(GameTime gameTime);
 
+        //method used to cleanup beofre being switched to another state
+        public abstract void Exit();
+
         public void PauseSounds()
         {
             foreach(var sound in Sounds)
@@ -66,7 +69,6 @@ namespace Myng.States
             foreach (var sound in Sounds)
             {
                 sound.Resume();
-
             }
         }
 
@@ -75,7 +77,6 @@ namespace Myng.States
             foreach (var sound in Sounds)
             {
                 sound.Stop();
-
             }
         }
 

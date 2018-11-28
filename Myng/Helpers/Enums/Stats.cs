@@ -8,10 +8,10 @@ namespace Myng.Helpers.Enums
         ATTACK_SPEED = 1,
         MOVEMENT_SPEED = 2,
         BLOCK = 3,
-        PHYSICAL_DEFENSE = 4,
-        MAGIC_DEFENSE = 5,
-        MIN_DAMAGE = 6,
-        MAX_DAMAGE = 7
+        MAGIC_DEFENSE = 4,
+        PHYSICAL_DEFENSE = 5,
+        MAX_DAMAGE = 6,
+        MIN_DAMAGE = 7
     }
 
     public static class StatsMethods

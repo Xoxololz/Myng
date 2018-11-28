@@ -579,28 +579,17 @@ namespace Myng.Helpers
 
         public void DrawItemDescription(SpriteBatch spriteBatch, Item item)
         {
-            string[] lines = item.Description.Split('\n');
-            spriteBatch.DrawString(font, lines[0], itemTypePos + (font.MeasureString(lines[0]) / 2) * textScale, itemTypeColor, 0, font.MeasureString(lines[0]) / 2, textScale, SpriteEffects.None, Layers.InventoryItem);
+            if (item == null)
+                return;
 
-            StringBuilder sb = new StringBuilder();
-            string column1 = "";
-            for (int i = 1; i < 5 && i < lines.Length; ++i)
-            {
-                sb.Append(lines[i]).AppendLine();
-            }
-            column1 = sb.ToString();
-            spriteBatch.DrawString(font, column1, itemStatsPos + (font.MeasureString(column1) / 2) * textScale, itemStatsColor, 0, font.MeasureString(column1) / 2, textScale, SpriteEffects.None, Layers.InventoryItem);
+            string rarity = item.DescriptionRarity;
+            spriteBatch.DrawString(font, rarity, itemTypePos + (font.MeasureString(rarity) / 2) * textScale, itemTypeColor, 0, font.MeasureString(rarity) / 2, textScale, SpriteEffects.None, Layers.InventoryItem);
 
-            if(lines.Length >= 5)
-            {
-                sb.Clear();
-                for(int i = 5; i < lines.Length; ++i)
-                {
-                    sb.Append(lines[i]).AppendLine();
-                }
-                string column2 = sb.ToString();
-                spriteBatch.DrawString(font, column2, itemStatsPos + new Vector2(150,0)*invScale + (font.MeasureString(column2) / 2)*textScale, itemStatsColor, 0, font.MeasureString(column2) / 2, textScale, SpriteEffects.None, Layers.InventoryItem);
-            }
+            string attributes = item.DescriptionAttributes;
+            spriteBatch.DrawString(font, attributes, itemStatsPos + (font.MeasureString(attributes) / 2) * textScale, itemStatsColor, 0, font.MeasureString(attributes) / 2, textScale, SpriteEffects.None, Layers.InventoryItem);
+
+            string stats = item.DescriptionStats;
+            spriteBatch.DrawString(font, stats, itemStatsPos + new Vector2(150,0)*invScale + (font.MeasureString(stats) / 2)*textScale, itemStatsColor, 0, font.MeasureString(stats) / 2, textScale, SpriteEffects.None, Layers.InventoryItem);
         }
 
         //Method to draw highlights to slots when item is being dragged

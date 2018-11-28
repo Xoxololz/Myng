@@ -46,21 +46,46 @@ namespace Myng.Items
 
         public bool BeingDragged { get; set; }
 
-        public string Description
+        public string DescriptionRarity
         {
             get
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(Rarity.GetName() + " " + ItemType.GetName()).AppendLine();
-                foreach (Attributes attribute in attributes.Keys)
+                sb.Append(Rarity.GetName() + " " + ItemType.GetName());
+                return sb.ToString();
+            }
+        }
+
+        public string DescriptionAttributes
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (Attributes attribute in Enum.GetValues(typeof(Attributes)))
                 {
-                    sb.Append(attribute.GetName()).Append(" +").Append(attributes[attribute]).AppendLine();
+                    if(attributes.ContainsKey(attribute))
+                        sb.Append(attribute.GetName()).Append(" +").Append(attributes[attribute]).AppendLine();
                 }
-                foreach (Stats stat in stats.Keys)
+                if (sb.Length > 0)
+                    sb.Remove(sb.Length - 1, 1);
+                return sb.ToString();
+            }
+        }
+
+        public string DescriptionStats
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int i = Enum.GetValues(typeof(Stats)).Length - 1; i >= 0; --i)
                 {
-                    sb.Append(stat.GetName()).Append(" +").Append(stats[stat]).Append(stat.UsesPercentage() ? " %" : "").AppendLine();
+                    if (stats.ContainsKey((Stats)i)) {
+                        Stats stat = (Stats)i;
+                        sb.Append(stat.GetName()).Append(" +").Append(stats[stat]).Append(stat.UsesPercentage() ? " %" : "").AppendLine();
+                    }
                 }
-                sb.Remove(sb.Length - 1, 1);
+                if(sb.Length > 0)
+                    sb.Remove(sb.Length - 1, 1);
                 return sb.ToString();
             }
         }

@@ -87,6 +87,11 @@ namespace Myng.States
             }
         }
 
+        public override void Exit()
+        {
+            //do nothing
+        }
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             Game1.Player.Spellbar.Draw(spriteBatch);
