@@ -6,6 +6,7 @@ using Myng.Helpers.SoundHandlers;
 using Myng.AI.Movement;
 using Myng.Graphics.Animations;
 using Myng.Helpers.Enums;
+using Myng.AI.EnemyStates;
 
 namespace Myng.Graphics.Enemies
 {
@@ -21,17 +22,51 @@ namespace Myng.Graphics.Enemies
 
         public EnemyType EnemyType { get; private set; }
 
+        public Vector2 Velocity
+        {
+            get
+            {
+                return velocity;
+            }
+            set
+            {
+                velocity = value;
+            }
+        }
+
+        public int SightRange { get; private set; } //TODO: probly init in subclasses
+
+        public float SpeedMultiplier { get; set; }
+
+        public override float Speed
+        {
+            get
+            {
+                return baseSpeed * SpeedMultiplier;
+            }
+        }
+
+        public State NextState
+        {
+            set
+            {
+                nextState = value;
+            }
+        }
+
         #endregion
 
         #region Fields
 
         protected Spell autoAttack;
 
-        protected float attackRange = 500;
-
         protected Vector2 playerPosition;
 
         protected MovementAI movementAI;
+
+        protected State currentState;
+
+        protected State nextState;
 
         #endregion
 
@@ -39,14 +74,16 @@ namespace Myng.Graphics.Enemies
         public Enemy(Dictionary<string, Animation> animations, Vector2 position, EnemyType type) : base(animations, position)
         {
             InitAutoattack();
+            Spells = new List<Spell>();
+            InitSpells();
             Scale = 1.5f;
             baseSpeed = 1.5f;
             Faction = Faction.ENEMY;
             XPDrop = 20;
             movementAI = new MovementAI(CollisionPolygon, this);
             EnemyType = type;
-            //temporary for testing purposes
-            movementAI.SetGoalDestination(new Vector2(3148,Position.Y));
+            currentState = new WanderState(this);
+            SightRange = 300;
         }
 
         #endregion
@@ -73,7 +110,7 @@ namespace Myng.Graphics.Enemies
             };
             Func<bool> canExecute = () =>
             {
-                var AutoattackRange = (Position - playerPosition).Length() < attackRange;
+                var AutoattackRange = (Position - playerPosition).Length() < SightRange;
                 var coolDown = autoAttackTimer > AttackSpeed;
                 if (coolDown)
                     autoAttackTimer = 0;
@@ -83,20 +120,58 @@ namespace Myng.Graphics.Enemies
             autoAttack = new Spell(autoAttackAction, canExecute, 0);
         }
 
+        protected virtual void InitSpells()
+        {
+            Action<List<Sprite>> blast = (sprites) =>
+            {
+
+                var bulletMid = Bullet.Clone() as Projectile;
+                var bPosition = GlobalOrigin - Bullet.Origin * Bullet.Scale;
+
+                 var attackDirection= -(Position - (playerPosition));
+                double bAngle;
+                if (attackDirection.X < 0)
+                    bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
+                else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);
+
+                bulletMid.Initialize(bPosition, 40, DamageType.MAGIC, attackDirection, Faction, bAngle,
+                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
+                var bulletBot = bulletMid.Clone() as Projectile;
+                var bulletTop = bulletMid.Clone() as Projectile;
+                bulletBot.Angle += MathHelper.ToRadians(10);
+                bulletTop.Angle -= MathHelper.ToRadians(10);
+
+                sprites.Add(bulletMid);
+            };
+
+            Func<bool> canExecute = () =>
+            {
+                return true;
+            };
+            Spells.Add(new Spell(blast, canExecute,0));
+
+        }
+
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
+            HandleStateChange();
+            currentState.Update(gameTime, otherSprites, hittableSprites);
             UpdateTimer(gameTime);
             playerPosition = Game1.Player.Position;
             DetermineVelocity(hittableSprites);
-            if (velocity == Vector2.Zero)
-            {
-                movementAI.SetGoalDestination(new Vector2(1, Position.Y));
-            }
-
             HandleAnimation();
             animationManager.Update(gameTime);
             CastAutoattack(otherSprites);
             base.Update(gameTime, otherSprites, hittableSprites);
+        }
+
+        private void HandleStateChange()
+        {
+            if (nextState != null)
+            {
+                currentState = nextState;
+                nextState = null;
+            }
         }
 
         private void UpdateTimer(GameTime gameTime)
@@ -181,10 +256,14 @@ namespace Myng.Graphics.Enemies
             else animationManager.Animation.IsLooping = false;
         }
 
-
         protected void CastAutoattack(List<Sprite> sprites)
         {
             autoAttack.Cast(sprites);
+        }
+
+        public bool SetGoalDestination(Vector2 dest)
+        {
+            return movementAI.SetGoalDestination(dest);
         }
 
         #endregion

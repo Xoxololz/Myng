@@ -36,8 +36,8 @@ namespace Myng.AI.Movement
         {
             GridHeight = gridHeight;
             GridWidth = gridWidth;
-            XSize = xSize;
-            YSize = ySize;
+            XSize = xSize - 1;
+            YSize = ySize - 1;
 
             Nodes = new Node[xSize,ySize];
             for (int i = 0; i < xSize; i++)
@@ -111,15 +111,15 @@ namespace Myng.AI.Movement
             int i = GetClosestNodesI(destination);
             int j = GetClosestNodesJ(destination);
 
-            if (Nodes[i, j].IsFree && IsInMap(i, j)) return Nodes[i, j];
-            if (Nodes[i + 1, j].IsFree && IsInMap(i + 1, j)) return Nodes[i + 1, j];
-            if (Nodes[i, j + 1].IsFree && IsInMap(i, j + 1)) return Nodes[i, j + 1];
-            if (Nodes[i + 1, j + 1].IsFree && IsInMap(i + 1, j + 1)) return Nodes[i + 1, j + 1];
-            if (Nodes[i - 1, j].IsFree && IsInMap(i - 1, j)) return Nodes[i - 1, j];
-            if (Nodes[i, j - 1].IsFree && IsInMap(i, j - 1)) return Nodes[i, j - 1];
-            if (Nodes[i - 1, j - 1].IsFree && IsInMap(i - 1, j - 1)) return Nodes[i - 1, j - 1];
-            if (Nodes[i + 1, j - 1].IsFree && IsInMap(i + 1, j - 1)) return Nodes[i + 1, j - 1];
-            if (Nodes[i - 1, j + 1].IsFree && IsInMap(i - 1, j + 1)) return Nodes[i - 1, j + 1];
+            if (IsInMap(i, j) && Nodes[i, j].IsFree) return Nodes[i, j];
+            if (IsInMap(i + 1, j) && Nodes[i + 1, j].IsFree) return Nodes[i + 1, j];
+            if (IsInMap(i, j + 1) && Nodes[i, j + 1].IsFree) return Nodes[i, j + 1];
+            if (IsInMap(i + 1, j + 1) && Nodes[i + 1, j + 1].IsFree) return Nodes[i + 1, j + 1];
+            if (IsInMap(i - 1, j) && Nodes[i - 1, j].IsFree) return Nodes[i - 1, j];
+            if (IsInMap(i, j - 1) && Nodes[i, j - 1].IsFree) return Nodes[i, j - 1];
+            if (IsInMap(i - 1, j - 1) && Nodes[i - 1, j - 1].IsFree) return Nodes[i - 1, j - 1];
+            if (IsInMap(i + 1, j - 1) && Nodes[i + 1, j - 1].IsFree) return Nodes[i + 1, j - 1];
+            if (IsInMap(i - 1, j + 1) && Nodes[i - 1, j + 1].IsFree) return Nodes[i - 1, j + 1];
 
             return null;
         }

@@ -41,9 +41,7 @@ namespace Myng.AI.Movement
                 }
 
             }
-
-
-            throw new Exception("Couldnt find path");
+            return null;
         }
 
 

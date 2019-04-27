@@ -129,8 +129,6 @@ namespace Myng.AI.Movement
 
         private bool CanGoStraightTo(Node node)
         {
-            //return true;
-
             bool canGo = false;
             Vector2 direction = new Vector2()
             {
@@ -174,15 +172,17 @@ namespace Myng.AI.Movement
             nodeMap.RemoveTemporaryTerrain();
         }
 
-        public void SetGoalDestination(Vector2 destination)
+        public bool SetGoalDestination(Vector2 destination)
         {
             nodeMap.Clear();
             Node goalNode = nodeMap.FindClosestFreeNode(destination);
-            if (goalNode == null) return;
+            if (goalNode == null) return false;
             Node startNode = nodeMap.FindClosestFreeNode(parent.Position);
-            if (startNode == null) return;
+            if (startNode == null) return false;
             path = pathFinder.FindPath(startNode, goalNode, nodeMap);
-            currentNodeIndex = path.Count;
+            if(path!=null)
+                currentNodeIndex = path.Count;
+            return path != null;
         }                     
 
         #endregion

@@ -145,7 +145,6 @@ namespace Myng.Graphics
 
         private Vector2 attackDirection;
         private Dictionary<string, Animation> playerAnimations;
-        private Vector2 vector2;
 
         #endregion
 

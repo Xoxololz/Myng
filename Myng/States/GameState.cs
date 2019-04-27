@@ -114,10 +114,10 @@ namespace Myng.States
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f))
             };
 
-            Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(500), EnemyType.ELITE)
-            {
-                Bullet = new Projectile(fireballAnimation, new Vector2(200f))
-            };
+            //Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(500), EnemyType.ELITE)
+            //{
+            //    Bullet = new Projectile(fireballAnimation, new Vector2(200f))
+            //};
 
             otherSprites = new List<Sprite>
             {
@@ -129,8 +129,7 @@ namespace Myng.States
 
             hittableSprites = new List<Sprite>
             {
-                monster,
-                monster2,
+                monster,               
             };
             //for (int i = 240; i < 1500; i += 150)
             //{

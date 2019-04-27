@@ -1,5 +1,4 @@
-﻿using System.Text;
-
+﻿
 namespace Myng.Helpers.Enums
 {
     public enum Stats
