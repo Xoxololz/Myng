@@ -345,7 +345,6 @@ namespace Myng.Graphics
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            DrawFrame(spriteBatch);
             DrawHPBar(spriteBatch);
             DrawCollisionMessages(spriteBatch);
             if (animationManager != null)

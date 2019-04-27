@@ -42,6 +42,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AI\EnemyStates\ChaseState.cs" />
+    <Compile Include="AI\EnemyStates\State.cs" />
+    <Compile Include="AI\EnemyStates\WonderState.cs" />
     <Compile Include="AI\Movement\MovementAI.cs" />
     <Compile Include="AI\Movement\Node.cs" />
     <Compile Include="AI\Movement\NodeMap.cs" />
