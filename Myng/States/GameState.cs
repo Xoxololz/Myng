@@ -17,6 +17,7 @@ using Myng.PlayerIdentity;
 using Myng.Helpers.Enums;
 using Myng.Items.Interfaces;
 using System;
+using Myng.Depositories;
 
 namespace Myng.States
 {
@@ -72,79 +73,23 @@ namespace Myng.States
 
             itemFactory = new ItemFactoryImpl();
 
-            var monsterAnimations = new Dictionary<string, Animation>()
-            {
-                { "walking", new Animation(Content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
-            };
-
-            var monsterAnimations2 = new Dictionary<string, Animation>()
-            {
-                { "walking", new Animation(Content.Load<Texture2D>("Characters/Skeleton2"), 4, 3)
-                    {
-                        FrameSpeed = 0.15f
-                    }
-                }
-            };
-
-            var fireballAnimation = new Dictionary<string, Animation>()
-            {
-                { "fireball", new Animation(Content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
-
-                    {
-                        FrameSpeed = 0.05f
-                    }
-                }
-            };
-
-            var playerAnimations = new Dictionary<string, Animation>()
-            {
-                { "walking", new Animation(Content.Load<Texture2D>("Characters/White_Male"), 4, 3) }
-            };
-
-            Player player = new Player(playerAnimations, new Vector2(2900, 900), new Mage())
-            {
-                Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
-            };
-
-            Game1.Player = player;
-            itemFactory.SetPlayer(player);
-
-            Enemy monster = new Enemy(monsterAnimations, new Vector2(2900, 800), EnemyType.ELITE)
-            {
-                Bullet = new Projectile(fireballAnimation, new Vector2(100f))
-            };
-
-            //Enemy monster2 = new Enemy(monsterAnimations2, new Vector2(500), EnemyType.ELITE)
-            //{
-            //    Bullet = new Projectile(fireballAnimation, new Vector2(200f))
-            //};
+            Game1.Player = PlayerIdentitiesDepository.Mage();
+            itemFactory.SetPlayer(Game1.Player);
 
             otherSprites = new List<Sprite>
             {
-
                 itemFactory.CreateItemSprite(new Vector2(250f), itemFactory.CreateHealthPotion())
             };
 
-            player.Inventory.EquipItem(itemFactory.CreateRandomWeapon(ItemRarity.LEGENDARY));
+            Game1.Player.Inventory.EquipItem(itemFactory.CreateRandomWeapon(ItemRarity.LEGENDARY));
 
-            hittableSprites = new List<Sprite>
+            hittableSprites = new List<Sprite>();
+
+            for (int i = 240; i < 1500; i += 150)
             {
-                monster,               
-            };
-            //for (int i = 240; i < 1500; i += 150)
-            //{
-            //    var monsterAnimations3 = new Dictionary<string, Animation>()
-            //    {
-            //        { "walking", new Animation(Content.Load<Texture2D>("Characters/Zombie"), 4, 3) }
-            //    };
-
-            //    Enemy monster3 = new Enemy(monsterAnimations3, new Vector2(1, i))
-            //    {
-            //        Bullet = new Projectile(fireballAnimation, new Vector2(100f))
-            //    };
-
-            //    hittableSprites.Add(monster3);
-            //}
+                Enemy monster3 = EnemyDepository.Zombie(new Vector2(1, i));
+                hittableSprites.Add(monster3);
+            }
 
             camera = new Camera(Game1.Player);
 
@@ -156,7 +101,7 @@ namespace Myng.States
                 Content.Load<Song>("Sounds/NE"),
                 Content.Load<Song>("Sounds/RM")
             };
-           // backgroundMusic = new BackgroundMusic(songs);
+            backgroundMusic = new BackgroundMusic(songs);
         }
 
         public override void Update(GameTime gameTime)

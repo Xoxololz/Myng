@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Myng.Helpers;
-using Myng.Helpers.SoundHandlers;
 using Myng.AI.Movement;
 using Myng.Graphics.Animations;
 using Myng.Helpers.Enums;
 using Myng.AI.EnemyStates;
+using System.Diagnostics;
+using Microsoft.Xna.Framework.Graphics;
+using Myng.States;
+using Myng.Helpers.Spells;
+using Myng.Depositories;
 
 namespace Myng.Graphics.Enemies
 {
@@ -46,7 +50,7 @@ namespace Myng.Graphics.Enemies
             }
         }
 
-        public State NextState
+        public EnemyState NextState
         {
             set
             {
@@ -64,9 +68,11 @@ namespace Myng.Graphics.Enemies
 
         protected MovementAI movementAI;
 
-        protected State currentState;
+        protected EnemyState currentState;
 
-        protected State nextState;
+        protected EnemyState nextState;
+
+        protected int autoAttackRange;
 
         #endregion
 
@@ -83,7 +89,10 @@ namespace Myng.Graphics.Enemies
             movementAI = new MovementAI(CollisionPolygon, this);
             EnemyType = type;
             currentState = new WanderState(this);
-            SightRange = 300;
+            SightRange = 600;
+            autoAttackRange = 350;
+            baseAttackSpeed = 2f;
+            Debug.Assert(SightRange > autoAttackRange, "Cant shoot target, when u dont see it.");
         }
 
         #endregion
@@ -92,32 +101,28 @@ namespace Myng.Graphics.Enemies
 
         protected virtual void InitAutoattack()
         {
-            Action<List<Sprite>> autoAttackAction = (sprites) =>
-            {
-                var b = Bullet.Clone() as Projectile;
-                var bPosition = GlobalOrigin - Bullet.Origin * Bullet.Scale;
+            //Action<List<Sprite>> autoAttackAction = (sprites) =>
+            //{
+            //    var b = Bullet.Clone() as Projectile;
+            //    var bPosition = GlobalOrigin - Bullet.Origin * Bullet.Scale;
 
-                 var attackDirection= -(Position - (playerPosition));
-                double bAngle;
-                if (attackDirection.X < 0)
-                    bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
-                else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);
+            //     var attackDirection= -(Position - (playerPosition));
+            //    if (attackDirection.X < 0)
+            //        b.AngleTextureOffset = MathHelper.ToRadians(180);
 
-                b.Initialize(bPosition, 30, DamageType.PHYSICAL, attackDirection, Faction, bAngle,
-                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
+            //    b.Initialize(bPosition, 30, DamageType.PHYSICAL, attackDirection, Faction,
+            //        SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
 
-                sprites.Add(b);
-            };
-            Func<bool> canExecute = () =>
-            {
-                var AutoattackRange = (Position - playerPosition).Length() < SightRange;
-                var coolDown = autoAttackTimer > AttackSpeed;
-                if (coolDown)
-                    autoAttackTimer = 0;
-                return AutoattackRange && coolDown;                
-            };
+            //    sprites.Add(b);
+            //};
+            //Func<bool> canExecute = () =>
+            //{
+            //    var AutoattackRange = (Position - playerPosition).Length() < SightRange;
+            //    return AutoattackRange;                
+            //};
 
-            autoAttack = new Spell(autoAttackAction, canExecute, 0);
+            //autoAttack = new AutoAttack(autoAttackAction, canExecute, this);
+            autoAttack = SpellDepository.RangeAutoAttack(this);
         }
 
         protected virtual void InitSpells()
@@ -128,32 +133,46 @@ namespace Myng.Graphics.Enemies
                 var bulletMid = Bullet.Clone() as Projectile;
                 var bPosition = GlobalOrigin - Bullet.Origin * Bullet.Scale;
 
-                 var attackDirection= -(Position - (playerPosition));
-                double bAngle;
+                var attackDirection= -(Position - (playerPosition));
                 if (attackDirection.X < 0)
-                    bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
-                else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);
+                    bulletMid.AngleTextureOffset = MathHelper.ToRadians(180);
 
-                bulletMid.Initialize(bPosition, 40, DamageType.MAGIC, attackDirection, Faction, bAngle,
+                bulletMid.Initialize(bPosition, 40, DamageType.MAGIC, attackDirection, Faction,
                     SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
                 var bulletBot = bulletMid.Clone() as Projectile;
                 var bulletTop = bulletMid.Clone() as Projectile;
-                bulletBot.Angle += MathHelper.ToRadians(10);
-                bulletTop.Angle -= MathHelper.ToRadians(10);
+
+                var angleDiff = MathHelper.ToRadians(20);
+                bulletBot.RotateDirection(-angleDiff);
+                bulletTop.RotateDirection(angleDiff);
 
                 sprites.Add(bulletMid);
+                sprites.Add(bulletBot);
+                sprites.Add(bulletTop);
             };
 
-            Func<bool> canExecute = () =>
+            var fireballAnimation = new Dictionary<string, Animation>()
             {
-                return true;
+                { "fireball", new Animation(State.Content.Load<Texture2D>("Projectiles/greenArrow"), 1, 1)
+                    {
+                        FrameSpeed = 0.05f
+                    }
+                }
             };
-            Spells.Add(new Spell(blast, canExecute,0));
+
+            var spel = new Spell(blast, 0, 4)
+            {
+                Range = 250,
+                CastingAnimations = fireballAnimation,
+                CastingTime = 1.5
+            };
+            Spells.Add(spel);
 
         }
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
+            UpdateSpellCooldowns(gameTime);
             HandleStateChange();
             currentState.Update(gameTime, otherSprites, hittableSprites);
             UpdateTimer(gameTime);
@@ -163,6 +182,15 @@ namespace Myng.Graphics.Enemies
             animationManager.Update(gameTime);
             CastAutoattack(otherSprites);
             base.Update(gameTime, otherSprites, hittableSprites);
+        }
+
+        private void UpdateSpellCooldowns(GameTime gameTime)
+        {
+            foreach (var spell in Spells)
+            {
+                spell.UpdateCooldown(gameTime);
+            }
+            autoAttack.UpdateCooldown(gameTime);
         }
 
         private void HandleStateChange()

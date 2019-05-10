@@ -4,7 +4,6 @@ using Myng.Helpers.Enums;
 using System.Collections.Generic;
 using Myng.Graphics;
 using System;
-using Myng.States;
 
 namespace Myng.AI.Movement
 {
@@ -200,8 +199,10 @@ namespace Myng.AI.Movement
                     if (i > max.X) max.X = i;
                     if (j > max.Y) max.Y = j;
                 }
-                min -= new Point(1);
-                max += new Point(1);
+                if(min.X > 1 && min.Y >1)
+                    min -= new Point(1);
+                if(max.X < XSize && max.Y < YSize)
+                    max += new Point(1);
                 RegenerateRectangle(max, min, polygons);
             }
         }

@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
 using Myng.Helpers;
-using Myng.Helpers.SoundHandlers;
 using Myng.Items.Interfaces;
 using Myng.States;
 using System;
@@ -12,6 +11,8 @@ using Myng.Graphics.Animations;
 using Myng.Graphics.GUI;
 using Myng.Helpers.Enums;
 using Myng.PlayerIdentity;
+using Myng.Helpers.Spells;
+using Myng.Depositories;
 
 namespace Myng.Graphics
 {
@@ -127,6 +128,27 @@ namespace Myng.Graphics
             }
         }
 
+        public Vector2 AttackDirection;
+
+        public Direction FacingDirection
+        {
+            get
+            {
+                switch (animationManager.Animation.CurrentFrame.Y)
+                {
+                    case 0:
+                        return Direction.Down;
+                    case 1:
+                        return Direction.Left;
+                    case 2:
+                        return Direction.Right;
+                    case 3:
+                        return Direction.Up;
+                    default:
+                        return Direction.Right;
+                }
+            }
+        }
         #endregion
 
         #region Fields
@@ -143,7 +165,6 @@ namespace Myng.Graphics
 
         private int level;
 
-        private Vector2 attackDirection;
         private Dictionary<string, Animation> playerAnimations;
 
         #endregion
@@ -157,7 +178,7 @@ namespace Myng.Graphics
             input = new Input();
             Scale = 1.5f;
             baseAttackSpeed = 1f;
-            attackDirection = new Vector2(0, -1);
+            AttackDirection = new Vector2(0, -1);
             Inventory = new Inventory();
             Spellbar = new Spellbar();
             Faction = Faction.FRIENDLY;
@@ -193,39 +214,21 @@ namespace Myng.Graphics
                 sprites.Add(animation);
             };
 
-            Spellbar.Add(new Spell(spell, 10, State.Content.Load<Texture2D>("Projectiles/fireball_icon")));
-            Spellbar.Add(new Spell(spell, 15, State.Content.Load<Texture2D>("Projectiles/projectile")));
-            Spellbar.Add(new Spell(spell, 20, State.Content.Load<Texture2D>("Projectiles/fireball_icon")));
-            Spellbar.Add(new Spell(spell, 25, State.Content.Load<Texture2D>("Projectiles/projectile")));
+
+            Func<bool> canExecute = () =>
+            {
+                return true;
+            };
+
+            Spellbar.Add(SpellDepository.TrippleFireball(this));
+            Spellbar.Add(new Spell(spell, 15, State.Content.Load<Texture2D>("Projectiles/projectile"), 1));
+            Spellbar.Add(new Spell(spell, 20, State.Content.Load<Texture2D>("Projectiles/fireball_icon"), 1));
+            Spellbar.Add(new Spell(spell, 25, State.Content.Load<Texture2D>("Projectiles/projectile"), 1));
         }
 
         private void InitAutoattack()
         {
-            Action<List<Sprite>> autoAttackAction = (sprites) =>
-            {
-                var b = Bullet.Clone() as Projectile;
-                var bPosition = GlobalOrigin - Bullet.Origin*Bullet.Scale;
-                Random random = new Random();
-
-                double bAngle;
-                if (attackDirection.X < 0)
-                    bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(45);
-                else bAngle = Math.Atan(attackDirection.Y / attackDirection.X) + MathHelper.ToRadians(225);                
-
-                b.Initialize(bPosition, random.Next(MinDamage, MaxDamage + 1), DamageType.PHYSICAL, attackDirection, Faction, bAngle,
-                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
-
-                sprites.Add(b);
-            };
-            Func<bool> canExecute = () =>
-            {                
-                var coolDown = autoAttackTimer > AttackSpeed;
-                if (coolDown)
-                    autoAttackTimer = 0;
-                return coolDown;
-            };
-
-            autoAttack = new Spell(autoAttackAction,canExecute,0);
+            autoAttack = SpellDepository.RangeAutoAttack(this);
         }
 
         public override int GetAttribute(Attributes attribute)
@@ -247,6 +250,7 @@ namespace Myng.Graphics
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
+            UpdateSpellCooldowns(gameTime);
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
             autoAttackTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -273,6 +277,15 @@ namespace Myng.Graphics
             base.Update(gameTime, otherSprites, hittableSprites);
         }
 
+        private void UpdateSpellCooldowns(GameTime gameTime)
+        {
+            foreach (var spell in Spellbar.spells)
+            {
+                spell.UpdateCooldown(gameTime);
+            }
+            autoAttack.UpdateCooldown(gameTime);
+        }
+
         private void UsePotions(List<Sprite> sprites)
         {
             if (currentKey.IsKeyDown(input.HealthPotion) && !previousKey.IsKeyDown(input.HealthPotion))
@@ -287,6 +300,35 @@ namespace Myng.Graphics
 
         private void CastSpells(List<Sprite> sprites)
         {
+            if (currentKey.IsKeyDown(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
+            {
+                AttackDirection.X = 0;
+                AttackDirection.Y = -1;
+                CastAutoAttack(sprites);
+                animationManager.Animation.SetRow(3);
+            }
+            if (currentKey.IsKeyDown(input.ShootDown) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
+            {
+                AttackDirection.X = 0;
+                AttackDirection.Y = 1;
+                CastAutoAttack(sprites);
+                animationManager.Animation.SetRow(0);
+            }
+            if (currentKey.IsKeyDown(input.ShootRight) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootDown))
+            {
+                AttackDirection.X = 1;
+                AttackDirection.Y = 0;
+                CastAutoAttack(sprites);
+                animationManager.Animation.SetRow(2);
+            }
+            if (currentKey.IsKeyDown(input.ShootLeft) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootRight))
+            {
+                AttackDirection.X = -1;
+                AttackDirection.Y = 0;
+                CastAutoAttack(sprites);
+                animationManager.Animation.SetRow(1);
+            }
+
             if (currentKey.IsKeyDown(input.Spell1) && !previousKey.IsKeyDown(input.Spell1))
                 Spellbar.GetSpell(0)?.Cast(sprites);
             if (currentKey.IsKeyDown(input.Spell2) && !previousKey.IsKeyDown(input.Spell2))
@@ -299,35 +341,6 @@ namespace Myng.Graphics
                 Spellbar.GetSpell(4)?.Cast(sprites);
             if (currentKey.IsKeyDown(input.Spell6) && !previousKey.IsKeyDown(input.Spell6))
                 Spellbar.GetSpell(5)?.Cast(sprites);
-
-            if (currentKey.IsKeyDown(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
-            {
-                attackDirection.X = 0;
-                attackDirection.Y = -1;
-                CastAutoAttack(sprites);
-                animationManager.Animation.SetRow(3);
-            }
-            if (currentKey.IsKeyDown(input.ShootDown) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
-            {
-                attackDirection.X = 0;
-                attackDirection.Y = 1;
-                CastAutoAttack(sprites);
-                animationManager.Animation.SetRow(0);
-            }
-            if (currentKey.IsKeyDown(input.ShootRight) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootDown))
-            {
-                attackDirection.X = 1;
-                attackDirection.Y = 0;
-                CastAutoAttack(sprites);
-                animationManager.Animation.SetRow(2);
-            }
-            if (currentKey.IsKeyDown(input.ShootLeft) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootRight))
-            {
-                attackDirection.X = -1;
-                attackDirection.Y = 0;
-                CastAutoAttack(sprites);
-                animationManager.Animation.SetRow(1);
-            }
         }
 
         private void CastAutoAttack(List<Sprite> sprites)

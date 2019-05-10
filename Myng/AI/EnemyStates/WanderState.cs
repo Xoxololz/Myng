@@ -6,14 +6,14 @@ using System.Collections.Generic;
 
 namespace Myng.AI.EnemyStates
 {
-    public class WanderState : State
+    public class WanderState : EnemyState
     {
         #region Constructors
 
         public WanderState(Enemy controlledEnemy) : base(controlledEnemy)
         {
-            minDistance = -600;
-            maxDistance = 600;
+            minDistance = -800;
+            maxDistance = 800;
 
             random = new Random();
             SetRandomGoalDestination();
