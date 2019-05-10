@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Audio;
 using Myng.States;
 
-namespace Myng.Helpers.SoundHandlers
+namespace Myng.Depositories
 {
     public static class SoundsDepository
     {
@@ -9,6 +9,6 @@ namespace Myng.Helpers.SoundHandlers
 
         public static SoundEffect FireballExplosion = State.Content.Load<SoundEffect>("Sounds/explosion");
 
-        public static SoundEffect walking = State.Content.Load<SoundEffect>("Sounds/walking");
+        public static SoundEffect Walking = State.Content.Load<SoundEffect>("Sounds/walking");
     }
 }

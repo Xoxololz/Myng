@@ -42,18 +42,23 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AI\EnemyStates\CastingState.cs" />
     <Compile Include="AI\EnemyStates\ChaseState.cs" />
-    <Compile Include="AI\EnemyStates\State.cs" />
-    <Compile Include="AI\EnemyStates\WonderState.cs" />
+    <Compile Include="AI\EnemyStates\EnemyState.cs" />
+    <Compile Include="AI\EnemyStates\WanderState.cs" />
     <Compile Include="AI\Movement\MovementAI.cs" />
     <Compile Include="AI\Movement\Node.cs" />
     <Compile Include="AI\Movement\NodeMap.cs" />
     <Compile Include="AI\Movement\NodeMapRepository.cs" />
     <Compile Include="AI\Movement\PathFinder.cs" />
     <Compile Include="Controller\Input.cs" />
+    <Compile Include="Depositories\AnimationDepository.cs" />
+    <Compile Include="Depositories\EnemyDepository.cs" />
+    <Compile Include="Depositories\PlayerIdentitiesDepository.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Graphics\Animations\AnimationManager.cs" />
     <Compile Include="Graphics\AnimationSprite.cs" />
+    <Compile Include="Graphics\CastingEffectSprite.cs" />
     <Compile Include="Graphics\Character.cs" />
     <Compile Include="Graphics\Animations\Animation.cs" />
     <Compile Include="Graphics\Enemies\Enemy.cs" />
@@ -63,6 +68,8 @@
     <Compile Include="Graphics\Player.cs" />
     <Compile Include="Graphics\Projectile.cs" />
     <Compile Include="Graphics\Sprite.cs" />
+    <Compile Include="Helpers\Enums\Direction.cs" />
+    <Compile Include="Helpers\Spells\AutoAttack.cs" />
     <Compile Include="Helpers\Camera.cs" />
     <Compile Include="Helpers\Enums\Attributes.cs" />
     <Compile Include="Helpers\Enums\Collision.cs" />
@@ -78,8 +85,9 @@
     <Compile Include="Helpers\SoundHandlers\BackgroundMusic.cs" />
     <Compile Include="Helpers\SoundHandlers\Sound.cs" />
     <Compile Include="Helpers\SoundHandlers\SoundEffect2D.cs" />
-    <Compile Include="Helpers\SoundHandlers\SoundsDepository.cs" />
+    <Compile Include="Depositories\SoundsDepository.cs" />
     <Compile Include="Graphics\GUI\Spellbar.cs" />
+    <Compile Include="Depositories\SpellDepository.cs" />
     <Compile Include="Helpers\SpritePolygon.cs" />
     <Compile Include="Helpers\Tileset.cs" />
     <Compile Include="Items\ItemFactoryImpl.cs" />
@@ -96,7 +104,7 @@
     <Compile Include="Items\Interfaces\IUsable.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Helpers\Polygon.cs" />
-    <Compile Include="Helpers\Spell.cs" />
+    <Compile Include="Helpers\Spells\Spell.cs" />
     <Compile Include="Helpers\TileMap.cs" />
     <Compile Include="Items\UpdatableTestItem.cs" />
     <Compile Include="PlayerIdentity\Identity.cs" />
@@ -117,6 +125,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Characters\Mage.png" />
     <Content Include="Content\Characters\Skeleton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -125,10 +134,8 @@
     </Content>
     <Content Include="Content\GUI\itembar.png" />
     <Content Include="Content\Items\HealthPotion.png" />
+    <Content Include="Content\Projectiles\greenArrow.png" />
     <Content Include="Content\Projectiles\projectile.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Characters\White_Male.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Sounds\explosion.wav" />

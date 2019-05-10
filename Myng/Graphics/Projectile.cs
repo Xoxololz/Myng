@@ -20,9 +20,21 @@ namespace Myng.Graphics
 
         public DamageType DamageType { get; set; }
 
-        public Vector2 Direction;
+        public Vector2 Direction
+        {
+            get
+            {
+                return direction;
+            }
+            set
+            {
+                value.Normalize();
+                direction = value;
+            }
+        }
         public float Speed = 6f;
         public double Angle = 0;
+        public double AngleTextureOffset { get; set; }
         public int Damage = 10;
 
         #endregion
@@ -35,6 +47,7 @@ namespace Myng.Graphics
         protected SoundEffect2D hitSound;
 
         protected Character Parent;
+        private Vector2 direction;
         #endregion
 
         #region Constructors
@@ -43,19 +56,21 @@ namespace Myng.Graphics
         {
             layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);
+            AngleTextureOffset = 0;
         }
 
         public Projectile(Dictionary<string, Animation> animations, Vector2 position) : base(animations, position)
         {
             layer = Layers.Projectile;
             Angle = Math.Atan(Direction.Y / Direction.X);            
+            AngleTextureOffset = 0;
         }
 
         #endregion
 
         #region Methods
 
-        public virtual void Initialize(Vector2 position, int damage, DamageType damageType, Vector2 direction, Faction faction, double angle
+        public virtual void Initialize(Vector2 position, int damage, DamageType damageType, Vector2 direction, Faction faction
             , SoundEffectInstance flyingSoundInstance, SoundEffectInstance hitSoundInstance, Character parent = null)
         {
             Position = position;
@@ -63,8 +78,8 @@ namespace Myng.Graphics
             DamageType = damageType;
             Direction = direction;
             Direction.Normalize();
+            Angle = Math.Atan(Direction.Y / Direction.X);            
             Faction = faction;
-            Angle = angle;
             Parent = parent;
 
             flyingSound = new SoundEffect2D(flyingSoundInstance, this)
@@ -206,9 +221,18 @@ namespace Myng.Graphics
         {
             if (texture != null)
                 spriteBatch.Draw(texture: texture, position: GlobalOrigin, sourceRectangle: null, color: Color.White,
-                    rotation: (float)Angle, origin: Origin, scale: Scale,
+                    rotation: (float)(Angle + AngleTextureOffset), origin: Origin, scale: Scale,
                     effects: SpriteEffects.None, layerDepth: 0);
-            else animationManager.Draw(spriteBatch, Scale, Angle, layer);
+            else animationManager.Draw(spriteBatch, Scale, Angle + AngleTextureOffset, layer);
+        }
+
+        public void RotateDirection(double angle)
+        {
+            var x = direction.X * (float)Math.Cos(angle) - direction.Y * (float)Math.Sin(angle);
+            var y = direction.X * (float)Math.Sin(angle) + direction.Y * (float)Math.Cos(angle);
+            direction.X = x;
+            direction.Y = y;
+            Angle += angle;
         }
 
         public virtual object Clone()

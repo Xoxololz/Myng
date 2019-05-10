@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers;
+using Myng.Helpers.Spells;
 using Myng.States;
 using System.Collections.Generic;
 

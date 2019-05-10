@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Depositories;
 using Myng.Graphics.Animations;
 using Myng.Graphics.Enemies;
 using Myng.Helpers;
@@ -225,7 +226,7 @@ namespace Myng.Graphics
         {
             layer = Layers.Character;            
             hpBar = State.Content.Load<Texture2D>("GUI/HPBar");
-            walkingSound = new SoundEffect2D(SoundsDepository.walking.CreateInstance(), this)
+            walkingSound = new SoundEffect2D(SoundsDepository.Walking.CreateInstance(), this)
             {
                 Volume = 0.3f,
                 IsLooping = true,
@@ -271,6 +272,7 @@ namespace Myng.Graphics
                 if(this is Enemy enemy)
                 {
                     Game1.Player.XP += enemy.XPDrop;
+                    walkingSound.Stop();
                     ToRemove = true;
                 }                
             }

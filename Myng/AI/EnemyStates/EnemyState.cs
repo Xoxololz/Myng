@@ -1,17 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Myng.Graphics;
 using Myng.Graphics.Enemies;
 using System.Collections.Generic;
 
 namespace Myng.AI.EnemyStates
 {
-    abstract public class State
+    abstract public class EnemyState
     {
         #region Constructors
 
-        public State(Enemy controlledEnemy)
+        public EnemyState(Enemy controlledEnemy)
         {
             this.controlledEnemy = controlledEnemy;
+            controlledEnemy.SpeedMultiplier = 1f;
         }
 
         #endregion
