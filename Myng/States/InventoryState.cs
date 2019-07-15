@@ -44,6 +44,7 @@ namespace Myng.States
             mouseTex = Content.Load<Texture2D>("GUI/mouse_normal");
             currentMouseState = Mouse.GetState();
             mouseOrig = new Vector2(mouseTex.Width / 2, mouseTex.Height / 2);
+            Mouse.SetPosition(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2);
 
             inventory = Game1.Player.Inventory;
             gui = new GUI();
@@ -182,6 +183,11 @@ namespace Myng.States
                 inventory.DrawItemDescription(spriteBatch, displayedItem);
                 inventory.HighlightSlot(spriteBatch, displayedItem.ItemType);
             }
+        }
+
+        public override Keys GetStateInputKey()
+        {
+            return Keys.I;
         }
         #endregion
     }

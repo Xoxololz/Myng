@@ -5,6 +5,7 @@ using Myng.Graphics;
 using Myng.Helpers;
 using Myng.Helpers.SoundHandlers;
 using Myng.States;
+using System;
 using System.Collections.Generic;
 
 namespace Myng
@@ -121,6 +122,12 @@ namespace Myng
         {
             base.Update(gameTime);
 
+            HandleStateChanges();
+            currentState.Update(gameTime);
+        }
+
+        private void HandleStateChanges()
+        {
             keyboardPrevious = keyboardCurrent;
             keyboardCurrent = Keyboard.GetState();
 
@@ -133,47 +140,19 @@ namespace Myng
             {
                 ExitCurrentState();
             }
-
-            //Inventory state handler
-            if (keyboardCurrent.IsKeyDown(Keys.I) && !keyboardPrevious.IsKeyDown(Keys.I))
+            
+            foreach(Keys key in keyboardCurrent.GetPressedKeys())
             {
-                if (currentState is InventoryState && nextState == null)
+                if (keyboardPrevious.IsKeyDown(key)) //already registered
+                    continue;
+
+                if(currentState.GetStateInputKey() == key) //State already active
                 {
                     ExitCurrentState();
-                    return;
+                    break;
                 }
-                if (nextState == null)
-                {
-                    if (!(currentState is GameState))
-                    {
-                        ExitCurrentState();
-                    }
-                    Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
-                    var inventoryState = new InventoryState(Content, graphics.GraphicsDevice, this);
-                    inventoryState.Init();
-                    ChangeState(inventoryState);
-                }
-            }
 
-            //Character state handler
-            if (keyboardCurrent.IsKeyDown(Keys.C) && !keyboardPrevious.IsKeyDown(Keys.C))
-            {
-                if (currentState is CharacterState && nextState == null)
-                {
-                    ExitCurrentState();
-                    return;
-                }
-                if (nextState == null)
-                {
-                    if(!(currentState is GameState))
-                    {
-                        ExitCurrentState();
-                    }
-                    Mouse.SetPosition(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
-                    var characterState = new CharacterState(Content, graphics.GraphicsDevice, this);
-                    characterState.Init();
-                    ChangeState(characterState);
-                }
+                CreateStateBasedOnKeyPressed(key);
             }
 
             if (nextState != null)
@@ -181,7 +160,31 @@ namespace Myng
                 currentState = nextState;
                 nextState = null;
             }
-            currentState.Update(gameTime);
+        }
+
+        private void CreateStateBasedOnKeyPressed(Keys key)
+        {
+            if (nextState == null)
+            {
+                State newState;
+
+                switch (key)
+                {
+                    case Keys.C : newState = new CharacterState(Content, graphics.GraphicsDevice, this);
+                                  break;
+                    case Keys.I : newState = new InventoryState(Content, graphics.GraphicsDevice, this);
+                                  break;
+                    default: return;
+                }
+
+                if (!(currentState is GameState))
+                {
+                    ExitCurrentState();
+                }
+
+                newState.Init();
+                ChangeState(newState);
+            }
         }
 
         /// <summary>
