@@ -38,6 +38,7 @@ namespace Myng.States
             mouseTex = Content.Load<Texture2D>("GUI/mouse_normal");
             currentMouseState = Mouse.GetState();
             mouseOrig = new Vector2(mouseTex.Width / 2, mouseTex.Height / 2);
+            Mouse.SetPosition(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2);
 
             //menu
             characterMenu = new CharacterMenu();
@@ -103,6 +104,11 @@ namespace Myng.States
             float mouseScale = 2;
             spriteBatch.Draw(texture: mouseTex, position: -Camera.ScreenOffset + mousePos + mouseOrig * mouseScale, sourceRectangle: null, color: Color.White,
                    rotation: 0, origin: mouseOrig, scale: mouseScale, effects: SpriteEffects.None, layerDepth: Layers.AlwaysOnTop);
+        }
+
+        public override Keys GetStateInputKey()
+        {
+            return Keys.C;
         }
         #endregion
 

@@ -100,7 +100,7 @@ namespace Myng.Depositories
                 else bulletMid.AngleTextureOffset = MathHelper.ToRadians(225);
  
 
-                bulletMid.Initialize(bPosition, 40, DamageType.MAGIC, dir, player.Faction,
+                bulletMid.Initialize(bPosition, (int)(player.GetAttribute(Attributes.INTELLIGENCE)*.5f), DamageType.MAGIC, dir, player.Faction,
                     SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), player);
                 var bulletBot = bulletMid.Clone() as Projectile;
                 var bulletTop = bulletMid.Clone() as Projectile;

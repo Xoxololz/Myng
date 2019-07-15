@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Myng.Helpers.SoundHandlers;
 using System.Collections.Generic;
 
@@ -52,6 +53,8 @@ namespace Myng.States
         public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
 
         public abstract void Update(GameTime gameTime);
+
+        public abstract Keys GetStateInputKey();
 
         //method used to cleanup beofre being switched to another state
         public abstract void Exit();
