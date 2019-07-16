@@ -134,13 +134,13 @@ namespace Myng.Graphics.Enemies
                 }
             };
 
-            var spel = new Spell(blast, 0, 4)
+            var spell = new Spell(blast, 0, 4)
             {
                 Range = 250,
                 CastingAnimations = fireballAnimation,
                 CastingTime = 1.5
             };
-            Spells.Add(spel);
+            Spells.Add(spell);
 
         }
 

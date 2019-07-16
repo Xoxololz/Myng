@@ -18,6 +18,7 @@ using Myng.Helpers.Enums;
 using Myng.Items.Interfaces;
 using System;
 using Myng.Depositories;
+using Microsoft.Xna.Framework.Input;
 
 namespace Myng.States
 {
@@ -249,6 +250,11 @@ namespace Myng.States
                 spriteBatch.Draw(texture: blackBackground, position: -Camera.ScreenOffset, color: Color.White*0.5f, effects: SpriteEffects.None, layerDepth: Layers.BackgroundTint);
             }
             TileMap.Draw(spriteBatch);
+        }
+
+        public override Keys GetStateInputKey()
+        {
+            return Keys.None;
         }
         #endregion
     }
