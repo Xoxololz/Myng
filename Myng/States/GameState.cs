@@ -69,7 +69,7 @@ namespace Myng.States
             blackBackground = new Texture2D(graphicsDevice, Game1.ScreenWidth, Game1.ScreenHeight);
             blackBackground.SetData(backgroundColor);
 
-            TmxMap map = new TmxMap("Content/Maps/map3.tmx");
+            TmxMap map = new TmxMap("Content/Maps/map_dungeon.tmx");
             TileMap = new TileMap(map);
 
             itemFactory = new ItemFactoryImpl();
@@ -86,11 +86,11 @@ namespace Myng.States
 
             hittableSprites = new List<Sprite>();
 
-            for (int i = 240; i < 1500; i += 150)
-            {
-                Enemy monster3 = EnemyDepository.Zombie(new Vector2(1, i));
-                hittableSprites.Add(monster3);
-            }
+            //for (int i = 240; i < 1500; i += 150)
+            //{
+            //    Enemy monster3 = EnemyDepository.Zombie(new Vector2(1, i));
+            //    hittableSprites.Add(monster3);
+            //}
 
             camera = new Camera(Game1.Player);
 

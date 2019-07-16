@@ -67,7 +67,7 @@ namespace Myng.AI.Movement
         }
 
         private Node FindFarthestNodeInRange()
-        {        
+        {
             Node node = null;
             if(DistanceParentFrom(path[0]) < sightRange)
             {

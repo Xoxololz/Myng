@@ -176,7 +176,7 @@ namespace Myng.Graphics
             previousKey = Keyboard.GetState();
             velocity = new Vector2(0f);
             input = new Input();
-            Scale = 1.5f;
+            Scale = 1.2f;
             baseAttackSpeed = 1f;
             AttackDirection = new Vector2(0, -1);
             Inventory = new Inventory();
