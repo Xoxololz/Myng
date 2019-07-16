@@ -18,6 +18,8 @@ namespace Myng.Helpers
 
         public static float GameInformation = 0.2f;
 
+        public static float Gates = 0.25f;
+
         public static float Character = 0.3f;
 
         public static float Projectile = 0.4f;

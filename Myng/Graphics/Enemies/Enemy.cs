@@ -79,7 +79,7 @@ namespace Myng.Graphics.Enemies
         #region Constructors
         public Enemy(Dictionary<string, Animation> animations, Vector2 position, EnemyType type) : base(animations, position)
         {
-            InitAutoattack();
+            autoAttack = SpellDepository.RangeAutoAttack(this);
             Spells = new List<Spell>();
             InitSpells();
             Scale = 1.5f;
@@ -98,32 +98,6 @@ namespace Myng.Graphics.Enemies
         #endregion
 
         #region Methods
-
-        protected virtual void InitAutoattack()
-        {
-            //Action<List<Sprite>> autoAttackAction = (sprites) =>
-            //{
-            //    var b = Bullet.Clone() as Projectile;
-            //    var bPosition = GlobalOrigin - Bullet.Origin * Bullet.Scale;
-
-            //     var attackDirection= -(Position - (playerPosition));
-            //    if (attackDirection.X < 0)
-            //        b.AngleTextureOffset = MathHelper.ToRadians(180);
-
-            //    b.Initialize(bPosition, 30, DamageType.PHYSICAL, attackDirection, Faction,
-            //        SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
-
-            //    sprites.Add(b);
-            //};
-            //Func<bool> canExecute = () =>
-            //{
-            //    var AutoattackRange = (Position - playerPosition).Length() < SightRange;
-            //    return AutoattackRange;                
-            //};
-
-            //autoAttack = new AutoAttack(autoAttackAction, canExecute, this);
-            autoAttack = SpellDepository.RangeAutoAttack(this);
-        }
 
         protected virtual void InitSpells()
         {

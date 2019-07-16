@@ -171,6 +171,9 @@
     <None Include="Content\Maps\hyptosis_tile-art-batch-1.tsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Maps\map_dungeon.tmx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Maps\meta.tsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

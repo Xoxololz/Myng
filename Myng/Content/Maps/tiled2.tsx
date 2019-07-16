@@ -5,6 +5,7 @@
   <terrain name="cesta" tile="0"/>
   <terrain name="voda" tile="1441"/>
   <terrain name="tráva" tile="1441"/>
+  <terrain name="dark_background" tile="0"/>
  </terraintypes>
  <tile id="0">
   <properties>
@@ -1994,12 +1995,12 @@
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="385">
+ <tile id="385" terrain="3,3,3,">
   <properties>
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="386">
+ <tile id="386" terrain="3,3,,3">
   <properties>
    <property name="Collision" value=""/>
   </properties>
@@ -2154,12 +2155,12 @@
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="417">
+ <tile id="417" terrain="3,,3,3">
   <properties>
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="418">
+ <tile id="418" terrain=",3,3,3">
   <properties>
    <property name="Collision" value=""/>
   </properties>
@@ -2309,17 +2310,17 @@
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="448">
+ <tile id="448" terrain=",,,3">
   <properties>
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="449">
+ <tile id="449" terrain=",,3,3">
   <properties>
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="450">
+ <tile id="450" terrain=",,3,">
   <properties>
    <property name="Collision" value=""/>
   </properties>
@@ -2469,17 +2470,17 @@
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="480">
+ <tile id="480" terrain=",3,,3">
   <properties>
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="481">
+ <tile id="481" terrain="3,3,3,3">
   <properties>
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="482">
+ <tile id="482" terrain="3,,3,">
   <properties>
    <property name="Collision" value=""/>
   </properties>
@@ -2629,17 +2630,17 @@
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="512">
+ <tile id="512" terrain=",3,,">
   <properties>
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="513">
+ <tile id="513" terrain="3,3,,">
   <properties>
    <property name="Collision" value=""/>
   </properties>
  </tile>
- <tile id="514">
+ <tile id="514" terrain="3,,,">
   <properties>
    <property name="Collision" value=""/>
   </properties>

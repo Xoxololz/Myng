@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Myng.Helpers.Enums;
-using Myng.States;
 using System;
 using System.Collections.Generic;
 using TiledSharp;
@@ -106,7 +105,7 @@ namespace Myng.Helpers
 
                     TmxTilesetTile collisionTile;
                     if (currentTileset.Tiles.TryGetValue(tileFrame, out collisionTile)
-                        && collisionTile.ObjectGroups.Count > 0)
+                        && collisionTile.ObjectGroups.Count > 0 && collisionTile.ObjectGroups[0].Objects.Count > 0)
                     {
                         Collision collisionType = GetCollisionType(collisionTile);
                         switch (collisionTile.ObjectGroups[0].Objects[0].ObjectType)
@@ -262,6 +261,9 @@ namespace Myng.Helpers
                                 break;
                             case 3:
                                 layer = Layers.Accesories;
+                                break;
+                            case 4:
+                                layer = Layers.Gates;
                                 break;
                             default:
                                 throw new Exception("Too many layers in tile map");
