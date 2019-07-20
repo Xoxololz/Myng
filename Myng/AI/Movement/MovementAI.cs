@@ -78,6 +78,7 @@ namespace Myng.AI.Movement
                     //path.RemoveRange(1, path.Count - 1);
                     if (DistanceParentFrom(path[0]) < tolerance)
                     {
+                        nextClearNode = null;
                         path = null;
                     }
 
@@ -102,6 +103,10 @@ namespace Myng.AI.Movement
                     {
                         for (int j = i + 2; j < path.Count; j++)
                         {
+                            if (j == path.Count - 1)
+                            {
+                                return path[currentNodeIndex - 1];
+                            }
                             if (path[j] == nextClearNode) return nextClearNode;
                             if (CanGoStraightTo(path[j]))
                             {
@@ -162,7 +167,8 @@ namespace Myng.AI.Movement
 
         private void RecalculatePath()
         {
-            SetGoalDestination(new Vector2(path[0].X, path[0].Y));
+            if(path != null)
+                SetGoalDestination(new Vector2(path[0].X, path[0].Y));
         }
 
         public void FindNewPath(List<Polygon> collidingPolygons)
