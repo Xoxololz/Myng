@@ -38,33 +38,25 @@
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="6.25" y="0" width="25.5" height="31"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="7">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.25" y="3" width="31.5" height="29"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="8">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0.25" width="32.25" height="31.75"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="9">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.25" y="0.5" width="25.25" height="31.25"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="10">
   <properties>
@@ -139,33 +131,25 @@
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="7" y="0.75" width="25.5" height="31"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="23">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.25" y="0.5" width="31.75" height="30.5"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="24">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.25" y="0" width="31.75" height="32"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="25">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0.25" width="24.75" height="31.5"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="26">
   <properties>
@@ -214,9 +198,7 @@
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="1" y="4" width="29" height="26"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="34">
   <properties>
@@ -245,33 +227,25 @@
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="6.25" y="0" width="26" height="31.25"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="39">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0" width="32.25" height="31.75"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="40">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.25" y="0.5" width="32" height="31.25"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="41">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0.25" width="26" height="32"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="42">
   <properties>
@@ -307,17 +281,13 @@
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0.181818" width="31.8182" height="31.4545"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="49">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.181818" y="0.181818" width="31.8182" height="31.6364"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="50">
   <properties>
@@ -349,57 +319,43 @@
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="10.5" y="-0.25" width="21.25" height="32.25"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="55">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="-0.25" y="0" width="32.75" height="32"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="56">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0" width="31.75" height="32.25"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="57">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0" width="20.75" height="32"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="58">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.181818" y="0.363636" width="31.6364" height="31.6364"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="59">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.181818" y="-0.181818" width="31.4545" height="31.8182"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="60">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="3" x="0.363636" y="0.545455" width="31.2727" height="31.0909"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="61">
   <properties>
@@ -431,9 +387,7 @@
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.545455" y="-0.181818" width="30.9091" height="31.8182"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="66">
   <properties>
@@ -462,33 +416,25 @@
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="-0.25" y="0.75" width="32" height="30.75"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="71">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0.25" y="0.5" width="30.75" height="31.75"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="72">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="6.5" width="32" height="24.5"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="73">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="-0.5" y="0.25" width="20.75" height="31.5"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="74">
   <properties>
@@ -588,30 +534,25 @@
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="11" y="0" width="21" height="31.75"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="87">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0.181818" width="31.8182" height="32"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="88">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
-  <objectgroup draworder="index">
-   <object id="1" x="0" y="0.75" width="31.75" height="30.5"/>
-  </objectgroup>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="89">
   <properties>
    <property name="Collision" value="Solid"/>
   </properties>
+  <objectgroup draworder="index"/>
  </tile>
  <tile id="90">
   <properties>

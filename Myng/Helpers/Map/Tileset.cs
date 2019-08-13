@@ -3,7 +3,7 @@ using Myng.States;
 using System.Collections.Generic;
 using TiledSharp;
 
-namespace Myng.Helpers
+namespace Myng.Helpers.Map
 {
     public class Tileset
     {

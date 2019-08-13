@@ -11,14 +11,13 @@ using Myng.Helpers.SoundHandlers;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using Myng.AI.Movement;
-using Myng.Graphics.Animations;
 using Myng.Graphics.GUI;
-using Myng.PlayerIdentity;
 using Myng.Helpers.Enums;
 using Myng.Items.Interfaces;
 using System;
 using Myng.Depositories;
 using Microsoft.Xna.Framework.Input;
+using Myng.Helpers.Map;
 
 namespace Myng.States
 {
@@ -75,6 +74,7 @@ namespace Myng.States
             itemFactory = new ItemFactoryImpl();
 
             Game1.Player = PlayerIdentitiesDepository.Mage();
+            Game1.Player.Position = new Vector2(2244, 1205);
             itemFactory.SetPlayer(Game1.Player);
 
             otherSprites = new List<Sprite>
@@ -86,11 +86,11 @@ namespace Myng.States
 
             hittableSprites = new List<Sprite>();
 
-            //for (int i = 240; i < 1500; i += 150)
-            //{
-            //    Enemy monster3 = EnemyDepository.Zombie(new Vector2(1, i));
-            //    hittableSprites.Add(monster3);
-            //}
+//            for (int i = 240; i < 1500; i += 150)
+//            {
+//                Enemy monster3 = EnemyDepository.Zombie(new Vector2(1, i));
+//                hittableSprites.Add(monster3);
+//            }
 
             camera = new Camera(Game1.Player);
 
@@ -102,7 +102,7 @@ namespace Myng.States
                 Content.Load<Song>("Sounds/NE"),
                 Content.Load<Song>("Sounds/RM")
             };
-            backgroundMusic = new BackgroundMusic(songs);
+            //backgroundMusic = new BackgroundMusic(songs);
         }
 
         public override void Update(GameTime gameTime)

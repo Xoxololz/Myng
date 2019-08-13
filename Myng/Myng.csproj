@@ -69,6 +69,7 @@
     <Compile Include="Graphics\Projectile.cs" />
     <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Helpers\Enums\Direction.cs" />
+    <Compile Include="Helpers\Map\NonCollidableTexture.cs" />
     <Compile Include="Helpers\Spells\AutoAttack.cs" />
     <Compile Include="Helpers\Camera.cs" />
     <Compile Include="Helpers\Enums\Attributes.cs" />
@@ -89,7 +90,7 @@
     <Compile Include="Graphics\GUI\Spellbar.cs" />
     <Compile Include="Depositories\SpellDepository.cs" />
     <Compile Include="Helpers\SpritePolygon.cs" />
-    <Compile Include="Helpers\Tileset.cs" />
+    <Compile Include="Helpers\Map\Tileset.cs" />
     <Compile Include="Items\ItemFactoryImpl.cs" />
     <Compile Include="Items\Shield.cs" />
     <Compile Include="Items\Weapon.cs" />
@@ -105,7 +106,7 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Helpers\Polygon.cs" />
     <Compile Include="Helpers\Spells\Spell.cs" />
-    <Compile Include="Helpers\TileMap.cs" />
+    <Compile Include="Helpers\Map\TileMap.cs" />
     <Compile Include="Items\UpdatableTestItem.cs" />
     <Compile Include="PlayerIdentity\Identity.cs" />
     <Compile Include="PlayerIdentity\Mage.cs" />
