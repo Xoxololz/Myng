@@ -18,7 +18,9 @@ namespace Myng.Helpers
 
         public static float GameInformation = 0.2f;
 
-        public static float Gates = 0.25f;
+        public static float Collidable = 0.22f;
+
+        public static float SemiCollidable = 0.25f;
 
         public static float Character = 0.3f;
 
@@ -30,9 +32,7 @@ namespace Myng.Helpers
         
         public static float Accesories = 0.8f;
 
-        public static float Road = 0.81f;
-
-        public static float Vegetation = 0.82f;
+        public static float Ground = 0.82f;
 
         public static float Background = 1f;
     }

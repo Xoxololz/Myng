@@ -82,7 +82,7 @@ namespace Myng.Graphics.Enemies
             autoAttack = SpellDepository.RangeAutoAttack(this);
             Spells = new List<Spell>();
             InitSpells();
-            Scale = 1.5f;
+            Scale = 1f;
             baseSpeed = 1.5f;
             Faction = Faction.ENEMY;
             XPDrop = 20;

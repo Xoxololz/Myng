@@ -4,6 +4,7 @@ using Myng.Helpers.Enums;
 using System.Collections.Generic;
 using Myng.Graphics;
 using System;
+using Myng.Helpers.Map;
 
 namespace Myng.AI.Movement
 {

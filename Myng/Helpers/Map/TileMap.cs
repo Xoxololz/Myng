@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using TiledSharp;
 
-namespace Myng.Helpers
+namespace Myng.Helpers.Map
 {
     public class TileMap
     {
@@ -23,6 +23,8 @@ namespace Myng.Helpers
 
         private int screenWidthTiles;
         private int screenHeightTiles;
+
+        private List<NonCollidableTexture> opaqueTextures;
         #endregion
 
         #region Variables
@@ -68,6 +70,7 @@ namespace Myng.Helpers
         {
             this.map = map;
             tilesets = new List<Tileset>();
+            opaqueTextures = new List<NonCollidableTexture>();
             foreach (var tileset in map.Tilesets)
             {
                 tilesets.Add(new Tileset(tileset));
@@ -76,6 +79,7 @@ namespace Myng.Helpers
             screenWidthTiles = (int)Math.Floor((float)Game1.ScreenWidth / map.Tilesets[0].TileWidth) + 10;
             screenHeightTiles = (int)Math.Floor((float)Game1.ScreenHeight / map.Tilesets[0].TileWidth) + 10;
 
+            InitOpaqueTextures();
             InitCollisionPolygons();
 
             MapHeightTiles = map.Height;
@@ -86,6 +90,22 @@ namespace Myng.Helpers
 
         #region Methods
 
+        private void InitOpaqueTextures()
+        {
+            for (int i = 0; i < map.ObjectGroups.Count; i++)
+            {
+                AddOpaqueTexture(map.ObjectGroups[i]);
+            }
+        }
+
+        private void AddOpaqueTexture(TmxObjectGroup tmxObjectGroup)
+        {
+            foreach (var rect in tmxObjectGroup.Objects)
+            {
+                Rectangle x = new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+                opaqueTextures.Add(new NonCollidableTexture(x, map.TileWidth, map.TileHeight));
+            }
+        }
 
         private void InitCollisionPolygons()
         {
@@ -164,6 +184,7 @@ namespace Myng.Helpers
             {
                 foreach (var layer in map.Layers)
                 {
+                    //if (layer.Name == "accesories") continue;
                     foreach (var point in spritePolygon.CollisionPoints)
                     {
                         var currentTile = GetCurrentTilesGid(point, layer);
@@ -230,21 +251,28 @@ namespace Myng.Helpers
             leftColumn = (int)Math.Floor(-Camera.ScreenOffset.X / map.Tilesets[0].TileWidth);
             upperRow = (int)Math.Floor(-Camera.ScreenOffset.Y / map.Tilesets[0].TileHeight);
             Tileset currentTileset;
+            float opacity = 1;
 
             for (var j = 0; j < map.Layers.Count; j++)
             {
                 for (var i = 0; i < map.Layers[j].Tiles.Count; i++)
                 {
+                    opacity = 1f;
                     int gid = map.Layers[j].Tiles[i].Gid;                                       
-                    if (gid != 0 && TileIsOnScreen(i))                   
+                    if (gid != 0 && TileIsOnScreen(i))
                     {
                         currentTileset = tilesets[GetTilesetIndex(gid)];
                         int tileFrame = gid - currentTileset.FirstGid;
                         int column = tileFrame % currentTileset.TilesetTilesWide;
                         int row = (int)Math.Floor((double)tileFrame / currentTileset.TilesetTilesWide);
 
-                        float x = (i % map.Width) * map.TileWidth;
-                        float y = (float)Math.Floor(i / (double)map.Width) * map.TileHeight;
+                        int mapColumn = (i % map.Width);
+                        int x = mapColumn * map.TileWidth;
+                        int mapRow = (int)Math.Floor(i / (double)map.Width);
+                        int y = mapRow * map.TileHeight;
+
+                        if(map.Layers[j].Name == "semiCollidable")
+                            opacity = CheckForOpacityForWalls(mapColumn, mapRow);
 
                         Rectangle tilesetRec = new Rectangle(currentTileset.TileWidth * column, currentTileset.TileHeight * row, currentTileset.TileWidth, currentTileset.TileHeight);
                         float layer;
@@ -254,27 +282,36 @@ namespace Myng.Helpers
                                 layer = Layers.Background;
                                 break;
                             case 1:
-                                layer = Layers.Vegetation;
+                                layer = Layers.Ground;
                                 break;
                             case 2:
-                                layer = Layers.Road;
+                                layer = Layers.SemiCollidable;
                                 break;
                             case 3:
-                                layer = Layers.Accesories;
-                                break;
-                            case 4:
-                                layer = Layers.Gates;
+                                layer = Layers.Collidable;
                                 break;
                             default:
                                 throw new Exception("Too many layers in tile map");
                         }
-
-                        spriteBatch.Draw(texture: currentTileset.Texture, destinationRectangle: new Rectangle((int)x, (int)y,
-                            currentTileset.TileWidth, currentTileset.TileHeight), sourceRectangle: tilesetRec, color: Color.White,
+                        spriteBatch.Draw(texture: currentTileset.Texture, destinationRectangle: new Rectangle(x, y,
+                            currentTileset.TileWidth, currentTileset.TileHeight), sourceRectangle: tilesetRec, color: Color.White * opacity,
                             layerDepth: layer);
                     }
                 }
             }
+        }
+
+        private float CheckForOpacityForWalls(int mapColumn, int mapRow)
+        {
+            foreach (var texture in opaqueTextures)
+            {
+                if (texture.IsTileIn(mapRow, mapColumn) && texture.PlayerIsUnder())
+                {
+                    return 0.5f;
+                }
+            }
+
+            return 1;
         }
 
         private bool TileIsOnScreen(int i)
