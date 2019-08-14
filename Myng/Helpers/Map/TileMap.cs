@@ -25,6 +25,9 @@ namespace Myng.Helpers.Map
         private int screenHeightTiles;
 
         private List<NonCollidableTexture> opaqueTextures;
+
+        private Vector2 playerPos;
+        private int[,] visionMap;
         #endregion
 
         #region Variables
@@ -62,6 +65,19 @@ namespace Myng.Helpers.Map
                 return tilesets[0].TileWidth;
             }
         }
+
+        public Vector2 MapSize { get; set; }
+        /// <summary>
+        /// Radius of the player's circle of vision
+        /// </summary>
+        public int VisualRange { get; set; }
+
+        /// <summary>
+        /// List of points visible to the player
+        /// </summary>
+        public List<Point> VisiblePoints { get; private set; }  // Cells the player can see
+
+        public Vector2 PlayerPos { get { return playerPos; } set { playerPos = value; } }
         #endregion
 
         #region Constructor
@@ -75,6 +91,10 @@ namespace Myng.Helpers.Map
             {
                 tilesets.Add(new Tileset(tileset));
             }
+
+            MapSize = new Vector2(map.Width, map.Height);
+            VisualRange = 15;
+            visionMap = new int[map.Width, map.Height];
 
             screenWidthTiles = (int)Math.Floor((float)Game1.ScreenWidth / map.Tilesets[0].TileWidth) + 10;
             screenHeightTiles = (int)Math.Floor((float)Game1.ScreenHeight / map.Tilesets[0].TileWidth) + 10;
@@ -119,15 +139,19 @@ namespace Myng.Helpers.Map
                     currentTileset = tilesets[GetTilesetIndex(gid)];
                     int tileFrame = gid - currentTileset.FirstGid;
 
-                    float x = (i % map.Width) * map.TileWidth;
-                    float y = (float)Math.Floor(i / (double)map.Width) * map.TileHeight;
-
-
                     TmxTilesetTile collisionTile;
                     if (currentTileset.Tiles.TryGetValue(tileFrame, out collisionTile)
                         && collisionTile.ObjectGroups.Count > 0 && collisionTile.ObjectGroups[0].Objects.Count > 0)
                     {
                         Collision collisionType = GetCollisionType(collisionTile);
+
+                        if (collisionType == Collision.Solid) 
+                        {
+                            var x = map.Layers[j].Tiles[i].X;
+                            var y = map.Layers[j].Tiles[i].Y;
+                            Point_Set(x, y, 1);
+                        }
+
                         switch (collisionTile.ObjectGroups[0].Objects[0].ObjectType)
                         {
                             case TmxObjectType.Polygon:
@@ -252,13 +276,14 @@ namespace Myng.Helpers.Map
             upperRow = (int)Math.Floor(-Camera.ScreenOffset.Y / map.Tilesets[0].TileHeight);
             Tileset currentTileset;
             float opacity = 1;
+            GetVisibleCells();
 
             for (var j = 0; j < map.Layers.Count; j++)
             {
                 for (var i = 0; i < map.Layers[j].Tiles.Count; i++)
                 {
                     opacity = 1f;
-                    int gid = map.Layers[j].Tiles[i].Gid;                                       
+                    int gid = map.Layers[j].Tiles[i].Gid;
                     if (gid != 0 && TileIsOnScreen(i))
                     {
                         currentTileset = tilesets[GetTilesetIndex(gid)];
@@ -271,7 +296,7 @@ namespace Myng.Helpers.Map
                         int mapRow = (int)Math.Floor(i / (double)map.Width);
                         int y = mapRow * map.TileHeight;
 
-                        if(map.Layers[j].Name == "semiCollidable")
+                        if (map.Layers[j].Name == "semiCollidable")
                             opacity = CheckForOpacityForWalls(mapColumn, mapRow);
 
                         Rectangle tilesetRec = new Rectangle(currentTileset.TileWidth * column, currentTileset.TileHeight * row, currentTileset.TileWidth, currentTileset.TileHeight);
@@ -293,9 +318,21 @@ namespace Myng.Helpers.Map
                             default:
                                 throw new Exception("Too many layers in tile map");
                         }
-                        spriteBatch.Draw(texture: currentTileset.Texture, destinationRectangle: new Rectangle(x, y,
-                            currentTileset.TileWidth, currentTileset.TileHeight), sourceRectangle: tilesetRec, color: Color.White * opacity,
-                            layerDepth: layer);
+                        if (VisiblePoints.Contains(new Point(map.Layers[j].Tiles[i].X, map.Layers[j].Tiles[i].Y)))
+                        {
+                            spriteBatch.Draw(texture: currentTileset.Texture, destinationRectangle: new Rectangle(x, y,
+                                currentTileset.TileWidth, currentTileset.TileHeight), sourceRectangle: tilesetRec, color: Color.White * opacity,
+                                layerDepth: layer);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(texture: currentTileset.Texture, destinationRectangle: new Rectangle(x, y,
+                                currentTileset.TileWidth, currentTileset.TileHeight), sourceRectangle: tilesetRec, color: Color.White * opacity,
+                                layerDepth: layer);
+                            spriteBatch.Draw(texture: currentTileset.Texture, destinationRectangle: new Rectangle(x, y,
+                                currentTileset.TileWidth, currentTileset.TileHeight), sourceRectangle: tilesetRec, color: Color.Black*0.7f,
+                                layerDepth: Layers.DarkVision);
+                        }
                     }
                 }
             }
@@ -326,5 +363,398 @@ namespace Myng.Helpers.Map
 
         #endregion
 
+        //START OF FOV
+        //source https://github.com/AndyStobirski/RogueLike/blob/master/FOVRecurse.cs
+
+        /// <summary>
+        /// The octants which a player can see
+        /// </summary>
+        List<int> VisibleOctants = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+        #region map point code
+
+        /// <summary>
+        /// Check if the provided coordinate is within the bounds of the mapp array
+        /// </summary>
+        /// <param name="pX"></param>
+        /// <param name="pY"></param>
+        /// <returns></returns>
+        private bool Point_Valid(int pX, int pY)
+        {
+            return pX >= 0 & pX < visionMap.GetLength(0)
+                    & pY >= 0 & pY < visionMap.GetLength(1);
+        }
+
+        /// <summary>
+        /// Get the value of the point at the specified location
+        /// </summary>
+        /// <param name="_x"></param>
+        /// <param name="_y"></param>
+        /// <returns>Cell value</returns>
+        public int Point_Get(int _x, int _y)
+        {
+            return visionMap[_x, _y];
+        }
+
+        /// <summary>
+        /// Set the map point to the specified value
+        /// </summary>
+        /// <param name="_x"></param>
+        /// <param name="_y"></param>
+        /// <param name="_val"></param>
+        public void Point_Set(int _x, int _y, int _val)
+        {
+            if (Point_Valid(_x, _y))
+                visionMap[_x, _y] = _val;
+        }
+
+        #endregion
+
+        #region FOV algorithm
+
+        //  Octant data
+        //
+        //    \ 1 | 2 /
+        //   8 \  |  / 3
+        //   -----+-----
+        //   7 /  |  \ 4
+        //    / 6 | 5 \
+        //
+        //  1 = NNW, 2 =NNE, 3=ENE, 4=ESE, 5=SSE, 6=SSW, 7=WSW, 8 = WNW
+
+        /// <summary>
+        /// Start here: go through all the octants which surround the player to
+        /// determine which open cells are visible
+        /// </summary>
+        public void GetVisibleCells()
+        {
+            VisiblePoints = new List<Point>();
+            playerPos = new Vector2(Game1.Player.GlobalOrigin.X / TileWidth, Game1.Player.GlobalOrigin.Y / TileHeight);
+            VisiblePoints.Add(playerPos.ToPoint());
+            foreach (int o in VisibleOctants)
+                ScanOctant(1, o, 1.0, 0.0);
+
+        }
+
+        /// <summary>
+        /// Examine the provided octant and calculate the visible cells within it.
+        /// </summary>
+        /// <param name="pDepth">Depth of the scan</param>
+        /// <param name="pOctant">Octant being examined</param>
+        /// <param name="pStartSlope">Start slope of the octant</param>
+        /// <param name="pEndSlope">End slope of the octance</param>
+        protected void ScanOctant(int pDepth, int pOctant, double pStartSlope, double pEndSlope)
+        {
+
+            int visrange2 = VisualRange * VisualRange;
+            int x = 0;
+            int y = 0;
+
+            switch (pOctant)
+            {
+
+                case 1: //nnw
+                    y = playerPos.ToPoint().Y - pDepth;
+                    if (y < 0) return;
+
+                    x = playerPos.ToPoint().X - Convert.ToInt32((pStartSlope * Convert.ToDouble(pDepth)));
+                    if (x < 0) x = 0;
+
+                    while (GetSlope(x, y, playerPos.X, playerPos.Y, false) >= pEndSlope && Point_Valid(x, y))
+                    {
+                        if (GetVisDistance(x, y, playerPos.ToPoint().X, playerPos.ToPoint().Y) <= visrange2)
+                        {
+                            if (visionMap[x, y] == 1) //current cell blocked
+                            {
+                                if (x - 1 >= 0 && visionMap[x - 1, y] == 0) //prior cell within range AND open...
+                                                                      //...incremenet the depth, adjust the endslope and recurse
+                                    ScanOctant(pDepth + 1, pOctant, pStartSlope, GetSlope(x - 0.5, y + 0.5, playerPos.X, playerPos.Y, false));
+                            }
+                            else
+                            {
+                                if (x - 1 >= 0 && visionMap[x - 1, y] == 1) //prior cell within range AND open...
+                                                                      //..adjust the startslope
+                                    pStartSlope = GetSlope(x - 0.5, y - 0.5, playerPos.X, playerPos.Y, false);
+
+                                VisiblePoints.Add(new Point(x, y));
+                            }
+                        }
+                        x++;
+                    }
+                    x--;
+                    break;
+
+                case 2: //nne
+
+                    y = playerPos.ToPoint().Y - pDepth;
+                    if (y < 0) return;
+
+                    x = playerPos.ToPoint().X + Convert.ToInt32((pStartSlope * Convert.ToDouble(pDepth)));
+                    if (x >= visionMap.GetLength(0)) x = visionMap.GetLength(0) - 1;
+
+                    while (GetSlope(x, y, playerPos.X, playerPos.Y, false) <= pEndSlope && Point_Valid(x, y))
+                    {
+                        if (GetVisDistance(x, y, playerPos.ToPoint().X, playerPos.ToPoint().Y) <= visrange2)
+                        {
+                            if (visionMap[x, y] == 1)
+                            {
+                                if (x + 1 < visionMap.GetLength(0) && visionMap[x + 1, y] == 0)
+                                    ScanOctant(pDepth + 1, pOctant, pStartSlope, GetSlope(x + 0.5, y + 0.5, playerPos.X, playerPos.Y, false));
+                            }
+                            else
+                            {
+                                if (x + 1 < visionMap.GetLength(0) && visionMap[x + 1, y] == 1)
+                                    pStartSlope = -GetSlope(x + 0.5, y - 0.5, playerPos.X, playerPos.Y, false);
+
+                                VisiblePoints.Add(new Point(x, y));
+                            }
+                        }
+                        x--;
+                    }
+                    x++;
+                    break;
+
+                case 3:
+
+                    x = playerPos.ToPoint().X + pDepth;
+                    if (x >= visionMap.GetLength(0)) return;
+
+                    y = playerPos.ToPoint().Y - Convert.ToInt32((pStartSlope * Convert.ToDouble(pDepth)));
+                    if (y < 0) y = 0;
+
+                    while (GetSlope(x, y, playerPos.X, playerPos.Y, true) <= pEndSlope && Point_Valid(x, y))
+                    {
+
+                        if (GetVisDistance(x, y, playerPos.ToPoint().X, playerPos.ToPoint().Y) <= visrange2)
+                        {
+
+                            if (visionMap[x, y] == 1)
+                            {
+                                if (y - 1 >= 0 && visionMap[x, y - 1] == 0)
+                                    ScanOctant(pDepth + 1, pOctant, pStartSlope, GetSlope(x - 0.5, y - 0.5, playerPos.X, playerPos.Y, true));
+                            }
+                            else
+                            {
+                                if (y - 1 >= 0 && visionMap[x, y - 1] == 1)
+                                    pStartSlope = -GetSlope(x + 0.5, y - 0.5, playerPos.X, playerPos.Y, true);
+
+                                VisiblePoints.Add(new Point(x, y));
+                            }
+                        }
+                        y++;
+                    }
+                    y--;
+                    break;
+
+                case 4:
+
+                    x = playerPos.ToPoint().X + pDepth;
+                    if (x >= visionMap.GetLength(0)) return;
+
+                    y = playerPos.ToPoint().Y + Convert.ToInt32((pStartSlope * Convert.ToDouble(pDepth)));
+                    if (y >= visionMap.GetLength(1)) y = visionMap.GetLength(1) - 1;
+
+                    while (GetSlope(x, y, playerPos.X, playerPos.Y, true) >= pEndSlope && Point_Valid(x, y))
+                    {
+
+                        if (GetVisDistance(x, y, playerPos.ToPoint().X, playerPos.ToPoint().Y) <= visrange2)
+                        {
+
+                            if (visionMap[x, y] == 1)
+                            {
+                                if (y + 1 < visionMap.GetLength(1) && visionMap[x, y + 1] == 0)
+                                    ScanOctant(pDepth + 1, pOctant, pStartSlope, GetSlope(x - 0.5, y + 0.5, playerPos.X, playerPos.Y, true));
+                            }
+                            else
+                            {
+                                if (y + 1 < visionMap.GetLength(1) && visionMap[x, y + 1] == 1)
+                                    pStartSlope = GetSlope(x + 0.5, y + 0.5, playerPos.X, playerPos.Y, true);
+
+                                VisiblePoints.Add(new Point(x, y));
+                            }
+                        }
+                        y--;
+                    }
+                    y++;
+                    break;
+
+                case 5:
+
+                    y = playerPos.ToPoint().Y + pDepth;
+                    if (y >= visionMap.GetLength(1)) return;
+
+                    x = playerPos.ToPoint().X + Convert.ToInt32((pStartSlope * Convert.ToDouble(pDepth)));
+                    if (x >= visionMap.GetLength(0)) x = visionMap.GetLength(0) - 1;
+
+                    while (GetSlope(x, y, playerPos.X, playerPos.Y, false) >= pEndSlope && Point_Valid(x, y))
+                    {
+                        if (GetVisDistance(x, y, playerPos.ToPoint().X, playerPos.ToPoint().Y) <= visrange2)
+                        {
+
+                            if (visionMap[x, y] == 1)
+                            {
+                                if (x + 1 < visionMap.GetLength(1) && visionMap[x + 1, y] == 0)
+                                    ScanOctant(pDepth + 1, pOctant, pStartSlope, GetSlope(x + 0.5, y - 0.5, playerPos.X, playerPos.Y, false));
+                            }
+                            else
+                            {
+                                if (x + 1 < visionMap.GetLength(1)
+                                        && visionMap[x + 1, y] == 1)
+                                    pStartSlope = GetSlope(x + 0.5, y + 0.5, playerPos.X, playerPos.Y, false);
+
+                                VisiblePoints.Add(new Point(x, y));
+                            }
+                        }
+                        x--;
+                    }
+                    x++;
+                    break;
+
+                case 6:
+
+                    y = playerPos.ToPoint().Y + pDepth;
+                    if (y >= visionMap.GetLength(1)) return;
+
+                    x = playerPos.ToPoint().X - Convert.ToInt32((pStartSlope * Convert.ToDouble(pDepth)));
+                    if (x < 0) x = 0;
+
+                    while (GetSlope(x, y, playerPos.X, playerPos.Y, false) <= pEndSlope && Point_Valid(x, y))
+                    {
+                        if (GetVisDistance(x, y, playerPos.ToPoint().X, playerPos.ToPoint().Y) <= visrange2)
+                        {
+
+                            if (visionMap[x, y] == 1)
+                            {
+                                if (x - 1 >= 0 && visionMap[x - 1, y] == 0)
+                                    ScanOctant(pDepth + 1, pOctant, pStartSlope, GetSlope(x - 0.5, y - 0.5, playerPos.X, playerPos.Y, false));
+                            }
+                            else
+                            {
+                                if (x - 1 >= 0
+                                        && visionMap[x - 1, y] == 1)
+                                    pStartSlope = -GetSlope(x - 0.5, y + 0.5, playerPos.X, playerPos.Y, false);
+
+                                VisiblePoints.Add(new Point(x, y));
+                            }
+                        }
+                        x++;
+                    }
+                    x--;
+                    break;
+
+                case 7:
+
+                    x = playerPos.ToPoint().X - pDepth;
+                    if (x < 0) return;
+
+                    y = playerPos.ToPoint().Y + Convert.ToInt32((pStartSlope * Convert.ToDouble(pDepth)));
+                    if (y >= visionMap.GetLength(1)) y = visionMap.GetLength(1) - 1;
+
+                    while (GetSlope(x, y, playerPos.X, playerPos.Y, true) <= pEndSlope && Point_Valid(x, y))
+                    {
+
+                        if (GetVisDistance(x, y, playerPos.ToPoint().X, playerPos.ToPoint().Y) <= visrange2)
+                        {
+
+                            if (visionMap[x, y] == 1)
+                            {
+                                if (y + 1 < visionMap.GetLength(1) && visionMap[x, y + 1] == 0)
+                                    ScanOctant(pDepth + 1, pOctant, pStartSlope, GetSlope(x + 0.5, y + 0.5, playerPos.X, playerPos.Y, true));
+                            }
+                            else
+                            {
+                                if (y + 1 < visionMap.GetLength(1) && visionMap[x, y + 1] == 1)
+                                    pStartSlope = -GetSlope(x - 0.5, y + 0.5, playerPos.X, playerPos.Y, true);
+
+                                VisiblePoints.Add(new Point(x, y));
+                            }
+                        }
+                        y--;
+                    }
+                    y++;
+                    break;
+
+                case 8: //wnw
+
+                    x = playerPos.ToPoint().X - pDepth;
+                    if (x < 0) return;
+
+                    y = playerPos.ToPoint().Y - Convert.ToInt32((pStartSlope * Convert.ToDouble(pDepth)));
+                    if (y < 0) y = 0;
+
+                    while (GetSlope(x, y, playerPos.ToPoint().X, playerPos.ToPoint().Y, true) >= pEndSlope && Point_Valid(x, y))
+                    {
+
+                        if (GetVisDistance(x, y, playerPos.ToPoint().X, playerPos.ToPoint().Y) <= visrange2)
+                        {
+
+                            if (visionMap[x, y] == 1)
+                            {
+                                if (y - 1 >= 0 && visionMap[x, y - 1] == 0)
+                                    ScanOctant(pDepth + 1, pOctant, pStartSlope, GetSlope(x + 0.5, y - 0.5, playerPos.X, playerPos.Y, true));
+
+                            }
+                            else
+                            {
+                                if (y - 1 >= 0 && visionMap[x, y - 1] == 1)
+                                    pStartSlope = GetSlope(x - 0.5, y - 0.5, playerPos.X, playerPos.Y, true);
+
+                                VisiblePoints.Add(new Point(x, y));
+                            }
+                        }
+                        y++;
+                    }
+                    y--;
+                    break;
+            }
+
+
+            if (x < 0)
+                x = 0;
+            else if (x >= visionMap.GetLength(0))
+                x = visionMap.GetLength(0) - 1;
+
+            if (y < 0)
+                y = 0;
+            else if (y >= visionMap.GetLength(1))
+                y = visionMap.GetLength(1) - 1;
+
+            if (pDepth < VisualRange & visionMap[x, y] == 0)
+                ScanOctant(pDepth + 1, pOctant, pStartSlope, pEndSlope);
+
+        }
+
+        /// <summary>
+        /// Get the gradient of the slope formed by the two points
+        /// </summary>
+        /// <param name="pX1"></param>
+        /// <param name="pY1"></param>
+        /// <param name="pX2"></param>
+        /// <param name="pY2"></param>
+        /// <param name="pInvert">Invert slope</param>
+        /// <returns></returns>
+        private double GetSlope(double pX1, double pY1, double pX2, double pY2, bool pInvert)
+        {
+            if (pInvert)
+                return (pY1 - pY2) / (pX1 - pX2);
+            else
+                return (pX1 - pX2) / (pY1 - pY2);
+        }
+
+
+        /// <summary>
+        /// Calculate the distance between the two points
+        /// </summary>
+        /// <param name="pX1"></param>
+        /// <param name="pY1"></param>
+        /// <param name="pX2"></param>
+        /// <param name="pY2"></param>
+        /// <returns>Distance</returns>
+        private int GetVisDistance(int pX1, int pY1, int pX2, int pY2)
+        {
+            return ((pX1 - pX2) * (pX1 - pX2)) + ((pY1 - pY2) * (pY1 - pY2));
+        }
+
+        #endregion
     }
 }

@@ -18,6 +18,8 @@ namespace Myng.Helpers
 
         public static float GameInformation = 0.2f;
 
+        public static float DarkVision = 0.21f;
+
         public static float Collidable = 0.22f;
 
         public static float SemiCollidable = 0.25f;
