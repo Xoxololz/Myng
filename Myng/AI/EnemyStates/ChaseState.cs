@@ -33,7 +33,7 @@ namespace Myng.AI.EnemyStates
         {
             if(Vector2.Distance(controlledEnemy.Position, Game1.Player.Position) > controlledEnemy.SightRange)
             {
-                controlledEnemy.NextState = new WanderState(controlledEnemy);
+                controlledEnemy.NextState = new PassiveState(controlledEnemy);
             }
 
             recalculationTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;

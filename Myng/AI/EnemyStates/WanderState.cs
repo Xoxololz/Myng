@@ -1,36 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
 using Myng.Graphics;
 using Myng.Graphics.Enemies;
-using System;
 using System.Collections.Generic;
 
 namespace Myng.AI.EnemyStates
 {
-    public class WanderState : EnemyState
+    public class PassiveState : EnemyState
     {
-        #region Constructors
+        #region Fields
 
-        public WanderState(Enemy controlledEnemy) : base(controlledEnemy)
-        {
-            minDistance = -800;
-            maxDistance = 800;
-
-            random = new Random();
-            SetRandomGoalDestination();
-            controlledEnemy.SpeedMultiplier = 0.7f;
-        }
 
         #endregion
 
-        #region Fields
+        #region Constructors
 
-        private int minDistance;
-
-        private int maxDistance;
-
-        private Vector2 goalDestination;
-
-        private Random random;
+        public PassiveState(Enemy controlledEnemy) : base(controlledEnemy)
+        {
+            controlledEnemy.SpeedMultiplier = 0.7f;
+        }
 
         #endregion
 
@@ -42,22 +29,10 @@ namespace Myng.AI.EnemyStates
             {
                 controlledEnemy.NextState = new ChaseState(controlledEnemy);
             }
-            if(controlledEnemy.Velocity == Vector2.Zero)
-            {
-                SetRandomGoalDestination();
-            }
-        }
 
-        private void SetRandomGoalDestination()
-        {
-            var set = false;
-            Vector2 dest = new Vector2();
-            while (!set)
-            {
-                dest = controlledEnemy.Position - new Vector2(random.Next(minDistance, maxDistance), random.Next(minDistance, maxDistance));
-                set = controlledEnemy.SetGoalDestination(dest);
-            }
-            goalDestination = dest;
+            if (Vector2.Distance(controlledEnemy.Position, controlledEnemy.startingPosition) > controlledEnemy.CollisionPolygon.Radius 
+                && controlledEnemy.Velocity == Vector2.Zero)
+                controlledEnemy.SetGoalDestination(controlledEnemy.startingPosition);
         }
 
         #endregion

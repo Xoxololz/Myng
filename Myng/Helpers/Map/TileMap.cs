@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myng.Depositories;
+using Myng.Graphics;
 using Myng.Helpers.Enums;
 using System;
 using System.Collections.Generic;
@@ -66,7 +68,7 @@ namespace Myng.Helpers.Map
 
         #region Constructor
 
-        public TileMap(TmxMap map)
+        public TileMap(TmxMap map, List<Sprite> hittableSprites)
         {
             this.map = map;
             tilesets = new List<Tileset>();
@@ -79,22 +81,24 @@ namespace Myng.Helpers.Map
             screenWidthTiles = (int)Math.Floor((float)Game1.ScreenWidth / map.Tilesets[0].TileWidth) + 10;
             screenHeightTiles = (int)Math.Floor((float)Game1.ScreenHeight / map.Tilesets[0].TileWidth) + 10;
 
-            InitOpaqueTextures();
-            InitCollisionPolygons();
-
             MapHeightTiles = map.Height;
             MapWidthTiles = map.Width;
+
+            InitOpaqueTextures(hittableSprites);
+            InitCollisionPolygons();
         }
 
         #endregion
 
         #region Methods
 
-        private void InitOpaqueTextures()
+        private void InitOpaqueTextures(List<Sprite> hittableSprites)
         {
             for (int i = 0; i < map.ObjectGroups.Count; i++)
             {
-                AddOpaqueTexture(map.ObjectGroups[i]);
+                //name of the layer
+                if (map.ObjectGroups[i].Name == "opaqueTextures")
+                    AddOpaqueTexture(map.ObjectGroups[i]);
             }
         }
 
@@ -104,6 +108,18 @@ namespace Myng.Helpers.Map
             {
                 Rectangle x = new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
                 opaqueTextures.Add(new NonCollidableTexture(x, map.TileWidth, map.TileHeight));
+            }
+        }
+
+        public void SpawnEnemies(List<Sprite> hittableSprites)
+        {
+            for (int i = 0; i < map.ObjectGroups.Count; i++)
+            {
+                foreach (var enemy in map.ObjectGroups[i].Objects)
+                {
+                    if (enemy.Name == "Zombie")
+                        hittableSprites.Add(EnemyDepository.Zombie(new Vector2((float)enemy.X, (float)enemy.Y)));
+                }
             }
         }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2018.01.16" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextobjectid="30">
+<map version="1.0" tiledversion="2018.01.16" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextobjectid="78">
  <tileset firstgid="1" source="tiled2.tsx"/>
  <tileset firstgid="1025" source="tiled1.tsx"/>
  <tileset firstgid="7105" source="tiled3.tsx"/>
@@ -419,23 +419,26 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="opaqueShit">
-  <object id="8" x="578" y="1410" width="185" height="86"/>
-  <object id="9" x="774" y="708" width="498" height="62"/>
-  <object id="10" x="1352" y="702" width="1010" height="94"/>
-  <object id="11" x="2440" y="710" width="498" height="82"/>
-  <object id="12" x="1344" y="356" width="440" height="89.3333"/>
-  <object id="13" x="1288" y="266" width="52" height="78"/>
-  <object id="14" x="40" y="272" width="1168" height="66"/>
-  <object id="15" x="580" y="418" width="116" height="170"/>
-  <object id="16" x="902.667" y="1092" width="117.333" height="214.667"/>
-  <object id="17" x="962.667" y="1633.33" width="121.333" height="185.333"/>
-  <object id="18" x="1890.67" y="1474.67" width="121.333" height="185.333"/>
-  <object id="19" x="2625.33" y="1633.33" width="121.333" height="184"/>
-  <object id="20" x="2562.67" y="2692" width="118.667" height="180"/>
-  <object id="21" x="772" y="2562.67" width="117.333" height="178.667"/>
-  <object id="22" x="2626.67" y="257.333" width="118.667" height="188"/>
-  <object id="27" x="1281.82" y="1284.85" width="1875.76" height="84.8485"/>
-  <object id="29" x="834.667" y="1410.67" width="437.333" height="122.667"/>
+ <objectgroup name="opaqueTextures">
+  <object id="8" type="nonCollidable" x="578" y="1410" width="185" height="86"/>
+  <object id="9" type="nonCollidable" x="774" y="708" width="498" height="62"/>
+  <object id="10" type="nonCollidable" x="1352" y="702" width="1010" height="94"/>
+  <object id="11" type="nonCollidable" x="2440" y="710" width="498" height="82"/>
+  <object id="12" type="nonCollidable" x="1344" y="356" width="440" height="89.3333"/>
+  <object id="13" type="nonCollidable" x="1288" y="266" width="52" height="78"/>
+  <object id="14" type="nonCollidable" x="40" y="272" width="1168" height="66"/>
+  <object id="15" type="nonCollidable" x="580" y="418" width="116" height="170"/>
+  <object id="16" template="nonCollidable.tx" type="nonCollidable" x="902.667" y="1092"/>
+  <object id="17" type="nonCollidable" x="962.667" y="1633.33" width="121.333" height="185.333"/>
+  <object id="18" type="nonCollidable" x="1890.67" y="1474.67" width="121.333" height="185.333"/>
+  <object id="19" type="nonCollidable" x="2625.33" y="1633.33" width="121.333" height="184"/>
+  <object id="20" type="nonCollidable" x="2562.67" y="2692" width="118.667" height="180"/>
+  <object id="21" type="nonCollidable" x="772" y="2562.67" width="117.333" height="178.667"/>
+  <object id="22" type="nonCollidable" x="2626.67" y="257.333" width="118.667" height="188"/>
+  <object id="27" type="nonCollidable" x="1281.82" y="1284.85" width="1875.76" height="84.8485"/>
+  <object id="29" type="nonCollidable" x="834.667" y="1410.67" width="437.333" height="122.667"/>
+ </objectgroup>
+ <objectgroup name="enemies">
+  <object id="39" name="Zombie" x="1564" y="84.303" width="72" height="92"/>
  </objectgroup>
 </map>

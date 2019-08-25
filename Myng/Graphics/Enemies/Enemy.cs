@@ -58,6 +58,8 @@ namespace Myng.Graphics.Enemies
             }
         }
 
+        public Vector2 startingPosition;
+
         #endregion
 
         #region Fields
@@ -79,6 +81,7 @@ namespace Myng.Graphics.Enemies
         #region Constructors
         public Enemy(Dictionary<string, Animation> animations, Vector2 position, EnemyType type) : base(animations, position)
         {
+            startingPosition = position;
             autoAttack = SpellDepository.RangeAutoAttack(this);
             Spells = new List<Spell>();
             InitSpells();
@@ -88,9 +91,9 @@ namespace Myng.Graphics.Enemies
             XPDrop = 20;
             movementAI = new MovementAI(CollisionPolygon, this);
             EnemyType = type;
-            currentState = new WanderState(this);
-            SightRange = 600;
-            autoAttackRange = 350;
+            currentState = new PassiveState(this);
+            SightRange = 200;
+            autoAttackRange = 150;
             baseAttackSpeed = 2f;
             Debug.Assert(SightRange > autoAttackRange, "Cant shoot target, when u dont see it.");
         }

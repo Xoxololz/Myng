@@ -68,13 +68,16 @@ namespace Myng.States
             blackBackground = new Texture2D(graphicsDevice, Game1.ScreenWidth, Game1.ScreenHeight);
             blackBackground.SetData(backgroundColor);
 
+            hittableSprites = new List<Sprite>();
+
             TmxMap map = new TmxMap("Content/Maps/map_dungeon.tmx");
-            TileMap = new TileMap(map);
+            TileMap = new TileMap(map, hittableSprites);
+            TileMap.SpawnEnemies(hittableSprites);
 
             itemFactory = new ItemFactoryImpl();
 
             Game1.Player = PlayerIdentitiesDepository.Mage();
-            Game1.Player.Position = new Vector2(2244, 1205);
+            Game1.Player.Position = new Vector2(180, 120);
             itemFactory.SetPlayer(Game1.Player);
 
             otherSprites = new List<Sprite>
@@ -84,7 +87,6 @@ namespace Myng.States
 
             Game1.Player.Inventory.EquipItem(itemFactory.CreateRandomWeapon(ItemRarity.LEGENDARY));
 
-            hittableSprites = new List<Sprite>();
 
 //            for (int i = 240; i < 1500; i += 150)
 //            {
