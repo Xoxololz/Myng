@@ -1,18 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myng.Controller;
 using Myng.Helpers;
 using Myng.Items.Interfaces;
-using Myng.States;
 using System;
 using System.Collections.Generic;
 using Myng.Graphics.Animations;
 using Myng.Graphics.GUI;
 using Myng.Helpers.Enums;
 using Myng.PlayerIdentity;
-using Myng.Helpers.Spells;
-using Myng.Depositories;
 
 namespace Myng.Graphics
 {
@@ -92,7 +88,7 @@ namespace Myng.Graphics
         {
             get
             {
-                return baseSpeed * MovementSpeedBonus;
+                return baseSpeed * MovementSpeedBonus * ImpairmentSpeedMultiplier;
             }
         }
 
@@ -159,8 +155,6 @@ namespace Myng.Graphics
 
         private KeyboardState previousKey;
 
-        private Spell autoAttack;
-
         private int nextLevelXP;
 
         private int level;
@@ -186,50 +180,13 @@ namespace Myng.Graphics
             XP = 0;
             CharacterPoints = 5;
             nextLevelXP = 100;
+            SpeedMultiplier = 1;
             this.Identity = identity;
-            
-            InitAutoattack();
-            InitSpells();
         }
 
         #endregion
 
         #region Methods
-
-        private void InitSpells()
-        {
-            //testing function 
-            Action<List<Sprite>> spell = (sprites) =>
-            {
-                var fireballAnimation = new Dictionary<string, Animation>()
-                {
-                    { "fireball", new Animation(State.Content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
-                        {
-                            FrameSpeed = 0.05f
-                        }
-                    }
-                };
-                var animation = new AnimationSprite(fireballAnimation, GlobalOrigin);
-                animation.Position -= animation.Origin * animation.Scale;
-                sprites.Add(animation);
-            };
-
-
-            Func<bool> canExecute = () =>
-            {
-                return true;
-            };
-
-            Spellbar.Add(SpellDepository.TrippleFireball(this));
-            Spellbar.Add(new Spell(spell, 15, State.Content.Load<Texture2D>("Projectiles/projectile"), 1));
-            Spellbar.Add(new Spell(spell, 20, State.Content.Load<Texture2D>("Projectiles/fireball_icon"), 1));
-            Spellbar.Add(new Spell(spell, 25, State.Content.Load<Texture2D>("Projectiles/projectile"), 1));
-        }
-
-        private void InitAutoattack()
-        {
-            autoAttack = SpellDepository.RangeAutoAttack(this);
-        }
 
         public override int GetAttribute(Attributes attribute)
         {
@@ -250,40 +207,42 @@ namespace Myng.Graphics
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
-            UpdateSpellCooldowns(gameTime);
+            base.Update(gameTime, otherSprites, hittableSprites);
+
+            UpdateSpells(gameTime, otherSprites, hittableSprites);
             previousKey = currentKey;
             currentKey = Keyboard.GetState();
             autoAttackTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            if (Stunned)
+                return;
             // just temporary solution until we somehow handle player dying
             if (Health <= 0)
-            {
                 Health = MaxHealth;
-            }
 
             if(XP >= nextLevelXP)
-            {
                 LevelUp();
-            }
 
             Move(hittableSprites);
             HandleAnimation();
             animationManager.Update(gameTime);
+
+            if (Silenced)
+                return;
+
             UsePotions(otherSprites);
-            CastSpells(otherSprites);
+            CastSpells(otherSprites, hittableSprites);
 
             Inventory.UpdateEquippedItems(otherSprites, hittableSprites);
-            
-            base.Update(gameTime, otherSprites, hittableSprites);
         }
 
-        private void UpdateSpellCooldowns(GameTime gameTime)
+        private void UpdateSpells(GameTime gameTime,List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             foreach (var spell in Spellbar.spells)
             {
-                spell.UpdateCooldown(gameTime);
+                spell.Update(gameTime,otherSprites, hittableSprites);
             }
-            autoAttack.UpdateCooldown(gameTime);
+            AutoAttack.Update(gameTime, otherSprites, hittableSprites);
         }
 
         private void UsePotions(List<Sprite> sprites)
@@ -298,54 +257,49 @@ namespace Myng.Graphics
             }
         }
 
-        private void CastSpells(List<Sprite> sprites)
+        private void CastSpells(List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             if (currentKey.IsKeyDown(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
             {
                 AttackDirection.X = 0;
                 AttackDirection.Y = -1;
-                CastAutoAttack(sprites);
+                AutoAttack.Cast(otherSprites, hittableSprites);
                 animationManager.Animation.SetRow(3);
             }
             if (currentKey.IsKeyDown(input.ShootDown) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootRight))
             {
                 AttackDirection.X = 0;
                 AttackDirection.Y = 1;
-                CastAutoAttack(sprites);
+                AutoAttack.Cast(otherSprites, hittableSprites);
                 animationManager.Animation.SetRow(0);
             }
             if (currentKey.IsKeyDown(input.ShootRight) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootLeft) && currentKey.IsKeyUp(input.ShootDown))
             {
                 AttackDirection.X = 1;
                 AttackDirection.Y = 0;
-                CastAutoAttack(sprites);
+                AutoAttack.Cast(otherSprites, hittableSprites);
                 animationManager.Animation.SetRow(2);
             }
             if (currentKey.IsKeyDown(input.ShootLeft) && currentKey.IsKeyUp(input.ShootUp) && currentKey.IsKeyUp(input.ShootDown) && currentKey.IsKeyUp(input.ShootRight))
             {
                 AttackDirection.X = -1;
                 AttackDirection.Y = 0;
-                CastAutoAttack(sprites);
+                AutoAttack.Cast(otherSprites, hittableSprites);
                 animationManager.Animation.SetRow(1);
             }
 
             if (currentKey.IsKeyDown(input.Spell1) && !previousKey.IsKeyDown(input.Spell1))
-                Spellbar.GetSpell(0)?.Cast(sprites);
+                Spellbar.GetSpell(0)?.Cast(otherSprites, hittableSprites);
             if (currentKey.IsKeyDown(input.Spell2) && !previousKey.IsKeyDown(input.Spell2))
-                Spellbar.GetSpell(1)?.Cast(sprites);
+                Spellbar.GetSpell(1)?.Cast(otherSprites, hittableSprites);
             if (currentKey.IsKeyDown(input.Spell3) && !previousKey.IsKeyDown(input.Spell3))
-                Spellbar.GetSpell(2)?.Cast(sprites);
+                Spellbar.GetSpell(2)?.Cast(otherSprites, hittableSprites);
             if (currentKey.IsKeyDown(input.Spell4) && !previousKey.IsKeyDown(input.Spell4))
-                Spellbar.GetSpell(3)?.Cast(sprites);
+                Spellbar.GetSpell(3)?.Cast(otherSprites, hittableSprites);
             if (currentKey.IsKeyDown(input.Spell5) && !previousKey.IsKeyDown(input.Spell5))
-                Spellbar.GetSpell(4)?.Cast(sprites);
+                Spellbar.GetSpell(4)?.Cast(otherSprites, hittableSprites);
             if (currentKey.IsKeyDown(input.Spell6) && !previousKey.IsKeyDown(input.Spell6))
-                Spellbar.GetSpell(5)?.Cast(sprites);
-        }
-
-        private void CastAutoAttack(List<Sprite> sprites)
-        {           
-                autoAttack.Cast(sprites);
+                Spellbar.GetSpell(5)?.Cast(otherSprites, hittableSprites);
         }
 
         private void Move(List<Sprite> hittableSprites)
@@ -416,12 +370,6 @@ namespace Myng.Graphics
 
         private bool CheckCollision(Sprite sprite)
         {
-            //int minDistance = 35;
-            //if (Vector2.Distance(CollisionPolygon.Origin, sprite.CollisionPolygon.Origin) < minDistance)
-            //{
-            //    return true;
-            //}
-            //return false;
             return CollisionPolygon.Intersects(sprite.CollisionPolygon);
         }
 

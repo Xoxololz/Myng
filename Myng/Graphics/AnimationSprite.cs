@@ -21,9 +21,9 @@ namespace Myng.Graphics
 
         #region Constructors
 
-        public AnimationSprite(Dictionary<string, Animation> animations, Vector2 position): base(animations, position)
+        public AnimationSprite(Dictionary<string, Animation> animations, Vector2 position, float layer): base(animations, position)
         {
-            layer = Layers.Projectile;
+            this.layer = layer;
         }
 
         #endregion

@@ -3,7 +3,7 @@ using Myng.States;
 
 namespace Myng.Depositories
 {
-    public static class SoundsDepository
+    internal static class SoundsDepository
     {
         public static SoundEffect FireballFlying = State.Content.Load<SoundEffect>("Sounds/fireballFlying");
 

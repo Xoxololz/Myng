@@ -23,10 +23,15 @@ namespace Myng.Depositories
                 { "walking", AnimationDepository.MageWalking()}
             };
 
-            return new Player(playerAnimations, new Vector2(2900, 900), new Mage())
+            var player = new Player(playerAnimations, new Vector2(2900, 900), new Mage())
             {
                 Bullet = new Projectile(fireballAnimation, new Vector2(100f)),
             };
+
+            player.Spellbar.Add(SpellDepository.TrippleFireball(player));
+            player.AutoAttack = SpellDepository.RangeAutoAttack(player);
+
+            return player;
         }
 
         #endregion

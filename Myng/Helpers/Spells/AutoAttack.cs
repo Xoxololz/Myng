@@ -22,7 +22,7 @@ namespace Myng.Helpers.Spells
 
         #region Constructors
 
-        public AutoAttack(Action<List<Sprite>> action, Func<bool> canExecute, Character owner)
+        public AutoAttack(Action<List<Sprite>, List<Sprite>> action, Func<bool> canExecute, Character owner)
             : base(action, canExecute, 0, 1)
         {
             this.owner = owner;

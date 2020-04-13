@@ -7,6 +7,7 @@ using Myng.Graphics.Enemies;
 using Myng.Helpers;
 using Myng.Helpers.Enums;
 using Myng.Helpers.SoundHandlers;
+using Myng.Helpers.Spells;
 using Myng.States;
 using System;
 using System.Collections.Generic;
@@ -53,9 +54,19 @@ namespace Myng.Graphics
 
         protected int baseMaxDamage = 10;
 
+        private List<Impairment> impairments;
+
         #endregion
 
         #region Properties
+
+        public bool Silenced { get; set; }
+
+        public bool Stunned { get; set; }
+
+        public float SpeedMultiplier { get; set; }
+        
+        public float ImpairmentSpeedMultiplier { get; set; }
 
         public Faction Faction { get; set; }
 
@@ -79,7 +90,8 @@ namespace Myng.Graphics
         }
 
 
-        public int Health {
+        public int Health
+        {
             get
             {
                 if (health == null || health > MaxHealth)
@@ -202,6 +214,8 @@ namespace Myng.Graphics
                 return baseSpeed;
             }
         }
+
+        public Spell AutoAttack { get; set; }
         #endregion
 
         #region Constructor
@@ -242,6 +256,8 @@ namespace Myng.Graphics
 
             CollisionDisplaytList = new List<CollisionToDisplay>();
 
+            impairments = new List<Impairment>();
+            ImpairmentSpeedMultiplier = 1;
             autoAttackTimer = baseAttackSpeed;
         }
 
@@ -256,11 +272,12 @@ namespace Myng.Graphics
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
+            HandleImpairements(gameTime);
             HandleWalkingSound();
 
             for(int i = CollisionDisplaytList.Count - 1; i >= 0; --i)
             {
-                CollisionDisplaytList[i].Timer -= gameTime.ElapsedGameTime.TotalMilliseconds;
+                CollisionDisplaytList[i].Timer -= gameTime.ElapsedGameTime.TotalSeconds;
                 if (CollisionDisplaytList[i].Timer <= 0f)
                     CollisionDisplaytList.RemoveAt(i);
             }
@@ -275,6 +292,40 @@ namespace Myng.Graphics
                     walkingSound.Stop();
                     ToRemove = true;
                 }                
+            }
+        }
+
+        private void HandleImpairements(GameTime gameTime)
+        {
+            ImpairmentSpeedMultiplier = 1;
+            Silenced = false;
+            Stunned = false;
+
+            for (int i = 0; i < impairments.Count; i++)
+            {
+                if (impairments[i].DurationLeft < 0)
+                {
+                    impairments.RemoveAt(i);
+                    i--;
+                }
+                else
+                {
+                    impairments[i].DurationLeft -= gameTime.ElapsedGameTime.TotalSeconds;
+                    switch (impairments[i].Type)
+                    {
+                        case ImpairmentType.Stun:
+                            Stunned = true;
+                            break;
+                        case ImpairmentType.Silence:
+                            Silenced = true;
+                            break;
+                        case ImpairmentType.Snare:
+                            ImpairmentSpeedMultiplier *= impairments[i].Snare;
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
 
@@ -380,6 +431,12 @@ namespace Myng.Graphics
                    rotation: 0, origin: animationManager.Animation.FrameOrigin, scale: hpScale, effects: SpriteEffects.None, layerDepth: Layers.GameInformation);
         }
 
+        public void AddImpairement(Impairment impairment)
+        {
+            CollisionDisplaytList.Add(new CollisionToDisplay(impairment.TextToDisplay, Color.Red) { Timer = impairment.DurationLeft});
+            impairments.Add(impairment);
+        }
+
         #endregion
 
         public class CollisionToDisplay
@@ -390,7 +447,7 @@ namespace Myng.Graphics
 
             public CollisionToDisplay(string text, Color color)
             {
-                Timer = 600f;
+                Timer = 0.6f;
                 Text = text;
                 Color = color;
             }

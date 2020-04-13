@@ -11,7 +11,9 @@ namespace Myng.Helpers.Spells
     {
         #region Fields
 
-        protected Action<List<Sprite>> action;
+        protected Action<List<Sprite>, List<Sprite>> spellCastAction;
+
+        protected Action<List<Sprite>,List<Sprite>, GameTime> updateAction;
 
         protected Func<bool> canExecute;
 
@@ -57,37 +59,41 @@ namespace Myng.Helpers.Spells
 
         #region Contructors
 
-        public Spell(Action<List<Sprite>> action, Func<bool> canExecute, int cost, Texture2D texture, double cooldown)
+        public Spell(Action<List<Sprite>, List<Sprite>> spellCastAction, Func<bool> canExecute, int cost, Texture2D texture
+            , double cooldown, Action<List<Sprite>,List<Sprite>, GameTime> updateAction)
         {
-            this.action = action;
+            this.spellCastAction = spellCastAction;
             this.canExecute = canExecute;
             this.manaCost = cost;
             this.spellbarTexture = texture;
             this.cooldown = cooldown;
+            this.updateAction = updateAction;
         }
 
-        public Spell(Action<List<Sprite>> action, Func<bool> canExecute, int cost, double cooldown)
-        {
-            this.action = action;
-            this.canExecute = canExecute;
-            this.manaCost = cost;
-            this.spellbarTexture = null;
-            this.cooldown = cooldown;
-        }
+        public Spell(Action<List<Sprite>, List<Sprite>> spellCastAction, Func<bool> canExecute, int cost, double cooldown)
+            :this(spellCastAction, canExecute, cost, null, cooldown, null) { }
 
-        public Spell(Action<List<Sprite>> action, int cost, Texture2D texture, double cooldown)
-            : this(action, null, cost, texture, cooldown) { }
+        public Spell(Action<List<Sprite>, List<Sprite>> spellCastAction, Func<bool> canExecute, int cost, Texture2D texture, double cooldown)
+            :this(spellCastAction, canExecute, cost, texture, cooldown, null) { }
 
-        public Spell(Action<List<Sprite>> action, int cost, double cooldown)
-            : this(action, null, cost, null, cooldown) { }
+        public Spell(Action<List<Sprite>, List<Sprite>> spellCastAction, int cost, Texture2D texture, double cooldown)
+            : this(spellCastAction, null, cost, texture, cooldown) { }
+
+        public Spell(Action<List<Sprite>, List<Sprite>> spellCastAction, int cost, double cooldown)
+            : this(spellCastAction, null, cost, null, cooldown) { }
 
         #endregion
 
         #region Methods
 
-        public void UpdateCooldown(GameTime gameTime)
+        public void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             cooldownTimer += gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
+        public void CastingUpdate(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
+        {
+            updateAction?.Invoke(otherSprites, hittableSprites, gameTime);
         }
 
         public bool CanCast()
@@ -102,14 +108,14 @@ namespace Myng.Helpers.Spells
             return canExecute();
         }
 
-        public void Cast(List<Sprite> parameter)
+        public void Cast(List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             if (!CanCast())
                 return;
 
             cooldownTimer = 0;
             Game1.Player.Mana -= manaCost;
-            action(parameter);
+            spellCastAction(otherSprites, hittableSprites);
         }
 
         #endregion

@@ -15,10 +15,9 @@ namespace Myng.Graphics
 
         #region Constructor
 
-        public CastingEffectSprite(Dictionary<string, Animation> animations, Vector2 position, Character character) : base(animations, position)
+        public CastingEffectSprite(Dictionary<string, Animation> animations, Vector2 position, Character character) : base(animations, position, Layers.Collidable)
         {
             castingCharacter = character;
-            layer = Layers.AlwaysOnTop;
         }
 
         #endregion

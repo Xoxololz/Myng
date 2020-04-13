@@ -118,6 +118,22 @@ namespace Myng.Graphics
                 }
                 return Vector2.Zero;
             }
+            set
+            {
+                int width = 0;
+                int height = 0;
+                if (texture != null)
+                {
+                    width = texture.Width;
+                    height = texture.Height;
+                }
+                if (animationManager != null)
+                {
+                    width = animationManager.Animation.FrameWidth;
+                    height = animationManager.Animation.FrameHeight;
+                }
+                Position = new Vector2(value.X - width / 2 * Scale, value.Y - height / 2 * Scale);
+            }
         }
 
         public Vector2 GlobalOrigin
@@ -167,7 +183,7 @@ namespace Myng.Graphics
 
         //default Draw method
         public virtual void Draw(SpriteBatch spriteBatch)
-        {            
+        {
             if (animationManager != null)
                 animationManager.Draw(spriteBatch, Scale,layer);
             else if (texture != null)
@@ -189,7 +205,7 @@ namespace Myng.Graphics
             var y = (int)collisionPolygon.Vertices[0].Y;
             var width = (int)collisionPolygon.Vertices[1].X - (int)collisionPolygon.Vertices[0].X;
             var height = (int)(collisionPolygon.Vertices[2].Y - collisionPolygon.Vertices[0].Y);
-            var rectangle = new Rectangle(x, y, width, height);
+            var rectangle = new Rectangle((int)Position.X, (int)Position.Y, width, height);
             return rectangle;
         }
         #endregion

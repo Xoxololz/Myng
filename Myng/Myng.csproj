@@ -45,7 +45,7 @@
     <Compile Include="AI\EnemyStates\CastingState.cs" />
     <Compile Include="AI\EnemyStates\ChaseState.cs" />
     <Compile Include="AI\EnemyStates\EnemyState.cs" />
-    <Compile Include="AI\EnemyStates\WanderState.cs" />
+    <Compile Include="AI\EnemyStates\PassiveState.cs" />
     <Compile Include="AI\Movement\MovementAI.cs" />
     <Compile Include="AI\Movement\Node.cs" />
     <Compile Include="AI\Movement\NodeMap.cs" />
@@ -69,6 +69,7 @@
     <Compile Include="Graphics\Projectile.cs" />
     <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Helpers\Enums\Direction.cs" />
+    <Compile Include="Helpers\Enums\Impairment.cs" />
     <Compile Include="Helpers\Map\NonCollidableTexture.cs" />
     <Compile Include="Helpers\Spells\AutoAttack.cs" />
     <Compile Include="Helpers\Camera.cs" />
@@ -135,6 +136,7 @@
     </Content>
     <Content Include="Content\GUI\itembar.png" />
     <Content Include="Content\Items\HealthPotion.png" />
+    <Content Include="Content\Projectiles\explosion.png" />
     <Content Include="Content\Projectiles\greenArrow.png" />
     <Content Include="Content\Projectiles\projectile.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

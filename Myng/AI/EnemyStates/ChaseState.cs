@@ -22,6 +22,7 @@ namespace Myng.AI.EnemyStates
         {
             recalculationTimer = 0f;
             updateTime = 1.5f;
+            controlledEnemy.IsAutoAttacking = true;
             controlledEnemy.SetGoalDestination(Game1.Player.Position);
         }
 
@@ -31,7 +32,7 @@ namespace Myng.AI.EnemyStates
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
-            if(Vector2.Distance(controlledEnemy.Position, Game1.Player.Position) > controlledEnemy.SightRange)
+            if(Vector2.Distance(controlledEnemy.Position, Game1.Player.Position) > 1.5 * controlledEnemy.SightRange)
             {
                 controlledEnemy.NextState = new PassiveState(controlledEnemy);
             }

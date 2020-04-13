@@ -38,7 +38,6 @@ namespace Myng.Depositories
         public static Animation FireballFlying()
         {
             return new Animation(State.Content.Load<Texture2D>("Projectiles/fireball"), 1, 6)
-
             {
                 FrameSpeed = 0.05f
             };
@@ -47,11 +46,18 @@ namespace Myng.Depositories
         public static Animation GreenArrowFlying()
         {
             return new Animation(State.Content.Load<Texture2D>("Projectiles/greenArrow"), 1, 1)
-
             {
                 FrameSpeed = 1f
             };
 
+        }
+
+        public static Animation Explosion()
+        {
+            return new Animation(State.Content.Load<Texture2D>("Projectiles/explosion"), 1, 1)
+            {
+                FrameSpeed = 1f
+            };
         }
 
         #endregion

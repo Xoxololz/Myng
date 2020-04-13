@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Myng.Helpers;
 using Myng.AI.Movement;
@@ -7,10 +6,7 @@ using Myng.Graphics.Animations;
 using Myng.Helpers.Enums;
 using Myng.AI.EnemyStates;
 using System.Diagnostics;
-using Microsoft.Xna.Framework.Graphics;
-using Myng.States;
 using Myng.Helpers.Spells;
-using Myng.Depositories;
 
 namespace Myng.Graphics.Enemies
 {
@@ -40,13 +36,11 @@ namespace Myng.Graphics.Enemies
 
         public int SightRange { get; private set; } //TODO: probly init in subclasses
 
-        public float SpeedMultiplier { get; set; }
-
         public override float Speed
         {
             get
             {
-                return baseSpeed * SpeedMultiplier;
+                return baseSpeed * SpeedMultiplier * ImpairmentSpeedMultiplier;
             }
         }
 
@@ -58,13 +52,13 @@ namespace Myng.Graphics.Enemies
             }
         }
 
+        public bool IsAutoAttacking { get; set; }
+
         public Vector2 startingPosition;
 
         #endregion
 
         #region Fields
-
-        protected Spell autoAttack;
 
         protected Vector2 playerPosition;
 
@@ -82,9 +76,7 @@ namespace Myng.Graphics.Enemies
         public Enemy(Dictionary<string, Animation> animations, Vector2 position, EnemyType type) : base(animations, position)
         {
             startingPosition = position;
-            autoAttack = SpellDepository.RangeAutoAttack(this);
             Spells = new List<Spell>();
-            InitSpells();
             Scale = 1f;
             baseSpeed = 1.5f;
             Faction = Faction.ENEMY;
@@ -92,9 +84,10 @@ namespace Myng.Graphics.Enemies
             movementAI = new MovementAI(CollisionPolygon, this);
             EnemyType = type;
             currentState = new PassiveState(this);
-            SightRange = 200;
+            SightRange = 500;
             autoAttackRange = 150;
             baseAttackSpeed = 2f;
+            IsAutoAttacking = false;
             Debug.Assert(SightRange > autoAttackRange, "Cant shoot target, when u dont see it.");
         }
 
@@ -102,72 +95,41 @@ namespace Myng.Graphics.Enemies
 
         #region Methods
 
-        protected virtual void InitSpells()
-        {
-            Action<List<Sprite>> blast = (sprites) =>
-            {
-
-                var bulletMid = Bullet.Clone() as Projectile;
-                var bPosition = GlobalOrigin - Bullet.Origin * Bullet.Scale;
-
-                var attackDirection= -(Position - (playerPosition));
-                if (attackDirection.X < 0)
-                    bulletMid.AngleTextureOffset = MathHelper.ToRadians(180);
-
-                bulletMid.Initialize(bPosition, 40, DamageType.MAGIC, attackDirection, Faction,
-                    SoundsDepository.FireballFlying.CreateInstance(), SoundsDepository.FireballExplosion.CreateInstance(), this);
-                var bulletBot = bulletMid.Clone() as Projectile;
-                var bulletTop = bulletMid.Clone() as Projectile;
-
-                var angleDiff = MathHelper.ToRadians(20);
-                bulletBot.RotateDirection(-angleDiff);
-                bulletTop.RotateDirection(angleDiff);
-
-                sprites.Add(bulletMid);
-                sprites.Add(bulletBot);
-                sprites.Add(bulletTop);
-            };
-
-            var fireballAnimation = new Dictionary<string, Animation>()
-            {
-                { "fireball", new Animation(State.Content.Load<Texture2D>("Projectiles/greenArrow"), 1, 1)
-                    {
-                        FrameSpeed = 0.05f
-                    }
-                }
-            };
-
-            var spell = new Spell(blast, 0, 4)
-            {
-                Range = 250,
-                CastingAnimations = fireballAnimation,
-                CastingTime = 1.5
-            };
-            Spells.Add(spell);
-
-        }
-
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
-            UpdateSpellCooldowns(gameTime);
+            base.Update(gameTime, otherSprites, hittableSprites);
+            UpdateSpells(gameTime, otherSprites, hittableSprites);
+            UpdateTimer(gameTime);
+
+            if (Stunned)
+            {
+                if (!(currentState is ChaseState))
+                    nextState = new ChaseState(this);
+                return;
+            }
             HandleStateChange();
             currentState.Update(gameTime, otherSprites, hittableSprites);
-            UpdateTimer(gameTime);
             playerPosition = Game1.Player.Position;
             DetermineVelocity(hittableSprites);
             HandleAnimation();
             animationManager.Update(gameTime);
-            CastAutoattack(otherSprites);
-            base.Update(gameTime, otherSprites, hittableSprites);
+
+            if (Silenced)
+            {
+                if (!(currentState is ChaseState))
+                    nextState = new ChaseState(this);
+                return;
+            }
+            CastAutoattack(otherSprites, hittableSprites);
         }
 
-        private void UpdateSpellCooldowns(GameTime gameTime)
+        private void UpdateSpells(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
             foreach (var spell in Spells)
             {
-                spell.UpdateCooldown(gameTime);
+                spell.Update(gameTime, otherSprites, hittableSprites);
             }
-            autoAttack.UpdateCooldown(gameTime);
+            AutoAttack?.Update(gameTime, otherSprites, hittableSprites);
         }
 
         private void HandleStateChange()
@@ -261,14 +223,20 @@ namespace Myng.Graphics.Enemies
             else animationManager.Animation.IsLooping = false;
         }
 
-        protected void CastAutoattack(List<Sprite> sprites)
+        public void CastAutoattack(List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
-            autoAttack.Cast(sprites);
+            if(IsAutoAttacking)
+                AutoAttack?.Cast(otherSprites, hittableSprites);
         }
 
         public bool SetGoalDestination(Vector2 dest)
         {
             return movementAI.SetGoalDestination(dest);
+        }
+
+        public bool CanSeePlayer()
+        {
+            return movementAI.CanSee(Game1.Player.Position);
         }
 
         #endregion

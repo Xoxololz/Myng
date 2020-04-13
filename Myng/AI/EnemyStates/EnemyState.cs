@@ -13,7 +13,7 @@ namespace Myng.AI.EnemyStates
         public EnemyState(Enemy controlledEnemy)
         {
             this.controlledEnemy = controlledEnemy;
-            controlledEnemy.SpeedMultiplier = 1f;
+            //controlledEnemy.SpeedMultiplier = 1f;
         }
 
         #endregion

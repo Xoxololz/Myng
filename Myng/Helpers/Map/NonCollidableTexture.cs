@@ -43,7 +43,7 @@ namespace Myng.Helpers.Map
             return (row <= maxRow && row >= minRow && column <= maxColumn && column >= minColumn);
         }
 
-        public bool PlayerIsUnder()
+        public bool ShouldBeTransparent()
         {
             if (Game1.Player.CollisionPolygon.Intersects(new Polygon(rectangle))) return true;
             return false;

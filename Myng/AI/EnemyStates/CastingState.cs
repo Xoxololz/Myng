@@ -25,6 +25,7 @@ namespace Myng.AI.EnemyStates
             this.spell = spell;
             castTimer = 0;
             controlledEnemy.SpeedMultiplier = 0.6f;
+            controlledEnemy.IsAutoAttacking = false;
             castingSpriteAdded = false;
         }
 
@@ -34,6 +35,7 @@ namespace Myng.AI.EnemyStates
 
         public override void Update(GameTime gameTime, List<Sprite> otherSprites, List<Sprite> hittableSprites)
         {
+            spell.CastingUpdate(gameTime, otherSprites, hittableSprites);
             castTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
             if (!castingSpriteAdded && spell.CastingAnimations != null)
@@ -49,7 +51,7 @@ namespace Myng.AI.EnemyStates
 
             if (spell.CastingTime < castTimer)
             {
-                spell.Cast(otherSprites);
+                spell.Cast(otherSprites, hittableSprites);
                 controlledEnemy.NextState = new ChaseState(controlledEnemy);
             }
         }

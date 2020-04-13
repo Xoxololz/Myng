@@ -191,6 +191,11 @@ namespace Myng.AI.Movement
             return path != null;
         }                     
 
+        public bool CanSee(Vector2 dest)
+        {
+            Node goal = nodeMap.FindClosestFreeNode(dest);
+            return CanGoStraightTo(goal);
+        }
         #endregion
     }
 }

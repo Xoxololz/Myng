@@ -41,13 +41,14 @@ namespace Myng.Graphics
 
         #region Fields
         protected float timer = 0f;
-        protected float lifespan = 3f;
+        protected float lifespan = 1.2f;
 
         protected SoundEffect2D flyingSound;
         protected SoundEffect2D hitSound;
 
         protected Character Parent;
         private Vector2 direction;
+        private Impairment impairment;
         #endregion
 
         #region Constructors
@@ -71,7 +72,7 @@ namespace Myng.Graphics
         #region Methods
 
         public virtual void Initialize(Vector2 position, int damage, DamageType damageType, Vector2 direction, Faction faction
-            , SoundEffectInstance flyingSoundInstance, SoundEffectInstance hitSoundInstance, Character parent = null)
+            , SoundEffectInstance flyingSoundInstance, SoundEffectInstance hitSoundInstance, Character parent = null, Impairment impairment = null)
         {
             Position = position;
             Damage = damage;
@@ -81,6 +82,7 @@ namespace Myng.Graphics
             Angle = Math.Atan(Direction.Y / Direction.X);            
             Faction = faction;
             Parent = parent;
+            this.impairment = impairment;
 
             flyingSound = new SoundEffect2D(flyingSoundInstance, this)
             {
@@ -153,6 +155,9 @@ namespace Myng.Graphics
                         hitSound.Play();
                         int actualDamage = CalculateDamage(Damage, DamageType, characerSprite, out bool isCrit, out bool isBlocked);
                         characerSprite.Health -= actualDamage;
+
+                        if (impairment != null)
+                            characerSprite.AddImpairement(impairment);
 
                         if (isBlocked)
                             characerSprite.CollisionDisplaytList.Add(new CollisionToDisplay("blocked", Color.Snow));

@@ -118,7 +118,11 @@ namespace Myng.Helpers.Map
                 foreach (var enemy in map.ObjectGroups[i].Objects)
                 {
                     if (enemy.Name == "Zombie")
+                    {
                         hittableSprites.Add(EnemyDepository.Zombie(new Vector2((float)enemy.X, (float)enemy.Y)));
+                    }
+                    else if (enemy.Name == "Skeleton")
+                        hittableSprites.Add(EnemyDepository.SuicideBomberSkeleton(new Vector2((float)enemy.X, (float)enemy.Y)));
                 }
             }
         }
@@ -321,7 +325,7 @@ namespace Myng.Helpers.Map
         {
             foreach (var texture in opaqueTextures)
             {
-                if (texture.IsTileIn(mapRow, mapColumn) && texture.PlayerIsUnder())
+                if (texture.IsTileIn(mapRow, mapColumn) && texture.ShouldBeTransparent())
                 {
                     return 0.5f;
                 }
